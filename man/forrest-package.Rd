@@ -5,7 +5,7 @@
 \alias{forrest-package}
 \title{forrest: Publication-Ready Forest Plots}
 \description{
-Creates publication-ready forest plots with minimal dependencies. Supports subgroup headers, summary estimates displayed as diamonds, grouped estimates with automatic color mapping, and customizable text columns alongside the plot. Works with base R data frames, 'tibble', and 'data.table' objects. Built on 'tinyplot' for clean, consistent visual styling.
+Creates publication-ready forest plots from any tabular data containing point estimates and confidence intervals. Suitable for visualising results from regression models, meta-analyses, subgroup analyses, or any comparative study. Supports group and subgroup headings, summary estimates displayed as diamonds, grouped estimates with automatic colour mapping, customisable text columns alongside the plot, and optional row striping. Provides a helper to export plots to PDF, PNG, SVG, or TIFF. Built on 'tinyplot' for clean, consistent visual styling with a minimal dependency footprint.
 }
 \seealso{
 Useful links:

@@ -1,11 +1,11 @@
-# R
+# R user files
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 *.Rproj
 
-# Package build
+# Package build artifacts
 /*.Rcheck/
 /*.tar.gz
 *.o
@@ -19,14 +19,23 @@ _quarto/*
 altdoc/freeze.rds
 .quarto/
 
-# vignette intermediates
+# Vignette intermediates
 vignettes/*.html
 vignettes/*.pdf
 vignettes/*.R
+vignettes/cache/
+vignettes/*_cache/
+vignettes/*_files/
+
+# knitr cache
+cache/
+*_cache/
 
 # covr
 /*.cov
 
 # macOS
 .DS_Store
+
+# Claude Code
 .claude

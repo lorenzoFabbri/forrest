@@ -6,13 +6,13 @@ output: github_document
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.path  = "man/figures/README-",
   out.width = "100%",
   fig.width = 7,
   fig.height = 4.5,
-  dpi = 150
+  dpi       = 150
 )
 ```
 
@@ -27,21 +27,24 @@ knitr::opts_chunk$set(
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95-yellow.svg)](https://www.buymeacoffee.com/epilorenzo)
 <!-- badges: end -->
 
-`forrest` creates publication-ready forest plots with a single dependency —
-[tinyplot](https://github.com/grantmcdermott/tinyplot). It is designed for
-epidemiologists and data scientists who need clean, customisable forest plots
-without pulling in a large dependency tree.
+`forrest` creates publication-ready forest plots from any data frame that
+contains point estimates and confidence intervals — regression models,
+subgroup analyses, meta-analyses, dose-response patterns, and more. A single
+dependency ([tinyplot](https://github.com/grantmcdermott/tinyplot)) keeps the
+footprint minimal.
 
 **Key features:**
 
-- Minimal dependency footprint (only `tinyplot`)
-- Subgroup headers and spacer rows via `NA` estimate rows
+- Works with any estimates and CIs: regression coefficients, ORs, HRs, MDs, …
+- Group and subgroup headings via `NA` estimate rows
 - Summary estimates rendered as filled diamonds
-- Study weights scale point size (meta-analysis convention)
-- Confidence intervals clipped at axis limits with directional arrows
-- Group coloring with automatic Okabe-Ito legend
-- Optional text columns (OR, p-value, …) alongside the plot
+- Alternating row stripes for readability (`stripe = TRUE`)
+- Group colouring with automatic Okabe-Ito legend
+- Optional text columns (formatted estimates, p-values, …) alongside the plot
 - Log-scale x-axis for ratio measures
+- CI clipping at axis limits with directional arrows
+- Point size proportional to row weights
+- Export to PDF, PNG, SVG, or TIFF with `save_forrest()`
 - Works with `data.frame`, `tibble`, and `data.table`
 
 ## Installation
@@ -54,46 +57,56 @@ pak::pak("lorenzoFabbri/forrest")
 
 ## Quick start
 
-```{r basic}
+### Regression model predictors
+
+Use [`broom::tidy()`](https://broom.tidymodels.org/) to extract parameters
+from a fitted model and pass the result directly to `forrest()`.
+
+```{r regression, fig.height = 4.5}
 library(forrest)
 
+set.seed(1)
+n   <- 300
 dat <- data.frame(
-  study = c(
-    "Smith 2018", "Jones 2019", "Brown 2020",
-    "Garcia 2021", "Lee 2022", "Pooled"
-  ),
-  estimate = c(-0.18, 0.05, -0.12, -0.08, 0.02, -0.07),
-  lower = c(-0.38, -0.12, -0.30, -0.24, -0.14, -0.16),
-  upper = c(0.02, 0.22, 0.06, 0.08, 0.18, 0.02),
-  is_sum = c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE),
-  weight = c(12.1, 4.5, 9.8, 7.2, 5.3, NA)
+  sbp    = 120 + rnorm(n, sd = 15),
+  age    = runif(n, 30, 70),
+  female = rbinom(n, 1, 0.5),
+  bmi    = rnorm(n, 26, 4),
+  smoker = rbinom(n, 1, 0.2)
 )
+dat$sbp <- dat$sbp + 0.3 * dat$age - 4 * dat$female +
+           0.5 * dat$bmi - 2 * dat$smoker + rnorm(n, sd = 6)
+
+fit   <- lm(sbp ~ age + female + bmi + smoker, data = dat)
+coefs <- broom::tidy(fit, conf.int = TRUE)
+coefs <- coefs[coefs$term != "(Intercept)", ]
+coefs$term <- c("Age (per 1 y)", "Female sex",
+                "BMI (per 1 kg/m²)", "Current smoker")
 
 forrest(
-  dat,
-  estimate   = "estimate",
-  lower      = "lower",
-  upper      = "upper",
-  label      = "study",
-  is_summary = "is_sum",
-  weight     = "weight",
-  xlab       = "Mean difference (95% CI)"
+  coefs,
+  estimate = "estimate",
+  lower    = "conf.low",
+  upper    = "conf.high",
+  label    = "term",
+  xlab     = "Regression coefficient (95% CI)",
+  stripe   = TRUE
 )
 ```
 
-## Subgroup analysis with text columns
+### Subgroup analysis with text columns
 
 ```{r subgroups, fig.width = 9, fig.height = 5.5}
 sub <- data.frame(
-  label = c(
-    "Sex", "  Female", "  Male", "  Pooled",
-    "", "Region", "  North", "  South", "  Pooled"
+  label  = c(
+    "Sex", "  Female", "  Male", "  Overall",
+    "", "Region", "  North", "  South", "  Overall"
   ),
-  est = c(NA, -0.10, -0.05, -0.07, NA, NA, -0.12, -0.02, -0.07),
-  lo = c(NA, -0.22, -0.18, -0.16, NA, NA, -0.28, -0.12, -0.16),
-  hi = c(NA, 0.02, 0.08, 0.02, NA, NA, 0.04, 0.08, 0.02),
+  est    = c(NA, -0.10, -0.05, -0.07, NA, NA, -0.12, -0.02, -0.07),
+  lo     = c(NA, -0.22, -0.18, -0.16, NA, NA, -0.28, -0.12, -0.16),
+  hi     = c(NA,  0.02,  0.08,  0.02, NA, NA,  0.04,  0.08,  0.02),
   is_sum = c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE),
-  or_text = c(
+  text   = c(
     "", "-0.10 (-0.22, 0.02)", "-0.05 (-0.18, 0.08)",
     "-0.07 (-0.16, 0.02)", "",
     "", "-0.12 (-0.28, 0.04)", "-0.02 (-0.12, 0.08)",
@@ -109,14 +122,14 @@ forrest(
   label      = "label",
   is_summary = "is_sum",
   header     = "Subgroup",
-  cols       = c("Estimate (95% CI)" = "or_text"),
+  cols       = c("Estimate (95% CI)" = "text"),
   widths     = c(2.2, 4, 2.5)
 )
 ```
 
-## Log scale for ratio measures
+### Log scale for ratio measures
 
-```{r logscale}
+```{r logscale, fig.height = 4}
 or_dat <- data.frame(
   study  = c("Adams 2016", "Baker 2018", "Chen 2019", "Pooled"),
   est    = c(1.45, 0.88, 1.21, 1.09),
@@ -143,12 +156,15 @@ forrest(
 | Feature | forrest | forestplot | forestploter | ggforestplot |
 |---|:---:|:---:|:---:|:---:|
 | Minimal dependencies | ✅ | ❌ | ❌ | ❌ |
+| General (not meta-analysis only) | ✅ | ⚠️ | ⚠️ | ❌ |
 | Study weight sizing | ✅ | ✅ | ✅ | ❌ |
 | Subgroup headers | ✅ | ✅ | ✅ | ❌ |
 | Summary diamonds | ✅ | ✅ | ✅ | ✅ |
 | Text columns | ✅ | ✅ | ✅ | ❌ |
+| Alternating row stripes | ✅ | ❌ | ✅ | ❌ |
 | CI clipping with arrows | ✅ | ✅ | ❌ | ❌ |
-| Group coloring + legend | ✅ | ❌ | ✅ | ✅ |
+| Group colouring + legend | ✅ | ❌ | ✅ | ✅ |
 | Log-scale axis | ✅ | ✅ | ✅ | ❌ |
+| Export helper | ✅ | ❌ | ❌ | ❌ |
 | data.table support | ✅ | ❌ | ❌ | ❌ |
 | Actively maintained | ✅ | ⚠️ | ✅ | ❌ |

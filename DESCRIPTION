@@ -1,16 +1,19 @@
 Package: forrest
 Title: Publication-Ready Forest Plots
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person("Lorenzo", "Fabbri", email = "lorenzo.fabbri92sm@gmail.com",
            role = c("aut", "cre"))
   )
-Description: Creates publication-ready forest plots with minimal
-    dependencies. Supports subgroup headers, summary estimates
-    displayed as diamonds, grouped estimates with automatic color
-    mapping, and customizable text columns alongside the plot.
-    Works with base R data frames, 'tibble', and 'data.table'
-    objects. Built on 'tinyplot' for clean, consistent visual styling.
+Description: Creates publication-ready forest plots from any tabular data
+    containing point estimates and confidence intervals. Suitable for
+    visualising results from regression models, meta-analyses, subgroup
+    analyses, or any comparative study. Supports group and subgroup
+    headings, summary estimates displayed as diamonds, grouped estimates
+    with automatic colour mapping, customisable text columns alongside the
+    plot, and optional row striping. Provides a helper to export plots
+    to PDF, PNG, SVG, or TIFF. Built on 'tinyplot' for clean, consistent
+    visual styling with a minimal dependency footprint.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -20,6 +23,7 @@ Depends:
 Imports:
     tinyplot (>= 0.2.0)
 Suggests:
+    broom,
     data.table,
     knitr,
     rmarkdown,

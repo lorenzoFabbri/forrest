@@ -21,6 +21,7 @@ forrest(
   header = NULL,
   cols = NULL,
   widths = NULL,
+  stripe = FALSE,
   pch = 15,
   lwd = 2,
   cex = 1,
@@ -43,21 +44,20 @@ forrest(
 in the left text panel. If \code{NULL}, row numbers are used.}
 
 \item{group}{Column name (string) for a grouping variable. Rows that share
-a group value receive the same color, and a legend is drawn automatically.}
+a group value receive the same colour, and a legend is drawn automatically.}
 
 \item{is_summary}{Column name (string) of a logical vector. Rows where this
-is \code{TRUE} are drawn as filled diamonds (pooled / summary estimates) rather
-than squares with whiskers.}
+is \code{TRUE} are drawn as filled diamonds (e.g. pooled or overall estimates)
+rather than squares with whiskers.}
 
-\item{weight}{Column name (string) of numeric study weights (e.g.
-inverse-variance weights or effective sample sizes). When provided, point
-size scales as \code{cex * sqrt(weight / max(weight))}, so larger studies are
-displayed with a bigger marker — the conventional meta-analysis convention.
-Weights for summary rows are ignored (diamond size is controlled by \code{cex}).}
+\item{weight}{Column name (string) of numeric row weights. When provided,
+point size scales as \code{cex * sqrt(weight / max(weight))}, so rows with
+larger weights appear with a bigger marker. Weights for summary rows are
+ignored (diamond size is fixed by \code{cex}).}
 
 \item{ref_line}{Numeric. Position of the vertical reference line (e.g. \code{0}
-for log-odds / risk differences, \code{1} for odds ratios on the natural scale).
-Set to \code{NULL} to suppress. Default is \code{0}.}
+for differences, \code{1} for ratio measures on the natural scale). Set to
+\code{NULL} to suppress. Default is \code{0}.}
 
 \item{log_scale}{Logical. If \code{TRUE}, apply a log transformation to the
 x-axis. Useful when plotting odds ratios, hazard ratios, or risk ratios
@@ -86,6 +86,9 @@ names in \code{data}. Example:
 panel, plot panel, then one entry per extra column. Sensible defaults are
 chosen automatically.}
 
+\item{stripe}{Logical. If \code{TRUE}, alternate rows are shaded with a light
+grey background to improve readability. Default is \code{FALSE}.}
+
 \item{pch}{Point character for non-summary rows. Default is \code{15} (filled
 square), which is conventional for forest plots.}
 
@@ -93,9 +96,9 @@ square), which is conventional for forest plots.}
 
 \item{cex}{Point size multiplier. Default is \code{1}.}
 
-\item{col}{Color or character vector of colors. When \code{NULL} (default) and
+\item{col}{Colour or character vector of colours. When \code{NULL} (default) and
 \code{group} is specified, the Okabe-Ito colorblind-safe palette is used. When
-\code{NULL} and no \code{group}, a single dark color is used.}
+\code{NULL} and no \code{group}, a single dark colour is used.}
 
 \item{legend_pos}{Position of the legend when \code{group} is supplied. Passed
 to \code{\link[=legend]{legend()}}. Set to \code{NULL} to suppress the legend. Default is
@@ -110,41 +113,41 @@ Invisibly returns \code{NULL}. Called for its side effect of producing a
 plot.
 }
 \description{
-Draws a publication-ready forest plot from a data frame. Each row represents
-one study, subgroup, or estimate. Rows whose \code{estimate} is \code{NA} are treated
-as spacer/header rows: they produce no point or confidence interval, and
-their label is rendered in bold if non-empty.
+Draws a publication-ready forest plot from a data frame. Each row
+represents one estimate — a study, a predictor, a model, a subgroup, or any
+other unit of analysis. Rows whose \code{estimate} is \code{NA} are treated as
+spacer/header rows: they produce no point or confidence interval, and their
+label is rendered in bold if non-empty.
 }
 \examples{
-# Basic forest plot
+# Basic forest plot — results from a single regression model
 dat <- data.frame(
-  label    = c("Study A", "Study B", "Study C", "Pooled"),
-  estimate = c(-0.15, 0.10, -0.05, -0.05),
-  lower    = c(-0.40, -0.10, -0.25, -0.20),
-  upper    = c(0.10, 0.30, 0.15, 0.10),
-  is_sum   = c(FALSE, FALSE, FALSE, TRUE)
+  label    = c("Exposure A", "Exposure B", "Exposure C", "Exposure D"),
+  estimate = c(0.42, -0.18, 0.31, -0.07),
+  lower    = c(0.22, -0.38, 0.12, -0.24),
+  upper    = c(0.62,  0.02, 0.50,  0.10)
 )
 forrest(dat,
-  estimate   = "estimate",
-  lower      = "lower",
-  upper      = "upper",
-  label      = "label",
-  is_summary = "is_sum"
+  estimate = "estimate",
+  lower    = "lower",
+  upper    = "upper",
+  label    = "label",
+  xlab     = "Regression coefficient (95\% CI)"
 )
 
-# With subgroup headers (NA estimate rows) and text columns
+# Multiple models with subgroup headers and a text column
 dat2 <- data.frame(
   label    = c(
-    "Subgroup A", "Study 1", "Study 2", "Pooled A",
-    "", "Subgroup B", "Study 3", "Study 4", "Pooled B"
+    "Model 1", "  Exposure A", "  Exposure B",
+    "", "Model 2", "  Exposure A", "  Exposure B"
   ),
-  estimate = c(NA, 0.5, 0.7, 0.6, NA, NA, 1.1, 0.9, 1.0),
-  lower    = c(NA, 0.3, 0.5, 0.45, NA, NA, 0.8, 0.6, 0.75),
-  upper    = c(NA, 0.7, 0.9, 0.75, NA, NA, 1.4, 1.2, 1.25),
-  is_sum   = c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE),
-  or_ci    = c(
-    "", "0.50 (0.30-0.70)", "0.70 (0.50-0.90)", "0.60 (0.45-0.75)",
-    "", "", "1.10 (0.80-1.40)", "0.90 (0.60-1.20)", "1.00 (0.75-1.25)"
+  estimate = c(NA,  0.42, -0.18, NA, NA,  0.35, -0.14),
+  lower    = c(NA,  0.22, -0.38, NA, NA,  0.16, -0.32),
+  upper    = c(NA,  0.62,  0.02, NA, NA,  0.54,  0.04),
+  is_sum   = rep(FALSE, 7),
+  est_ci   = c(
+    "", "0.42 (0.22, 0.62)", "-0.18 (-0.38, 0.02)",
+    "", "", "0.35 (0.16, 0.54)", "-0.14 (-0.32, 0.04)"
   )
 )
 forrest(dat2,
@@ -153,10 +156,8 @@ forrest(dat2,
   upper      = "upper",
   label      = "label",
   is_summary = "is_sum",
-  ref_line   = 1,
-  log_scale  = TRUE,
-  header     = "Study",
-  cols       = c("OR (95\% CI)" = "or_ci")
+  header     = "Predictor",
+  cols       = c("Coef (95\% CI)" = "est_ci")
 )
 
 }

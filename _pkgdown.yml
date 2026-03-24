@@ -1,10 +1,24 @@
-url: https://github.com/lf-/forrest
+url: https://github.com/lorenzoFabbri/forrest
 
 template:
   bootstrap: 5
 
 reference:
-  - title: "Forest plots"
-    desc: "Create and customise forest plots."
+  - title: "Create forest plots"
+    desc: "Draw publication-ready forest plots from a data frame."
     contents:
       - forrest
+  - title: "Export"
+    desc: "Save plots to file."
+    contents:
+      - save_forrest
+
+articles:
+  - title: "Get started"
+    navbar: ~
+    contents:
+      - forrest
+  - title: "Use cases"
+    navbar: "Use cases"
+    contents:
+      - regression

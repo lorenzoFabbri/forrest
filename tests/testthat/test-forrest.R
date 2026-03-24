@@ -243,3 +243,60 @@ test_that("forrest() returns NULL invisibly", {
   )
   expect_null(result)
 })
+
+test_that("forrest() renders with stripe = TRUE", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  expect_no_error(
+    forrest(
+      dat,
+      estimate = "estimate",
+      lower    = "lower",
+      upper    = "upper",
+      label    = "label",
+      stripe   = TRUE
+    )
+  )
+})
+
+# ── save_forrest() ─────────────────────────────────────────────────────────────
+
+test_that("save_forrest() writes a PDF file", {
+  tmp <- tempfile(fileext = ".pdf")
+  on.exit(unlink(tmp))
+  dat <- basic_dat()
+  result <- save_forrest(
+    tmp,
+    function() forrest(dat, estimate = "estimate", lower = "lower", upper = "upper")
+  )
+  expect_equal(result, tmp)
+  expect_true(file.exists(tmp))
+  expect_gt(file.size(tmp), 0L)
+})
+
+test_that("save_forrest() writes a PNG file", {
+  tmp <- tempfile(fileext = ".png")
+  on.exit(unlink(tmp))
+  dat <- basic_dat()
+  expect_no_error(
+    save_forrest(
+      tmp,
+      function() forrest(dat, estimate = "estimate", lower = "lower", upper = "upper"),
+      width = 6, height = 4, dpi = 72
+    )
+  )
+  expect_true(file.exists(tmp))
+  expect_gt(file.size(tmp), 0L)
+})
+
+test_that("save_forrest() errors on unsupported extension", {
+  dat <- basic_dat()
+  expect_error(
+    save_forrest(
+      tempfile(fileext = ".bmp"),
+      function() forrest(dat, estimate = "estimate", lower = "lower", upper = "upper")
+    ),
+    "Supported extensions"
+  )
+})
