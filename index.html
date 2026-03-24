@@ -268,7 +268,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="quick-start">Quick start</h2>
 <section id="regression-model-predictors" class="level3">
 <h3 class="anchored" data-anchor-id="regression-model-predictors">Regression model predictors</h3>
-<p>Use <a href="https://broom.tidymodels.org/"><code>broom::tidy()</code></a> to extract parameters from a fitted model and pass the result directly to <code>forrest()</code>.</p>
+<p>Use <a href="https://broom.tidymodels.org/"><code>broom::tidy()</code></a> to extract parameters from a fitted model and pass the result directly to <code>forrest()</code>. The <code>cols</code> argument adds a formatted text column alongside the plot; <code>header</code> labels the row-label panel.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forrest)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
@@ -289,71 +289,81 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>coefs<span class="sc">$</span>term <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Age (per 1 y)"</span>, <span class="st">"Female sex"</span>,</span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                <span class="st">"BMI (per 1 kg/m²)"</span>, <span class="st">"Current smoker"</span>)</span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  coefs,</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"conf.low"</span>,</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"conf.high"</span>,</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"term"</span>,</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Regression coefficient (95% CI)"</span>,</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">stripe   =</span> <span class="cn">TRUE</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Formatted text column shown alongside the plot</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>coefs<span class="sc">$</span>coef_ci <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  coefs<span class="sc">$</span>estimate, coefs<span class="sc">$</span>conf.low, coefs<span class="sc">$</span>conf.high</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  coefs,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"conf.low"</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"conf.high"</span>,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"term"</span>,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">header   =</span> <span class="st">"Predictor"</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols     =</span> <span class="fu">c</span>(<span class="st">"Coef (95% CI)"</span> <span class="ot">=</span> <span class="st">"coef_ci"</span>),</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths   =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="fl">2.5</span>),</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Regression coefficient (95% CI)"</span>,</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">stripe   =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><img src="man/figures/README-regression-1.png" alt="" width="100%"></p>
 </section>
-<section id="subgroup-analysis-with-text-columns" class="level3">
-<h3 class="anchored" data-anchor-id="subgroup-analysis-with-text-columns">Subgroup analysis with text columns</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sub <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">label  =</span> <span class="fu">c</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sex"</span>, <span class="st">"  Female"</span>, <span class="st">"  Male"</span>, <span class="st">"  Overall"</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>, <span class="st">"Region"</span>, <span class="st">"  North"</span>, <span class="st">"  South"</span>, <span class="st">"  Overall"</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">est    =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="sc">-</span><span class="fl">0.10</span>, <span class="sc">-</span><span class="fl">0.05</span>, <span class="sc">-</span><span class="fl">0.07</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="sc">-</span><span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.02</span>, <span class="sc">-</span><span class="fl">0.07</span>),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo     =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="sc">-</span><span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.18</span>, <span class="sc">-</span><span class="fl">0.16</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="sc">-</span><span class="fl">0.28</span>, <span class="sc">-</span><span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.16</span>),</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi     =</span> <span class="fu">c</span>(<span class="cn">NA</span>,  <span class="fl">0.02</span>,  <span class="fl">0.08</span>,  <span class="fl">0.02</span>, <span class="cn">NA</span>, <span class="cn">NA</span>,  <span class="fl">0.04</span>,  <span class="fl">0.08</span>,  <span class="fl">0.02</span>),</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_sum =</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>),</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">text   =</span> <span class="fu">c</span>(</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>, <span class="st">"-0.10 (-0.22, 0.02)"</span>, <span class="st">"-0.05 (-0.18, 0.08)"</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"-0.07 (-0.16, 0.02)"</span>, <span class="st">""</span>,</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>, <span class="st">"-0.12 (-0.28, 0.04)"</span>, <span class="st">"-0.02 (-0.12, 0.08)"</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"-0.07 (-0.16, 0.02)"</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  sub,</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate   =</span> <span class="st">"est"</span>,</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower      =</span> <span class="st">"lo"</span>,</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper      =</span> <span class="st">"hi"</span>,</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">label      =</span> <span class="st">"label"</span>,</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_summary =</span> <span class="st">"is_sum"</span>,</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">header     =</span> <span class="st">"Subgroup"</span>,</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols       =</span> <span class="fu">c</span>(<span class="st">"Estimate (95% CI)"</span> <span class="ot">=</span> <span class="st">"text"</span>),</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths     =</span> <span class="fu">c</span>(<span class="fl">2.2</span>, <span class="dv">4</span>, <span class="fl">2.5</span>)</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><img src="man/figures/README-subgroups-1.png" alt="" width="100%"></p>
+<section id="meta-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="meta-analysis">Meta-analysis</h3>
+<p>Use <code>log_scale = TRUE</code> and <code>ref_line = 1</code> for ratio measures, <code>is_summary = TRUE</code> to draw the pooled row as a filled diamond, and <code>weight</code> to scale point sizes by inverse-variance weights.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ma <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">study  =</span> <span class="fu">c</span>(<span class="st">"Adams 2016"</span>, <span class="st">"Baker 2018"</span>, <span class="st">"Chen 2019"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Davis 2020"</span>, <span class="st">"Evans 2021"</span>, <span class="st">"Pooled"</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est    =</span> <span class="fu">c</span>(<span class="fl">1.45</span>, <span class="fl">0.88</span>, <span class="fl">1.21</span>, <span class="fl">1.07</span>, <span class="fl">0.95</span>, <span class="fl">1.09</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo     =</span> <span class="fu">c</span>(<span class="fl">1.10</span>, <span class="fl">0.65</span>, <span class="fl">0.92</span>, <span class="fl">0.80</span>, <span class="fl">0.72</span>, <span class="fl">0.94</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi     =</span> <span class="fu">c</span>(<span class="fl">1.91</span>, <span class="fl">1.19</span>, <span class="fl">1.59</span>, <span class="fl">1.43</span>, <span class="fl">1.25</span>, <span class="fl">1.26</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight =</span> <span class="fu">c</span>(<span class="dv">180</span>, <span class="dv">95</span>, <span class="dv">140</span>, <span class="dv">210</span>, <span class="dv">160</span>, <span class="cn">NA</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_sum =</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>ma<span class="sc">$</span>or_ci <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%.2f (%.2f, %.2f)"</span>, ma<span class="sc">$</span>est, ma<span class="sc">$</span>lo, ma<span class="sc">$</span>hi)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ma,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate   =</span> <span class="st">"est"</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower      =</span> <span class="st">"lo"</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper      =</span> <span class="st">"hi"</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">label      =</span> <span class="st">"study"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_summary =</span> <span class="st">"is_sum"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight     =</span> <span class="st">"weight"</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">log_scale  =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line   =</span> <span class="dv">1</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">header     =</span> <span class="st">"Study"</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols       =</span> <span class="fu">c</span>(<span class="st">"OR (95% CI)"</span> <span class="ot">=</span> <span class="st">"or_ci"</span>),</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths     =</span> <span class="fu">c</span>(<span class="fl">2.2</span>, <span class="dv">4</span>, <span class="fl">2.5</span>),</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab       =</span> <span class="st">"Odds ratio (95% CI)"</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><img src="man/figures/README-meta-1.png" alt="" width="100%"></p>
 </section>
-<section id="log-scale-for-ratio-measures" class="level3">
-<h3 class="anchored" data-anchor-id="log-scale-for-ratio-measures">Log scale for ratio measures</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>or_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">study  =</span> <span class="fu">c</span>(<span class="st">"Adams 2016"</span>, <span class="st">"Baker 2018"</span>, <span class="st">"Chen 2019"</span>, <span class="st">"Pooled"</span>),</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est    =</span> <span class="fu">c</span>(<span class="fl">1.45</span>, <span class="fl">0.88</span>, <span class="fl">1.21</span>, <span class="fl">1.09</span>),</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo     =</span> <span class="fu">c</span>(<span class="fl">1.10</span>, <span class="fl">0.65</span>, <span class="fl">0.92</span>, <span class="fl">0.94</span>),</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi     =</span> <span class="fu">c</span>(<span class="fl">1.91</span>, <span class="fl">1.19</span>, <span class="fl">1.59</span>, <span class="fl">1.26</span>),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_sum =</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>)</span>
+<section id="multiple-estimates-per-row" class="level3">
+<h3 class="anchored" data-anchor-id="multiple-estimates-per-row">Multiple estimates per row</h3>
+<p>Set <code>dodge = TRUE</code> and supply a <code>group</code> column to stack multiple CIs within each row — useful for comparing results across time periods, sexes, models, or any other categorical dimension.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>periods <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Metals"</span>, <span class="st">"OPPs"</span>, <span class="st">"PFAS"</span>, <span class="st">"Phenols"</span>, <span class="st">"Phthalates"</span>), <span class="at">each =</span> <span class="dv">2</span>),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">period   =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Pregnancy"</span>, <span class="st">"Childhood"</span>), <span class="dv">5</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est      =</span> <span class="fu">c</span>( <span class="fl">0.03</span>, <span class="sc">-</span><span class="fl">0.04</span>, <span class="sc">-</span><span class="fl">0.03</span>,  <span class="fl">0.04</span>, <span class="sc">-</span><span class="fl">0.17</span>, <span class="sc">-</span><span class="fl">0.02</span>,  <span class="fl">0.10</span>, <span class="sc">-</span><span class="fl">0.02</span>,  <span class="fl">0.07</span>,  <span class="fl">0.10</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo       =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.25</span>, <span class="sc">-</span><span class="fl">0.26</span>, <span class="sc">-</span><span class="fl">0.19</span>, <span class="sc">-</span><span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.40</span>, <span class="sc">-</span><span class="fl">0.24</span>, <span class="sc">-</span><span class="fl">0.06</span>, <span class="sc">-</span><span class="fl">0.10</span>, <span class="sc">-</span><span class="fl">0.15</span>, <span class="sc">-</span><span class="fl">0.08</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi       =</span> <span class="fu">c</span>( <span class="fl">0.30</span>,  <span class="fl">0.19</span>,  <span class="fl">0.13</span>,  <span class="fl">0.21</span>,  <span class="fl">0.06</span>,  <span class="fl">0.19</span>,  <span class="fl">0.26</span>,  <span class="fl">0.07</span>,  <span class="fl">0.29</span>,  <span class="fl">0.28</span>)</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  or_dat,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate   =</span> <span class="st">"est"</span>,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower      =</span> <span class="st">"lo"</span>,</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper      =</span> <span class="st">"hi"</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">label      =</span> <span class="st">"study"</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_summary =</span> <span class="st">"is_sum"</span>,</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">log_scale  =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line   =</span> <span class="dv">1</span>,</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab       =</span> <span class="st">"Odds ratio (95% CI)"</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><img src="man/figures/README-logscale-1.png" alt="" width="100%"></p>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  periods,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"est"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"lo"</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"hi"</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"exposure"</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">group    =</span> <span class="st">"period"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">dodge    =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">header   =</span> <span class="st">"Exposure class"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line =</span> <span class="dv">0</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Coefficient (95% CI)"</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><img src="man/figures/README-dodge-1.png" alt="" width="100%"></p>
 </section>
 </section>
 <section id="compared-with-other-packages" class="level2">

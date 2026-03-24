@@ -264,11 +264,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   cols = NULL,
   widths = NULL,
   stripe = FALSE,
+  dodge = FALSE,
   pch = 15,
+  shape = NULL,
   lwd = 2,
   cex = 1,
   col = NULL,
+  cols_by_group = FALSE,
   legend_pos = "topright",
+  legend_shape_pos = "bottomright",
   ...
 )
 </code></pre>
@@ -414,10 +418,26 @@ Logical. If <code>TRUE</code>, alternate rows are shaded with a light grey backg
 </tr>
 <tr>
 <td style="white-space: collapse; font-family: monospace; vertical-align: top">
+<code id="dodge">dodge</code>
+</td>
+<td>
+Logical or positive numeric. When <code>TRUE</code> (or a positive number), consecutive rows that share the same <code>label</code> value are grouped together and their confidence intervals are drawn with a small vertical offset so that they do not overlap. The shared label is displayed once at the centre of the group. Use together with <code>group</code> (for colour) and/or <code>shape</code> (for point characters) to distinguish the overlaid series. A numeric value sets the offset between rows in a group directly (in y-axis units); <code>TRUE</code> uses a default of <code>0.25</code>. Default is <code>FALSE</code>.
+</td>
+</tr>
+<tr>
+<td style="white-space: collapse; font-family: monospace; vertical-align: top">
 <code id="pch">pch</code>
 </td>
 <td>
-Point character for non-summary rows. Default is <code>15</code> (filled square), which is conventional for forest plots.
+Point character for non-summary rows. Default is <code>15</code> (filled square). When <code>shape</code> is provided, <code>pch</code> is used only as a fallback for rows whose shape value is <code>NA</code>.
+</td>
+</tr>
+<tr>
+<td style="white-space: collapse; font-family: monospace; vertical-align: top">
+<code id="shape">shape</code>
+</td>
+<td>
+Column name (string) for a shape variable. When provided, different values of the column are rendered with different point characters and a shape legend is drawn. Use together with <code>group</code> to distinguish two categorical dimensions simultaneously (e.g.&nbsp;colour = time period, shape = sex).
 </td>
 </tr>
 <tr>
@@ -446,10 +466,26 @@ Colour or character vector of colours. When <code>NULL</code> (default) and <cod
 </tr>
 <tr>
 <td style="white-space: collapse; font-family: monospace; vertical-align: top">
+<code id="cols_by_group">cols_by_group</code>
+</td>
+<td>
+Logical. Relevant only when <code>dodge</code> is active. When <code>TRUE</code>, each text column in <code>cols</code> is collapsed to one value per label group: the first non-empty entry within the group is displayed at the group centre y position. This produces a wide-format text table with one row per label and one column per condition — the same layout as Figures 2 and 3 in multi-period epidemiology papers. Populate each text column so that the value is non-empty only for the matching condition row and empty (<code>““</code>) for all others; <code>forrest()</code> picks up the right value automatically. When <code>FALSE</code> (default), text values are drawn at each individual row’s dodged y position, keeping them visually aligned with their CI whiskers.
+</td>
+</tr>
+<tr>
+<td style="white-space: collapse; font-family: monospace; vertical-align: top">
 <code id="legend_pos">legend_pos</code>
 </td>
 <td>
-Position of the legend when <code>group</code> is supplied. Passed to <code>legend()</code>. Set to <code>NULL</code> to suppress the legend. Default is <code>“topright”</code>.
+Position of the colour legend when <code>group</code> is supplied. Passed to <code>legend()</code>. Set to <code>NULL</code> to suppress. Default is <code>“topright”</code>.
+</td>
+</tr>
+<tr>
+<td style="white-space: collapse; font-family: monospace; vertical-align: top">
+<code id="legend_shape_pos">legend_shape_pos</code>
+</td>
+<td>
+Position of the shape legend when <code>shape</code> is supplied. Passed to <code>legend()</code>. Set to <code>NULL</code> to suppress. Default is <code>“bottomright”</code>.
 </td>
 </tr>
 <tr>
@@ -492,30 +528,23 @@ Additional graphical parameters passed to the internal <code>tinyplot::tinyplot(
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiple models with subgroup headers and a text column</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiple estimates per row (dodge) — two periods for the same predictors</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="fu">c</span>(</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Model 1"</span>, <span class="st">"  Exposure A"</span>, <span class="st">"  Exposure B"</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>, <span class="st">"Model 2"</span>, <span class="st">"  Exposure A"</span>, <span class="st">"  Exposure B"</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="fu">c</span>(<span class="cn">NA</span>,  <span class="fl">0.42</span>, <span class="sc">-</span><span class="fl">0.18</span>, <span class="cn">NA</span>, <span class="cn">NA</span>,  <span class="fl">0.35</span>, <span class="sc">-</span><span class="fl">0.14</span>),</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="fu">c</span>(<span class="cn">NA</span>,  <span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.38</span>, <span class="cn">NA</span>, <span class="cn">NA</span>,  <span class="fl">0.16</span>, <span class="sc">-</span><span class="fl">0.32</span>),</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="fu">c</span>(<span class="cn">NA</span>,  <span class="fl">0.62</span>,  <span class="fl">0.02</span>, <span class="cn">NA</span>, <span class="cn">NA</span>,  <span class="fl">0.54</span>,  <span class="fl">0.04</span>),</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_sum   =</span> <span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="dv">7</span>),</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">est_ci   =</span> <span class="fu">c</span>(</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>, <span class="st">"0.42 (0.22, 0.62)"</span>, <span class="st">"-0.18 (-0.38, 0.02)"</span>,</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>, <span class="st">""</span>, <span class="st">"0.35 (0.16, 0.54)"</span>, <span class="st">"-0.14 (-0.32, 0.04)"</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(dat2,</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate   =</span> <span class="st">"estimate"</span>,</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower      =</span> <span class="st">"lower"</span>,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper      =</span> <span class="st">"upper"</span>,</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">label      =</span> <span class="st">"label"</span>,</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_summary =</span> <span class="st">"is_sum"</span>,</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">header     =</span> <span class="st">"Predictor"</span>,</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols       =</span> <span class="fu">c</span>(<span class="st">"Coef (95% CI)"</span> <span class="ot">=</span> <span class="st">"est_ci"</span>)</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Exposure A"</span>, <span class="st">"Exposure B"</span>, <span class="st">"Exposure C"</span>), <span class="at">each =</span> <span class="dv">2</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">period   =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Early"</span>, <span class="st">"Late"</span>), <span class="dv">3</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="fu">c</span>(<span class="fl">0.42</span>, <span class="fl">0.30</span>, <span class="sc">-</span><span class="fl">0.18</span>, <span class="sc">-</span><span class="fl">0.10</span>, <span class="fl">0.31</span>, <span class="fl">0.22</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="fu">c</span>(<span class="fl">0.22</span>, <span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.38</span>, <span class="sc">-</span><span class="fl">0.28</span>, <span class="fl">0.12</span>,  <span class="fl">0.04</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="fu">c</span>(<span class="fl">0.62</span>, <span class="fl">0.48</span>,  <span class="fl">0.02</span>,  <span class="fl">0.08</span>, <span class="fl">0.50</span>,  <span class="fl">0.40</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(dat2,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"lower"</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"upper"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"label"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">group    =</span> <span class="st">"period"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">dodge    =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Regression coefficient (95% CI)"</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">

@@ -203,17 +203,55 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="forrest-0.2.0" class="level1">
-<h1>forrest 0.2.0</h1>
+<section id="forrest-0.3.0" class="level1">
+<h1>forrest 0.3.0</h1>
 <section id="new-features" class="level2">
 <h2 class="anchored" data-anchor-id="new-features">New features</h2>
+<ul>
+<li><p><code>forrest()</code> gains a <code>dodge</code> argument (logical or positive numeric, default <code>FALSE</code>). When set, consecutive rows that share the same <code>label</code> value are grouped together and their confidence intervals are drawn with a small vertical offset so they do not overlap. The shared label is displayed once at the centre of the group. Designed to be used with <code>group</code> (for colour) and/or <code>shape</code> (for point character) to visually distinguish the overlaid series. A numeric value controls the offset directly; <code>TRUE</code> uses a default of <code>0.25</code> y-axis units.</p></li>
+<li><p><code>forrest()</code> gains a <code>shape</code> argument (column name string, default <code>NULL</code>). When provided, different values of the column are rendered with different point characters from a built-in set (circle, triangle, square, diamond, …), and a shape legend is drawn automatically. Most useful in combination with <code>group</code> to encode two categorical dimensions simultaneously (e.g.&nbsp;colour = time period, shape = sex).</p></li>
+<li><p><code>forrest()</code> gains a <code>legend_shape_pos</code> argument (default <code>"bottomright"</code>) to control the position of the shape legend independently of <code>legend_pos</code>.</p></li>
+<li><p><code>forrest()</code> gains a <code>cols_by_group</code> argument (default <code>FALSE</code>). When <code>TRUE</code> and <code>dodge</code> is active, each text column in <code>cols</code> is collapsed to one value per label group displayed at the group centre y position. This produces a wide-format text table — one row per label, one column per condition — as commonly seen in multi-period epidemiology papers (vs.&nbsp;the default behaviour of stacking text at each individual row’s dodged y position).</p></li>
+</ul>
+</section>
+<section id="documentation" class="level2">
+<h2 class="anchored" data-anchor-id="documentation">Documentation</h2>
+<ul>
+<li><p>README quick-start gains a <em>Multiple estimates per row</em> example demonstrating <code>dodge</code> with <code>group</code>.</p></li>
+<li><p>Getting-started vignette gains two new sections: <em>Multiple estimates per row</em> and <em>Point shapes</em>.</p></li>
+<li><p>Internal helper <code>compute_dodge_groups()</code> and <code>group_shapes()</code> added to <code>R/utils.R</code>.</p></li>
+<li><p><code>draw_text_panel()</code> updated to accept explicit <code>y_positions</code> and <code>n_vis</code> arguments, enabling per-row dodged text placement in right-side panels.</p></li>
+</ul>
+</section>
+<section id="earlier-changes" class="level2">
+<h2 class="anchored" data-anchor-id="earlier-changes">Earlier changes</h2>
+<ul>
+<li><p>README quick-start regression example now shows a formatted text column (<code>cols</code>) and a panel header (<code>header</code>) alongside the plot, making all three core features visible in one place.</p></li>
+<li><p>Regression vignette: the <em>Multiple predictors from one model</em> example now includes a <code>cols = c("Coef (95% CI)" = "coef_ci")</code> column and matching <code>header</code>, consistent with the logistic and dose-response examples.</p></li>
+</ul>
+</section>
+<section id="infrastructure" class="level2">
+<h2 class="anchored" data-anchor-id="infrastructure">Infrastructure</h2>
+<ul>
+<li><p><code>covr</code> added to <code>Suggests</code> and <code>Config/Needs/coverage</code> so the test-coverage CI workflow installs it automatically via <code>r-lib/actions/setup-r-dependencies</code>.</p></li>
+<li><p>Website URL added to <code>DESCRIPTION</code> <code>URL</code> field.</p></li>
+<li><p>Upgraded <code>codecov/codecov-action</code> from v4 to v5 in the test-coverage workflow.</p></li>
+<li><p>New <code>lint.yaml</code> GitHub Actions workflow runs <code>lintr::lint_package()</code> on every push and pull request to <code>main</code>.</p></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="forrest-0.2.0" class="level1">
+<h1>forrest 0.2.0</h1>
+<section id="new-features-1" class="level2">
+<h2 class="anchored" data-anchor-id="new-features-1">New features</h2>
 <ul>
 <li><p><code>save_forrest()</code> — new exported function to write a forest plot to a file. The graphics device (PDF, PNG, SVG, TIFF) is inferred from the file extension; resolution can be controlled via <code>dpi</code> for raster formats.</p></li>
 <li><p><code>forrest()</code> gains a <code>stripe</code> argument (<code>FALSE</code> by default). When <code>TRUE</code>, alternate rows are shaded with a light-grey background to improve readability in tables with many rows.</p></li>
 </ul>
 </section>
-<section id="documentation" class="level2">
-<h2 class="anchored" data-anchor-id="documentation">Documentation</h2>
+<section id="documentation-1" class="level2">
+<h2 class="anchored" data-anchor-id="documentation-1">Documentation</h2>
 <ul>
 <li><p>Revised framing: <code>forrest</code> is now documented as a general-purpose tool for any tabular estimates-and-CIs data, not only meta-analyses. The description, README, and vignettes have been updated accordingly.</p></li>
 <li><p>New vignette <em>Forest plots for regression results</em> covers four practical patterns: multiple predictors from one model, comparing estimates across adjustment models, same predictor across multiple outcomes, and dose-response (exposure categories). Examples use <code>broom::tidy()</code> for parameter extraction.</p></li>
