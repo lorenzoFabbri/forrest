@@ -1,0 +1,10 @@
+url: https://github.com/lf-/forrest
+
+template:
+  bootstrap: 5
+
+reference:
+  - title: "Forest plots"
+    desc: "Create and customise forest plots."
+    contents:
+      - forrest

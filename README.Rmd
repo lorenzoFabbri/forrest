@@ -1,26 +1,36 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Do not edit it directly. -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  fig.width = 7,
+  fig.height = 4.5,
+  dpi = 150
+)
+```
 
 # forrest <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
-
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/forrest)](https://CRAN.R-project.org/package=forrest)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/forrest)](https://CRAN.R-project.org/package=forrest)
 [![R-CMD-check](https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml)
-[![Codecov test
-coverage](https://codecov.io/gh/lorenzoFabbri/forrest/branch/main/graph/badge.svg)](https://app.codecov.io/gh/lorenzoFabbri/forrest?branch=main)
+[![Codecov test coverage](https://codecov.io/gh/lorenzoFabbri/forrest/branch/main/graph/badge.svg)](https://app.codecov.io/gh/lorenzoFabbri/forrest?branch=main)
 [![](https://cranlogs.r-pkg.org/badges/forrest)](https://cran.r-project.org/package=forrest)
-[![Buy Me A
-Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95-yellow.svg)](https://www.buymeacoffee.com/epilorenzo)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95-yellow.svg)](https://www.buymeacoffee.com/epilorenzo)
 <!-- badges: end -->
 
-`forrest` creates publication-ready forest plots with a single
-dependency — [tinyplot](https://github.com/grantmcdermott/tinyplot). It
-is designed for epidemiologists and data scientists who need clean,
-customisable forest plots without pulling in a large dependency tree.
+`forrest` creates publication-ready forest plots with a single dependency —
+[tinyplot](https://github.com/grantmcdermott/tinyplot). It is designed for
+epidemiologists and data scientists who need clean, customisable forest plots
+without pulling in a large dependency tree.
 
 **Key features:**
 
@@ -36,7 +46,7 @@ customisable forest plots without pulling in a large dependency tree.
 
 ## Installation
 
-``` r
+```{r, eval = FALSE}
 # Development version from GitHub:
 # install.packages("pak")
 pak::pak("lorenzoFabbri/forrest")
@@ -44,7 +54,7 @@ pak::pak("lorenzoFabbri/forrest")
 
 ## Quick start
 
-``` r
+```{r basic}
 library(forrest)
 
 dat <- data.frame(
@@ -71,11 +81,9 @@ forrest(
 )
 ```
 
-<img src="man/figures/README-basic-1.png" alt="" width="100%" />
-
 ## Subgroup analysis with text columns
 
-``` r
+```{r subgroups, fig.width = 9, fig.height = 5.5}
 sub <- data.frame(
   label = c(
     "Sex", "  Female", "  Male", "  Pooled",
@@ -106,11 +114,9 @@ forrest(
 )
 ```
 
-<img src="man/figures/README-subgroups-1.png" alt="" width="100%" />
-
 ## Log scale for ratio measures
 
-``` r
+```{r logscale}
 or_dat <- data.frame(
   study  = c("Adams 2016", "Baker 2018", "Chen 2019", "Pooled"),
   est    = c(1.45, 0.88, 1.21, 1.09),
@@ -132,19 +138,17 @@ forrest(
 )
 ```
 
-<img src="man/figures/README-logscale-1.png" alt="" width="100%" />
-
 ## Compared with other packages
 
-| Feature                 | forrest | forestplot | forestploter | ggforestplot |
-|-------------------------|:-------:|:----------:|:------------:|:------------:|
-| Minimal dependencies    |   ✅    |     ❌     |      ❌      |      ❌      |
-| Study weight sizing     |   ✅    |     ✅     |      ✅      |      ❌      |
-| Subgroup headers        |   ✅    |     ✅     |      ✅      |      ❌      |
-| Summary diamonds        |   ✅    |     ✅     |      ✅      |      ✅      |
-| Text columns            |   ✅    |     ✅     |      ✅      |      ❌      |
-| CI clipping with arrows |   ✅    |     ✅     |      ❌      |      ❌      |
-| Group coloring + legend |   ✅    |     ❌     |      ✅      |      ✅      |
-| Log-scale axis          |   ✅    |     ✅     |      ✅      |      ❌      |
-| data.table support      |   ✅    |     ❌     |      ❌      |      ❌      |
-| Actively maintained     |   ✅    |     ⚠️     |      ✅      |      ❌      |
+| Feature | forrest | forestplot | forestploter | ggforestplot |
+|---|:---:|:---:|:---:|:---:|
+| Minimal dependencies | ✅ | ❌ | ❌ | ❌ |
+| Study weight sizing | ✅ | ✅ | ✅ | ❌ |
+| Subgroup headers | ✅ | ✅ | ✅ | ❌ |
+| Summary diamonds | ✅ | ✅ | ✅ | ✅ |
+| Text columns | ✅ | ✅ | ✅ | ❌ |
+| CI clipping with arrows | ✅ | ✅ | ❌ | ❌ |
+| Group coloring + legend | ✅ | ❌ | ✅ | ✅ |
+| Log-scale axis | ✅ | ✅ | ✅ | ❌ |
+| data.table support | ✅ | ❌ | ❌ | ❌ |
+| Actively maintained | ✅ | ⚠️ | ✅ | ❌ |

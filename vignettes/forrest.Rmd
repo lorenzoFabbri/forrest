@@ -1,0 +1,249 @@
+---
+title: "Getting started with forrest"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with forrest}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment  = "#>",
+  fig.width  = 7,
+  fig.height = 4,
+  out.width  = "100%"
+)
+library(forrest)
+```
+
+`forrest` creates publication-ready forest plots with a single dependency
+([tinyplot](https://github.com/grantmcdermott/tinyplot)) and a clean, minimal
+API. It works with base R data frames, tibbles, and data.tables.
+
+## Basic forest plot
+
+The simplest call requires only three column names: `estimate`, `lower`, and
+`upper`.
+
+```{r basic}
+dat <- data.frame(
+  study    = c("Smith 2018", "Jones 2019", "Brown 2020",
+               "Garcia 2021", "Lee 2022"),
+  estimate = c(-0.18, 0.05, -0.12, -0.08, 0.02),
+  lower    = c(-0.38, -0.12, -0.30, -0.24, -0.14),
+  upper    = c(0.02, 0.22, 0.06, 0.08, 0.18)
+)
+
+forrest(
+  dat,
+  estimate = "estimate",
+  lower    = "lower",
+  upper    = "upper",
+  label    = "study",
+  xlab     = "Mean difference (95% CI)"
+)
+```
+
+## Adding a summary (pooled) estimate
+
+Mark one or more rows as summary estimates with an `is_summary` logical column.
+Those rows are drawn as filled diamonds instead of squares.
+
+```{r summary, fig.height = 4.5}
+dat$is_pooled <- c(FALSE, FALSE, FALSE, FALSE, FALSE)
+dat <- rbind(dat, data.frame(
+  study      = "Pooled",
+  estimate   = -0.07,
+  lower      = -0.16,
+  upper      =  0.02,
+  is_pooled  = TRUE
+))
+
+forrest(
+  dat,
+  estimate   = "estimate",
+  lower      = "lower",
+  upper      = "upper",
+  label      = "study",
+  is_summary = "is_pooled",
+  xlab       = "Mean difference (95% CI)",
+  title      = "Association with outcome"
+)
+```
+
+## Log scale for ratio measures
+
+When plotting odds ratios, hazard ratios, or risk ratios, set
+`log_scale = TRUE` and `ref_line = 1`.
+
+```{r log-scale, fig.height = 4.5}
+or_dat <- data.frame(
+  study    = c("Adams 2016", "Baker 2018", "Chen 2019",
+               "Davis 2020", "Evans 2021", "Pooled"),
+  estimate = c(1.45, 0.88, 1.21, 1.07, 0.95, 1.09),
+  lower    = c(1.10, 0.65, 0.92, 0.80, 0.72, 0.94),
+  upper    = c(1.91, 1.19, 1.59, 1.43, 1.25, 1.26),
+  is_sum   = c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)
+)
+
+forrest(
+  or_dat,
+  estimate   = "estimate",
+  lower      = "lower",
+  upper      = "upper",
+  label      = "study",
+  is_summary = "is_sum",
+  log_scale  = TRUE,
+  ref_line   = 1,
+  xlab       = "Odds ratio (95% CI)"
+)
+```
+
+## Subgroup headers and spacer rows
+
+Rows whose `estimate` is `NA` are treated as visual separators. A non-empty
+label is rendered in bold as a subgroup header; an empty label creates a blank
+spacer line.
+
+```{r subgroups, fig.height = 7}
+sub_dat <- data.frame(
+  label    = c(
+    "Sex",
+    "  Female", "  Male", "  Pooled",
+    "",
+    "Age group",
+    "  18–44 years", "  45–64 years", "  65+ years", "  Pooled",
+    "",
+    "Overall"
+  ),
+  estimate = c(
+    NA,  -0.10, -0.05, -0.07,
+    NA,
+    NA,  -0.12, -0.06, -0.02, -0.07,
+    NA,
+    -0.07
+  ),
+  lower    = c(
+    NA,  -0.22, -0.18, -0.16,
+    NA,
+    NA,  -0.28, -0.18, -0.12, -0.16,
+    NA,
+    -0.16
+  ),
+  upper    = c(
+    NA,  0.02, 0.08, 0.02,
+    NA,
+    NA,  0.04, 0.06, 0.08, 0.02,
+    NA,
+    0.02
+  ),
+  is_sum   = c(
+    FALSE, FALSE, FALSE, TRUE,
+    FALSE,
+    FALSE, FALSE, FALSE, FALSE, TRUE,
+    FALSE,
+    TRUE
+  )
+)
+
+forrest(
+  sub_dat,
+  estimate   = "estimate",
+  lower      = "lower",
+  upper      = "upper",
+  label      = "label",
+  is_summary = "is_sum",
+  xlab       = "Mean difference (95% CI)"
+)
+```
+
+## Group coloring
+
+Pass a `group` column to color estimates by a categorical variable. A legend
+is added automatically.
+
+```{r grouped, fig.height = 5}
+grp_dat <- data.frame(
+  study    = c("Smith 2018", "Jones 2019", "Brown 2020",
+               "Garcia 2021", "Lee 2022", "Kim 2023"),
+  estimate = c(-0.18, 0.05, -0.12, 0.22, -0.08, 0.15),
+  lower    = c(-0.38, -0.12, -0.30,  0.04, -0.24, -0.01),
+  upper    = c(0.02, 0.22, 0.06,  0.40, 0.08, 0.31),
+  region   = c("Europe", "Europe", "Europe",
+               "Americas", "Americas", "Americas")
+)
+
+forrest(
+  grp_dat,
+  estimate = "estimate",
+  lower    = "lower",
+  upper    = "upper",
+  label    = "study",
+  group    = "region",
+  xlab     = "Mean difference (95% CI)"
+)
+```
+
+## Adding text columns
+
+Use the `cols` argument — a named character vector mapping display headers to
+column names — to show statistics alongside the plot. This triggers a
+multi-panel layout with a label panel on the left and text columns on the right.
+
+```{r text-cols, fig.height = 5, fig.width = 9}
+or_dat$or_text <- c(
+  "1.45 (1.10, 1.91)",
+  "0.88 (0.65, 1.19)",
+  "1.21 (0.92, 1.59)",
+  "1.07 (0.80, 1.43)",
+  "0.95 (0.72, 1.25)",
+  "1.09 (0.94, 1.26)"
+)
+or_dat$pval <- c("0.009", "0.372", "0.175", "0.647", "0.676", "<0.001")
+
+forrest(
+  or_dat,
+  estimate   = "estimate",
+  lower      = "lower",
+  upper      = "upper",
+  label      = "study",
+  is_summary = "is_sum",
+  log_scale  = TRUE,
+  ref_line   = 1,
+  header     = "Study",
+  cols       = c("OR (95% CI)" = "or_text", "P-value" = "pval"),
+  widths     = c(2, 4, 2, 1.2)
+)
+```
+
+## Study weights
+
+Pass `weight` as a column name of numeric study weights (e.g. inverse-variance
+weights). Point size scales proportionally to `sqrt(weight / max(weight))`, so
+larger studies appear with a bigger marker — a convention in meta-analysis
+forest plots.
+
+```{r weights, fig.height = 5}
+set.seed(42)
+wt_dat <- data.frame(
+  study    = paste("Study", LETTERS[1:7]),
+  estimate = c(-0.20, 0.04, -0.09, -0.15, 0.03, -0.08, -0.07),
+  lower    = c(-0.38, -0.10, -0.24, -0.32, -0.11, -0.22, -0.16),
+  upper    = c(-0.02, 0.18, 0.06, 0.02, 0.17, 0.06, 0.02),
+  weight   = c(12.1, 4.5, 9.8, 7.2, 5.3, 11.0, 50.1),
+  is_sum   = c(rep(FALSE, 6), TRUE)
+)
+
+forrest(
+  wt_dat,
+  estimate   = "estimate",
+  lower      = "lower",
+  upper      = "upper",
+  label      = "study",
+  is_summary = "is_sum",
+  weight     = "weight",
+  xlab       = "Mean difference (95% CI)"
+)
+```

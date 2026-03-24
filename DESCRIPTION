@@ -1,0 +1,31 @@
+Package: forrest
+Title: Publication-Ready Forest Plots
+Version: 0.1.0
+Authors@R: c(
+    person("Lorenzo", "Fabbri", email = "lorenzo.fabbri92sm@gmail.com",
+           role = c("aut", "cre"))
+  )
+Description: Creates publication-ready forest plots with minimal
+    dependencies. Supports subgroup headers, summary estimates
+    displayed as diamonds, grouped estimates with automatic color
+    mapping, and customizable text columns alongside the plot.
+    Works with base R data frames, 'tibble', and 'data.table'
+    objects. Built on 'tinyplot' for clean, consistent visual styling.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends:
+    R (>= 4.1.0)
+Imports:
+    tinyplot (>= 0.2.0)
+Suggests:
+    data.table,
+    knitr,
+    rmarkdown,
+    tibble,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+URL: https://github.com/lorenzoFabbri/forrest
+BugReports: https://github.com/lorenzoFabbri/forrest/issues

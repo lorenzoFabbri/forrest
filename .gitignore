@@ -1,0 +1,32 @@
+# R
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Package build
+/*.Rcheck/
+/*.tar.gz
+*.o
+*.so
+*.dll
+
+# altdoc / quarto docs
+/docs/
+_quarto/*
+!_quarto/_freeze/
+altdoc/freeze.rds
+.quarto/
+
+# vignette intermediates
+vignettes/*.html
+vignettes/*.pdf
+vignettes/*.R
+
+# covr
+/*.cov
+
+# macOS
+.DS_Store
+.claude
