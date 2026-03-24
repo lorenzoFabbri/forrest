@@ -1,0 +1,36 @@
+project:
+  type: website
+  output-dir: ../docs/
+website:
+  title: forrest
+  code-links: true
+  navbar:
+    search: true
+    right:
+      - icon: github
+        href: https://github.com/lorenzoFabbri/forrest
+        aria-label: forrest GitHub
+  sidebar:
+    collapse-level: 1
+    contents:
+      - text: Home
+        file: index.md
+      - section: Articles
+        contents:
+          - vignettes/forrest.Rmd
+          - vignettes/regression.Rmd
+      - section: Reference
+        contents:
+          - text: forrest
+            file: man/forrest.qmd
+          - text: save_forrest
+            file: man/save_forrest.qmd
+      - text: News
+        file: NEWS.md
+      - text: License
+        file: LICENSE.md
+      - text: Citation
+        file: CITATION.md
+format:
+  html:
+    code-link: true
