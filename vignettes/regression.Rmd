@@ -67,7 +67,7 @@ The simplest workflow: fit a model, call `broom::tidy(conf.int = TRUE)`, and
 pass the result to `forrest()`. Column names `estimate`, `conf.low`, and
 `conf.high` map directly to the `estimate`, `lower`, and `upper` arguments.
 
-```{r single-model, eval = has_broom, fig.height = 5}
+```{r single-model, eval = has_broom, fig.height = 5, fig.width = 9}
 fit_lm <- lm(sbp ~ age + female + bmi + smoker + activity, data = cohort)
 
 coefs <- broom::tidy(fit_lm, conf.int = TRUE)
@@ -82,6 +82,12 @@ coefs$term <- c(
   "Physically active"
 )
 
+# Formatted coefficient + CI text for the right-hand column
+coefs$coef_ci <- sprintf(
+  "%.2f (%.2f, %.2f)",
+  coefs$estimate, coefs$conf.low, coefs$conf.high
+)
+
 forrest(
   coefs,
   estimate = "estimate",
@@ -89,6 +95,8 @@ forrest(
   upper    = "conf.high",
   label    = "term",
   header   = "Predictor",
+  cols     = c("Coef (95% CI)" = "coef_ci"),
+  widths   = c(3, 4, 2.5),
   xlab     = "Regression coefficient (95% CI)",
   stripe   = TRUE
 )

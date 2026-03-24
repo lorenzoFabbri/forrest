@@ -38,45 +38,47 @@
 save_forrest <- function(
   file,
   plot,
-  width  = 7,
+  width = 7,
   height = 5,
-  dpi    = 300,
-  bg     = "white"
+  dpi = 300,
+  bg = "white"
 ) {
   ext <- tolower(tools::file_ext(file))
   switch(
     ext,
-    pdf  = grDevices::pdf(
+    pdf = grDevices::pdf(
       file,
-      width  = width,
+      width = width,
       height = height,
-      bg     = bg
+      bg = bg
     ),
-    png  = grDevices::png(
+    png = grDevices::png(
       file,
-      width  = width,
+      width = width,
       height = height,
-      units  = "in",
-      res    = dpi,
-      bg     = bg
+      units = "in",
+      res = dpi,
+      bg = bg
     ),
-    svg  = grDevices::svg(
+    svg = grDevices::svg(
       file,
-      width  = width,
+      width = width,
       height = height,
-      bg     = bg
+      bg = bg
     ),
     tiff = grDevices::tiff(
       file,
-      width       = width,
-      height      = height,
-      units       = "in",
-      res         = dpi,
-      bg          = bg,
+      width = width,
+      height = height,
+      units = "in",
+      res = dpi,
+      bg = bg,
       compression = "lzw"
     ),
     stop(
-      "Cannot infer device from extension '.", ext, "'. ",
+      "Cannot infer device from extension '.",
+      ext,
+      "'. ",
       "Supported extensions: pdf, png, svg, tiff.",
       call. = FALSE
     )

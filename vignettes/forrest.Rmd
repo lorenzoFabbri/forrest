@@ -53,54 +53,30 @@ forrest(
 ## Group and subgroup headings
 
 Rows whose `estimate` is `NA` become section headings. A non-empty label is
-rendered in bold as a group header; an empty label creates a blank spacer line.
-This makes it straightforward to organise results from multiple models or
-exposure categories.
+rendered in bold as a group header; an empty label (`""`) creates a blank spacer
+line between groups.
 
-```{r subgroups, fig.height = 7}
-multi_dat <- data.frame(
+```{r subgroups, fig.height = 5}
+sub_dat <- data.frame(
   label    = c(
-    "Model 1 — unadjusted",
-    "  Age (per 10 y)", "  Female sex", "  BMI (per 5 kg/m²)",
+    "Sex",
+    "  Female", "  Male",
     "",
-    "Model 2 — age and sex adjusted",
-    "  Age (per 10 y)", "  Female sex", "  BMI (per 5 kg/m²)",
-    "",
-    "Model 3 — fully adjusted",
-    "  Age (per 10 y)", "  Female sex", "  BMI (per 5 kg/m²)"
+    "Age group",
+    "  Under 50", "  50 and over"
   ),
-  estimate = c(
-    NA,  0.21, -0.48,  0.14,
-    NA,
-    NA,  0.19, -0.44,  0.12,
-    NA,
-    NA,  0.18, -0.42,  0.11
-  ),
-  lower    = c(
-    NA,  0.08, -0.68, -0.01,
-    NA,
-    NA,  0.06, -0.63, -0.03,
-    NA,
-    NA,  0.05, -0.61, -0.04
-  ),
-  upper    = c(
-    NA,  0.34, -0.28,  0.29,
-    NA,
-    NA,  0.32, -0.25,  0.27,
-    NA,
-    NA,  0.31, -0.23,  0.26
-  ),
-  is_sum   = rep(FALSE, 14)
+  estimate = c(NA, -0.42, -0.29, NA,  NA, -0.18, -0.51),
+  lower    = c(NA, -0.61, -0.48, NA,  NA, -0.38, -0.72),
+  upper    = c(NA, -0.23, -0.10, NA,  NA,  0.02, -0.30)
 )
 
 forrest(
-  multi_dat,
-  estimate   = "estimate",
-  lower      = "lower",
-  upper      = "upper",
-  label      = "label",
-  is_summary = "is_sum",
-  xlab       = "Regression coefficient (95% CI)"
+  sub_dat,
+  estimate = "estimate",
+  lower    = "lower",
+  upper    = "upper",
+  label    = "label",
+  xlab     = "Regression coefficient (95% CI)"
 )
 ```
 
@@ -186,36 +162,162 @@ forrest(
 )
 ```
 
+## Multiple estimates per row
+
+Set `dodge = TRUE` (or a positive number) when consecutive rows share the same
+`label` value. The CIs are vertically offset within each label band, and the
+label is displayed once at the group centre. Combine with `group` to colour the
+series.
+
+```{r dodge, fig.height = 4, fig.width = 9}
+dodge_dat <- data.frame(
+  exposure = rep(c("Metals", "OPPs", "PFAS", "Phenols", "Phthalates"), each = 2),
+  period   = rep(c("Pregnancy", "Childhood"), 5),
+  estimate = c( 0.03, -0.04, -0.03,  0.04, -0.17, -0.02,  0.10, -0.02,  0.07,  0.10),
+  lower    = c(-0.25, -0.26, -0.19, -0.12, -0.40, -0.24, -0.06, -0.10, -0.15, -0.08),
+  upper    = c( 0.30,  0.19,  0.13,  0.21,  0.06,  0.19,  0.26,  0.07,  0.29,  0.28)
+)
+
+forrest(
+  dodge_dat,
+  estimate = "estimate",
+  lower    = "lower",
+  upper    = "upper",
+  label    = "exposure",
+  group    = "period",
+  dodge    = TRUE,
+  header   = "Exposure class",
+  ref_line = 0,
+  xlab     = "Coefficient (95% CI)"
+)
+```
+
+A numeric value for `dodge` sets the vertical spacing between rows within a
+group directly (in y-axis units). `dodge = TRUE` uses the default of `0.25`.
+Subgroup header rows (those with `NA` estimate) are always treated as singleton
+groups and are not affected by dodging.
+
+### Wide-format text columns alongside dodged CIs
+
+By default, `cols` text values appear at each row's dodged y position,
+keeping them aligned with their CI whiskers. Set `cols_by_group = TRUE` to
+collapse each text column to one value per label group instead — this produces
+a wide table with one row per label and one column per condition, matching the
+layout commonly seen in multi-period epidemiology papers.
+
+Populate each text column so that the value is non-empty only for the matching
+condition's row, and empty (`""`) for all others; `forrest()` picks up the
+right value automatically.
+
+```{r dodge-cols, fig.height = 4, fig.width = 11}
+# Same long-format data as above — just add per-condition text columns
+dodge_dat$est_ci <- sprintf("%.2f (%.2f, %.2f)",
+                            dodge_dat$estimate, dodge_dat$lower, dodge_dat$upper)
+dodge_dat$text_preg  <- ifelse(dodge_dat$period == "Pregnancy",  dodge_dat$est_ci, "")
+dodge_dat$text_child <- ifelse(dodge_dat$period == "Childhood",  dodge_dat$est_ci, "")
+
+forrest(
+  dodge_dat,
+  estimate      = "estimate",
+  lower         = "lower",
+  upper         = "upper",
+  label         = "exposure",
+  group         = "period",
+  dodge         = TRUE,
+  cols_by_group = TRUE,
+  cols          = c("Pregnancy (95% CI)" = "text_preg",
+                    "Childhood (95% CI)" = "text_child"),
+  widths        = c(2.5, 3.5, 2.2, 2.2),
+  header        = "Exposure class",
+  ref_line      = 0,
+  xlab          = "Coefficient (95% CI)"
+)
+```
+
+## Point shapes
+
+Pass a `shape` column to assign different point characters per category.
+Use together with `group` and `dodge` to encode two categorical dimensions
+at once — for example, colour = time period and shape = sex.
+
+```{r shape, fig.height = 4, fig.width = 9}
+shape_dat <- data.frame(
+  exposure = rep(c("Metals", "OPPs", "PFAS", "Phenols", "Phthalates"), each = 4),
+  period   = rep(rep(c("Pregnancy", "Childhood"), each = 2), 5),
+  sex      = rep(c("Female", "Male"), 10),
+  estimate = c(
+     0.15, -0.00, -0.09,  0.16,
+    -0.07, -0.02,  0.00,  0.08,
+    -0.37,  0.02, -0.08, -0.00,
+     0.07,  0.11, -0.04,  0.02,
+     0.16, -0.06,  0.21,  0.01
+  ),
+  lower    = c(
+    -0.41, -0.34, -0.25, -0.19,
+    -0.29, -0.25, -0.25, -0.16,
+    -0.64, -0.29, -0.42, -0.28,
+    -0.19, -0.13, -0.18, -0.12,
+    -0.16, -0.42, -0.08, -0.30
+  ),
+  upper    = c(
+     0.70,  0.34,  0.51,  0.34,
+     0.15,  0.22,  0.25,  0.32,
+    -0.10,  0.32,  0.25,  0.28,
+     0.33,  0.35,  0.10,  0.16,
+     0.47,  0.30,  0.51,  0.31
+  )
+)
+
+forrest(
+  shape_dat,
+  estimate = "estimate",
+  lower    = "lower",
+  upper    = "upper",
+  label    = "exposure",
+  group    = "period",
+  shape    = "sex",
+  dodge    = TRUE,
+  ref_line = 0,
+  xlab     = "Coefficient (95% CI)"
+)
+```
+
+The shape legend appears at `legend_shape_pos` (`"bottomright"` by default).
+Set `legend_shape_pos = NULL` to suppress it.
+
 ## Adding text columns
 
 Use the `cols` argument — a named character vector mapping display headers to
-column names in `data` — to show formatted statistics alongside the plot. This
-triggers a multi-panel layout with the label panel on the left and text columns
-on the right.
+column names in `data` — to show formatted statistics alongside the plot. The
+`header` argument labels the row-label panel on the left.
 
-```{r text-cols, fig.height = 5, fig.width = 10}
-or_dat$or_text <- c(
-  "1.45 (1.10, 1.91)",
-  "0.88 (0.65, 1.19)",
-  "1.21 (0.92, 1.59)",
-  "1.07 (0.80, 1.43)",
-  "0.95 (0.72, 1.25)",
-  "1.09 (0.94, 1.26)"
+```{r text-cols, fig.height = 4.5, fig.width = 10}
+tc_dat <- data.frame(
+  predictor = c("Age (per 10 y)", "Female sex", "BMI (per 5 kg/m²)",
+                "Current smoker", "Physical activity"),
+  estimate  = c( 0.18, -0.42,  0.11, -0.31,  0.24),
+  lower     = c( 0.05, -0.61, -0.04, -0.52,  0.08),
+  upper     = c( 0.31, -0.23,  0.26, -0.10,  0.40),
+  coef_ci   = c(
+    " 0.18 ( 0.05,  0.31)",
+    "-0.42 (-0.61, -0.23)",
+    " 0.11 (-0.04,  0.26)",
+    "-0.31 (-0.52, -0.10)",
+    " 0.24 ( 0.08,  0.40)"
+  ),
+  pval = c("0.006", "<0.001", "0.148", "0.003", "0.009")
 )
-or_dat$pval <- c("0.009", "0.372", "0.175", "0.647", "0.676", "<0.001")
 
 forrest(
-  or_dat,
-  estimate   = "estimate",
-  lower      = "lower",
-  upper      = "upper",
-  label      = "study",
-  is_summary = "is_sum",
-  log_scale  = TRUE,
-  ref_line   = 1,
-  header     = "Study",
-  cols       = c("OR (95% CI)" = "or_text", "P-value" = "pval"),
-  widths     = c(2, 4, 2, 1.2)
+  tc_dat,
+  estimate = "estimate",
+  lower    = "lower",
+  upper    = "upper",
+  label    = "predictor",
+  header   = "Predictor",
+  cols     = c("Coef (95% CI)" = "coef_ci", "P-value" = "pval"),
+  widths   = c(2.8, 4, 2.5, 1.2),
+  xlab     = "Regression coefficient (95% CI)"
 )
 ```
 

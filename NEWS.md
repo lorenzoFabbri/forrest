@@ -1,3 +1,73 @@
+# forrest 0.3.0
+
+## New features
+
+* `forrest()` gains a `dodge` argument (logical or positive numeric, default
+  `FALSE`). When set, consecutive rows that share the same `label` value are
+  grouped together and their confidence intervals are drawn with a small
+  vertical offset so they do not overlap. The shared label is displayed once
+  at the centre of the group. Designed to be used with `group` (for colour)
+  and/or `shape` (for point character) to visually distinguish the overlaid
+  series. A numeric value controls the offset directly; `TRUE` uses a default
+  of `0.25` y-axis units.
+
+* `forrest()` gains a `shape` argument (column name string, default `NULL`).
+  When provided, different values of the column are rendered with different
+  point characters from a built-in set (circle, triangle, square, diamond, …),
+  and a shape legend is drawn automatically. Most useful in combination with
+  `group` to encode two categorical dimensions simultaneously (e.g. colour =
+  time period, shape = sex).
+
+* `forrest()` gains a `legend_shape_pos` argument (default `"bottomright"`)
+  to control the position of the shape legend independently of `legend_pos`.
+
+* `forrest()` gains a `cols_by_group` argument (default `FALSE`). When `TRUE`
+  and `dodge` is active, each text column in `cols` is collapsed to one value
+  per label group displayed at the group centre y position. This produces a
+  wide-format text table — one row per label, one column per condition — as
+  commonly seen in multi-period epidemiology papers (vs. the default behaviour
+  of stacking text at each individual row's dodged y position).
+
+## Documentation
+
+* README quick-start gains a *Multiple estimates per row* example
+  demonstrating `dodge` with `group`.
+
+* Getting-started vignette gains two new sections: *Multiple estimates per
+  row* and *Point shapes*.
+
+* Internal helper `compute_dodge_groups()` and `group_shapes()` added to
+  `R/utils.R`.
+
+* `draw_text_panel()` updated to accept explicit `y_positions` and `n_vis`
+  arguments, enabling per-row dodged text placement in right-side panels.
+
+## Earlier changes
+
+* README quick-start regression example now shows a formatted text column
+  (`cols`) and a panel header (`header`) alongside the plot, making all three
+  core features visible in one place.
+
+* Regression vignette: the *Multiple predictors from one model* example now
+  includes a `cols = c("Coef (95% CI)" = "coef_ci")` column and matching
+  `header`, consistent with the logistic and dose-response examples.
+
+## Infrastructure
+
+* `covr` added to `Suggests` and `Config/Needs/coverage` so the
+  test-coverage CI workflow installs it automatically via
+  `r-lib/actions/setup-r-dependencies`.
+
+* Website URL added to `DESCRIPTION` `URL` field.
+
+* Upgraded `codecov/codecov-action` from v4 to v5 in the test-coverage
+  workflow.
+
+* New `lint.yaml` GitHub Actions workflow runs `lintr::lint_package()` on
+  every push and pull request to `main`.
+
+---
+
 # forrest 0.2.0
 
 ## New features

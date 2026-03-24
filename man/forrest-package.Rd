@@ -5,11 +5,12 @@
 \alias{forrest-package}
 \title{forrest: Publication-Ready Forest Plots}
 \description{
-Creates publication-ready forest plots from any tabular data containing point estimates and confidence intervals. Suitable for visualising results from regression models, meta-analyses, subgroup analyses, or any comparative study. Supports group and subgroup headings, summary estimates displayed as diamonds, grouped estimates with automatic colour mapping, customisable text columns alongside the plot, and optional row striping. Provides a helper to export plots to PDF, PNG, SVG, or TIFF. Built on 'tinyplot' for clean, consistent visual styling with a minimal dependency footprint.
+Creates publication-ready forest plots from any tabular data containing point estimates and confidence intervals. Suitable for visualising results from regression models, meta-analyses, subgroup analyses, or any comparative study. Supports group and subgroup headings, summary estimates displayed as diamonds, grouped estimates with automatic colour and shape mapping, vertical dodging of multiple estimates within the same row, customisable text columns alongside the plot, and optional row striping. Provides a helper to export plots to PDF, PNG, SVG, or TIFF. Built on 'tinyplot' for clean, consistent visual styling with a minimal dependency footprint.
 }
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://lorenzofabbri.github.io/forrest/}
   \item \url{https://github.com/lorenzoFabbri/forrest}
   \item Report bugs at \url{https://github.com/lorenzoFabbri/forrest/issues}
 }

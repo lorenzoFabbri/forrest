@@ -252,11 +252,251 @@ test_that("forrest() renders with stripe = TRUE", {
     forrest(
       dat,
       estimate = "estimate",
+      lower = "lower",
+      upper = "upper",
+      label = "label",
+      stripe = TRUE
+    )
+  )
+})
+
+# ── dodge ──────────────────────────────────────────────────────────────────────
+
+dodge_dat <- function() {
+  data.frame(
+    label    = rep(c("A", "B", "C"), each = 2),
+    period   = rep(c("early", "late"), 3),
+    estimate = c( 0.42,  0.30, -0.18, -0.10,  0.31,  0.22),
+    lower    = c( 0.22,  0.12, -0.38, -0.28,  0.12,  0.04),
+    upper    = c( 0.62,  0.48,  0.02,  0.08,  0.50,  0.40)
+  )
+}
+
+test_that("forrest() renders with dodge = TRUE", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- dodge_dat()
+  expect_no_error(
+    forrest(
+      dat,
+      estimate = "estimate",
       lower    = "lower",
       upper    = "upper",
       label    = "label",
+      group    = "period",
+      dodge    = TRUE
+    )
+  )
+})
+
+test_that("forrest() renders with numeric dodge", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- dodge_dat()
+  expect_no_error(
+    forrest(
+      dat,
+      estimate = "estimate",
+      lower    = "lower",
+      upper    = "upper",
+      label    = "label",
+      dodge    = 0.3
+    )
+  )
+})
+
+test_that("forrest() dodge works with cols (row-level text)", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- dodge_dat()
+  dat$txt <- sprintf("%.2f", dat$estimate)
+  expect_no_error(
+    forrest(
+      dat,
+      estimate = "estimate",
+      lower    = "lower",
+      upper    = "upper",
+      label    = "label",
+      group    = "period",
+      dodge    = TRUE,
+      header   = "Exposure",
+      cols     = c("Coef" = "txt")
+    )
+  )
+})
+
+test_that("forrest() dodge works with cols_by_group = TRUE", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- dodge_dat()
+  dat$est_ci <- sprintf("%.2f", dat$estimate)
+  dat$text_early <- ifelse(dat$period == "early", dat$est_ci, "")
+  dat$text_late  <- ifelse(dat$period == "late",  dat$est_ci, "")
+  expect_no_error(
+    forrest(
+      dat,
+      estimate      = "estimate",
+      lower         = "lower",
+      upper         = "upper",
+      label         = "label",
+      group         = "period",
+      dodge         = TRUE,
+      cols_by_group = TRUE,
+      cols          = c("Early" = "text_early", "Late" = "text_late")
+    )
+  )
+})
+
+test_that("forrest() cols_by_group = TRUE ignored when dodge = FALSE", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  dat$txt <- dat$or_text
+  expect_no_error(
+    forrest(
+      dat,
+      estimate      = "estimate",
+      lower         = "lower",
+      upper         = "upper",
+      label         = "label",
+      dodge         = FALSE,
+      cols_by_group = TRUE,
+      cols          = c("OR" = "txt")
+    )
+  )
+})
+
+test_that("forrest() dodge = FALSE (default) is unchanged", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  expect_no_error(
+    forrest(
+      dat,
+      estimate = "estimate",
+      lower    = "lower",
+      upper    = "upper",
+      label    = "label",
+      dodge    = FALSE
+    )
+  )
+})
+
+test_that("forrest() dodge works with stripe = TRUE", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- dodge_dat()
+  expect_no_error(
+    forrest(
+      dat,
+      estimate = "estimate",
+      lower    = "lower",
+      upper    = "upper",
+      label    = "label",
+      group    = "period",
+      dodge    = TRUE,
       stripe   = TRUE
     )
+  )
+})
+
+test_that("forrest() dodge works with header rows (NA estimates)", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- data.frame(
+    label    = c("Group 1", "A", "A", "Group 2", "B", "B"),
+    period   = c(NA, "early", "late", NA, "early", "late"),
+    estimate = c(NA,  0.42,  0.30, NA, -0.18, -0.10),
+    lower    = c(NA,  0.22,  0.12, NA, -0.38, -0.28),
+    upper    = c(NA,  0.62,  0.48, NA,  0.02,  0.08),
+    is_sum   = rep(FALSE, 6)
+  )
+  expect_no_error(
+    forrest(
+      dat,
+      estimate   = "estimate",
+      lower      = "lower",
+      upper      = "upper",
+      label      = "label",
+      is_summary = "is_sum",
+      dodge      = TRUE
+    )
+  )
+})
+
+# ── shape ──────────────────────────────────────────────────────────────────────
+
+test_that("forrest() renders with shape column", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  dat$sex <- c("F", "M", "F", "M")
+  expect_no_error(
+    forrest(
+      dat,
+      estimate = "estimate",
+      lower    = "lower",
+      upper    = "upper",
+      label    = "label",
+      shape    = "sex"
+    )
+  )
+})
+
+test_that("forrest() renders with dodge + group + shape", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- data.frame(
+    label    = rep(c("A", "B"), each = 4),
+    period   = rep(rep(c("early", "late"), each = 2), 2),
+    sex      = rep(c("F", "M"), 4),
+    estimate = c( 0.42,  0.30,  0.22,  0.15, -0.18, -0.10, -0.25, -0.20),
+    lower    = c( 0.22,  0.12,  0.05,  0.00, -0.38, -0.28, -0.45, -0.38),
+    upper    = c( 0.62,  0.48,  0.39,  0.30,  0.02,  0.08, -0.05, -0.02)
+  )
+  expect_no_error(
+    forrest(
+      dat,
+      estimate = "estimate",
+      lower    = "lower",
+      upper    = "upper",
+      label    = "label",
+      group    = "period",
+      shape    = "sex",
+      dodge    = TRUE
+    )
+  )
+})
+
+test_that("forrest() shape legend can be suppressed", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  dat$sex <- c("F", "M", "F", "M")
+  expect_no_error(
+    forrest(
+      dat,
+      estimate         = "estimate",
+      lower            = "lower",
+      upper            = "upper",
+      label            = "label",
+      shape            = "sex",
+      legend_shape_pos = NULL
+    )
+  )
+})
+
+test_that("forrest() errors on missing shape column", {
+  dat <- basic_dat()
+  expect_error(
+    forrest(
+      dat,
+      estimate = "estimate",
+      lower    = "lower",
+      upper    = "upper",
+      shape    = "nonexistent"
+    ),
+    "Column 'nonexistent' not found"
   )
 })
 
@@ -268,7 +508,9 @@ test_that("save_forrest() writes a PDF file", {
   dat <- basic_dat()
   result <- save_forrest(
     tmp,
-    function() forrest(dat, estimate = "estimate", lower = "lower", upper = "upper")
+    function() {
+      forrest(dat, estimate = "estimate", lower = "lower", upper = "upper")
+    }
   )
   expect_equal(result, tmp)
   expect_true(file.exists(tmp))
@@ -282,8 +524,12 @@ test_that("save_forrest() writes a PNG file", {
   expect_no_error(
     save_forrest(
       tmp,
-      function() forrest(dat, estimate = "estimate", lower = "lower", upper = "upper"),
-      width = 6, height = 4, dpi = 72
+      function() {
+        forrest(dat, estimate = "estimate", lower = "lower", upper = "upper")
+      },
+      width = 6,
+      height = 4,
+      dpi = 72
     )
   )
   expect_true(file.exists(tmp))
@@ -295,7 +541,9 @@ test_that("save_forrest() errors on unsupported extension", {
   expect_error(
     save_forrest(
       tempfile(fileext = ".bmp"),
-      function() forrest(dat, estimate = "estimate", lower = "lower", upper = "upper")
+      function() {
+        forrest(dat, estimate = "estimate", lower = "lower", upper = "upper")
+      }
     ),
     "Supported extensions"
   )

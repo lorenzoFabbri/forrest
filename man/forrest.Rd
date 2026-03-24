@@ -22,11 +22,15 @@ forrest(
   cols = NULL,
   widths = NULL,
   stripe = FALSE,
+  dodge = FALSE,
   pch = 15,
+  shape = NULL,
   lwd = 2,
   cex = 1,
   col = NULL,
+  cols_by_group = FALSE,
   legend_pos = "topright",
+  legend_shape_pos = "bottomright",
   ...
 )
 }
@@ -89,8 +93,24 @@ chosen automatically.}
 \item{stripe}{Logical. If \code{TRUE}, alternate rows are shaded with a light
 grey background to improve readability. Default is \code{FALSE}.}
 
+\item{dodge}{Logical or positive numeric. When \code{TRUE} (or a positive
+number), consecutive rows that share the same \code{label} value are grouped
+together and their confidence intervals are drawn with a small vertical
+offset so that they do not overlap. The shared label is displayed once at
+the centre of the group. Use together with \code{group} (for colour) and/or
+\code{shape} (for point characters) to distinguish the overlaid series. A
+numeric value sets the offset between rows in a group directly (in y-axis
+units); \code{TRUE} uses a default of \code{0.25}. Default is \code{FALSE}.}
+
 \item{pch}{Point character for non-summary rows. Default is \code{15} (filled
-square), which is conventional for forest plots.}
+square). When \code{shape} is provided, \code{pch} is used only as a fallback for
+rows whose shape value is \code{NA}.}
+
+\item{shape}{Column name (string) for a shape variable. When provided,
+different values of the column are rendered with different point characters
+and a shape legend is drawn. Use together with \code{group} to distinguish two
+categorical dimensions simultaneously (e.g. colour = time period, shape =
+sex).}
 
 \item{lwd}{Line width for confidence interval whiskers. Default is \code{2}.}
 
@@ -100,9 +120,23 @@ square), which is conventional for forest plots.}
 \code{group} is specified, the Okabe-Ito colorblind-safe palette is used. When
 \code{NULL} and no \code{group}, a single dark colour is used.}
 
-\item{legend_pos}{Position of the legend when \code{group} is supplied. Passed
-to \code{\link[=legend]{legend()}}. Set to \code{NULL} to suppress the legend. Default is
-\code{"topright"}.}
+\item{cols_by_group}{Logical. Relevant only when \code{dodge} is active. When
+\code{TRUE}, each text column in \code{cols} is collapsed to one value per label
+group: the first non-empty entry within the group is displayed at the
+group centre y position. This produces a wide-format text table with one
+row per label and one column per condition — the same layout as Figures 2
+and 3 in multi-period epidemiology papers. Populate each text column so
+that the value is non-empty only for the matching condition row and empty
+(\code{""}) for all others; \code{forrest()} picks up the right value automatically.
+When \code{FALSE} (default), text values are drawn at each individual row's
+dodged y position, keeping them visually aligned with their CI whiskers.}
+
+\item{legend_pos}{Position of the colour legend when \code{group} is supplied.
+Passed to \code{\link[=legend]{legend()}}. Set to \code{NULL} to suppress. Default is \code{"topright"}.}
+
+\item{legend_shape_pos}{Position of the shape legend when \code{shape} is
+supplied. Passed to \code{\link[=legend]{legend()}}. Set to \code{NULL} to suppress. Default is
+\code{"bottomright"}.}
 
 \item{...}{Additional graphical parameters passed to the internal
 \code{\link[tinyplot:tinyplot]{tinyplot::tinyplot()}} call that sets up the main plot area (e.g.
@@ -135,29 +169,22 @@ forrest(dat,
   xlab     = "Regression coefficient (95\% CI)"
 )
 
-# Multiple models with subgroup headers and a text column
+# Multiple estimates per row (dodge) — two periods for the same predictors
 dat2 <- data.frame(
-  label    = c(
-    "Model 1", "  Exposure A", "  Exposure B",
-    "", "Model 2", "  Exposure A", "  Exposure B"
-  ),
-  estimate = c(NA,  0.42, -0.18, NA, NA,  0.35, -0.14),
-  lower    = c(NA,  0.22, -0.38, NA, NA,  0.16, -0.32),
-  upper    = c(NA,  0.62,  0.02, NA, NA,  0.54,  0.04),
-  is_sum   = rep(FALSE, 7),
-  est_ci   = c(
-    "", "0.42 (0.22, 0.62)", "-0.18 (-0.38, 0.02)",
-    "", "", "0.35 (0.16, 0.54)", "-0.14 (-0.32, 0.04)"
-  )
+  label    = rep(c("Exposure A", "Exposure B", "Exposure C"), each = 2),
+  period   = rep(c("Early", "Late"), 3),
+  estimate = c(0.42, 0.30, -0.18, -0.10, 0.31, 0.22),
+  lower    = c(0.22, 0.12, -0.38, -0.28, 0.12,  0.04),
+  upper    = c(0.62, 0.48,  0.02,  0.08, 0.50,  0.40)
 )
 forrest(dat2,
-  estimate   = "estimate",
-  lower      = "lower",
-  upper      = "upper",
-  label      = "label",
-  is_summary = "is_sum",
-  header     = "Predictor",
-  cols       = c("Coef (95\% CI)" = "est_ci")
+  estimate = "estimate",
+  lower    = "lower",
+  upper    = "upper",
+  label    = "label",
+  group    = "period",
+  dodge    = TRUE,
+  xlab     = "Regression coefficient (95\% CI)"
 )
 
 }

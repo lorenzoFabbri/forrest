@@ -50,11 +50,52 @@ check_col_opt <- function(data, col, arg) {
 #' @noRd
 group_colors <- function(groups) {
   lvls <- unique(groups)
-  n    <- length(lvls)
+  n <- length(lvls)
   # Skip index 1 (white/near-white) to keep colours visible on white backgrounds
-  pal  <- grDevices::palette.colors(n + 1L, "Okabe-Ito")[-1L]
-  if (n > length(pal)) pal <- rep_len(pal, n)
+  pal <- grDevices::palette.colors(n + 1L, "Okabe-Ito")[-1L]
+  if (n > length(pal)) {
+    pal <- rep_len(pal, n)
+  }
   stats::setNames(pal[seq_len(n)], as.character(lvls))
+}
+
+#' Assign visual group IDs for dodge layout
+#'
+#' Consecutive rows with the same label form one dodge group.
+#' Header/spacer rows are always singleton groups.
+#'
+#' @param lbl Character vector of row labels.
+#' @param is_header Logical vector; `TRUE` for header/spacer rows.
+#' @return Integer vector of group IDs (1, 2, ..., n_groups).
+#' @noRd
+compute_dodge_groups <- function(lbl, is_header) {
+  n <- length(lbl)
+  group_ids <- integer(n)
+  g <- 0L
+  prev_lbl <- ""
+  for (i in seq_len(n)) {
+    if (is_header[i] || lbl[i] != prev_lbl) {
+      g <- g + 1L
+      prev_lbl <- if (is_header[i]) "" else lbl[i]
+    }
+    group_ids[i] <- g
+  }
+  group_ids
+}
+
+#' Map shape levels to pch values
+#'
+#' Returns a named integer vector mapping each unique level of `shapes` to a
+#' point character value, cycling through a predefined set.
+#'
+#' @param shapes Character vector of shape labels.
+#' @return Named integer vector (`level -> pch`).
+#' @noRd
+group_shapes <- function(shapes) {
+  lvls <- unique(shapes)
+  pchs <- c(16L, 17L, 15L, 18L, 8L, 10L, 3L, 4L)
+  if (length(lvls) > length(pchs)) pchs <- rep_len(pchs, length(lvls))
+  stats::setNames(pchs[seq_along(lvls)], as.character(lvls))
 }
 
 #' Null-coalescing operator
