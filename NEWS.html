@@ -140,6 +140,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Getting started with forrest</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./vignettes/regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Forest plots for regression results</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -155,6 +161,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="./man/forrest.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">forrest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./man/save_forrest.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">save_forrest</span></a>
   </div>
 </li>
       </ul>
@@ -191,13 +203,46 @@ ul.task-list li input[type="checkbox"] {
 
 
 
+<section id="forrest-0.2.0" class="level1">
+<h1>forrest 0.2.0</h1>
+<section id="new-features" class="level2">
+<h2 class="anchored" data-anchor-id="new-features">New features</h2>
+<ul>
+<li><p><code>save_forrest()</code> — new exported function to write a forest plot to a file. The graphics device (PDF, PNG, SVG, TIFF) is inferred from the file extension; resolution can be controlled via <code>dpi</code> for raster formats.</p></li>
+<li><p><code>forrest()</code> gains a <code>stripe</code> argument (<code>FALSE</code> by default). When <code>TRUE</code>, alternate rows are shaded with a light-grey background to improve readability in tables with many rows.</p></li>
+</ul>
+</section>
+<section id="documentation" class="level2">
+<h2 class="anchored" data-anchor-id="documentation">Documentation</h2>
+<ul>
+<li><p>Revised framing: <code>forrest</code> is now documented as a general-purpose tool for any tabular estimates-and-CIs data, not only meta-analyses. The description, README, and vignettes have been updated accordingly.</p></li>
+<li><p>New vignette <em>Forest plots for regression results</em> covers four practical patterns: multiple predictors from one model, comparing estimates across adjustment models, same predictor across multiple outcomes, and dose-response (exposure categories). Examples use <code>broom::tidy()</code> for parameter extraction.</p></li>
+<li><p>Getting-started vignette updated with a <code>stripe</code> example and a <em>Saving plots</em> section.</p></li>
+<li><p>README now leads with a regression-model example and an updated feature comparison table.</p></li>
+</ul>
+</section>
+<section id="refactoring" class="level2">
+<h2 class="anchored" data-anchor-id="refactoring">Refactoring</h2>
+<ul>
+<li><p>Drawing helpers (<code>draw_diamond()</code>, <code>draw_text_panel()</code>) moved from <code>R/utils.R</code> to a dedicated <code>R/draw.R</code>, improving code organisation.</p></li>
+<li><p><code>save_forrest()</code> lives in its own <code>R/save.R</code>.</p></li>
+</ul>
+</section>
+<section id="bug-fixes" class="level2">
+<h2 class="anchored" data-anchor-id="bug-fixes">Bug fixes</h2>
+<ul>
+<li>Horizontal gridlines are now drawn at <code>lwd = 0.7</code> (was <code>0.8</code>) for a slightly lighter appearance.</li>
+</ul>
+<hr>
+</section>
+</section>
 <section id="forrest-0.1.0" class="level1">
 <h1>forrest 0.1.0</h1>
 <ul>
 <li>Initial release.</li>
-<li><code>forrest()</code> creates publication-ready forest plots with support for subgroup headers, summary estimates (diamonds), grouped color mapping, and optional text columns alongside the plot.</li>
-<li><code>forrest()</code> gains a <code>weight</code> argument to scale point size proportionally to study weights — the conventional meta-analysis display.</li>
-<li>Confidence intervals that extend beyond <code>xlim</code> are now clipped at the axis boundary; a directional arrow indicates the truncated side.</li>
+<li><code>forrest()</code> creates publication-ready forest plots with support for subgroup headers, summary estimates (diamonds), grouped colour mapping, and optional text columns alongside the plot.</li>
+<li><code>forrest()</code> gains a <code>weight</code> argument to scale point size proportionally to row weights.</li>
+<li>Confidence intervals that extend beyond <code>xlim</code> are clipped at the axis boundary; a directional arrow indicates the truncated side.</li>
 </ul>
 
 

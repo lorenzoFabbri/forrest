@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>forrest – forrest</title>
+<title>save_forrest – forrest</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -142,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../man/forrest.html">Reference</a></li><li class="breadcrumb-item"><a href="../man/forrest.html">forrest</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../man/forrest.html">Reference</a></li><li class="breadcrumb-item"><a href="../man/save_forrest.html">save_forrest</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -194,13 +194,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../man/forrest.html" class="sidebar-item-text sidebar-link active">
+  <a href="../man/forrest.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">forrest</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../man/save_forrest.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/save_forrest.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">save_forrest</span></a>
   </div>
 </li>
@@ -233,44 +233,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         
     <div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="undefined"><i class="bi bi-link-45deg"></i></a></li></ul></div></div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../man/forrest.html">Reference</a></li><li class="breadcrumb-item"><a href="../man/forrest.html">forrest</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../man/forrest.html">Reference</a></li><li class="breadcrumb-item"><a href="../man/save_forrest.html">save_forrest</a></li></ol></nav></header>
 
 
 
 
-<section id="create-a-forest-plot" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="create-a-forest-plot">Create a forest plot</h2>
+<section id="save-a-forest-plot-to-a-file" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="save-a-forest-plot-to-a-file">Save a forest plot to a file</h2>
 <section id="description" class="level3">
 <h3 class="anchored" data-anchor-id="description">Description</h3>
-<p>Draws a publication-ready forest plot from a data frame. Each row represents one estimate — a study, a predictor, a model, a subgroup, or any other unit of analysis. Rows whose <code>estimate</code> is <code>NA</code> are treated as spacer/header rows: they produce no point or confidence interval, and their label is rendered in bold if non-empty.</p>
+<p>Writes the plot produced by <code>forrest()</code> (or any base-R plotting code) to a file. The graphics device is inferred from the file extension.</p>
 </section>
 <section id="usage" class="level3">
 <h3 class="anchored" data-anchor-id="usage">Usage</h3>
-<pre><code class="language-R">forrest(
-  data,
-  estimate,
-  lower,
-  upper,
-  label = NULL,
-  group = NULL,
-  is_summary = NULL,
-  weight = NULL,
-  ref_line = 0,
-  log_scale = FALSE,
-  xlim = NULL,
-  xlab = "Estimate (95% CI)",
-  title = NULL,
-  header = NULL,
-  cols = NULL,
-  widths = NULL,
-  stripe = FALSE,
-  pch = 15,
-  lwd = 2,
-  cex = 1,
-  col = NULL,
-  legend_pos = "topright",
-  ...
-)
+<pre><code class="language-R">save_forrest(file, plot, width = 7, height = 5, dpi = 300, bg = "white")
 </code></pre>
 </section>
 <section id="arguments" class="level3">
@@ -278,251 +254,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table role="presentation">
 <tbody><tr>
 <td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="data">data</code>
+<code id="file">file</code>
 </td>
 <td>
-A data frame, tibble, or data.table.
+Output file path. Supported extensions: <code>.pdf</code>, <code>.png</code>, <code>.svg</code>, <code>.tiff</code>.
 </td>
 </tr>
 <tr>
 <td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="estimate">estimate</code>
+<code id="plot">plot</code>
 </td>
 <td>
-Column name (string) for point estimates.
+A zero-argument function (or <code>function() { … }</code> block) whose body calls <code>forrest()</code>. It is evaluated inside the open graphics device.
 </td>
 </tr>
 <tr>
 <td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="lower">lower</code>
+<code id="width">width</code>
 </td>
 <td>
-Column name (string) for lower confidence interval bounds.
+Plot width in inches. Default <code>7</code>.
 </td>
 </tr>
 <tr>
 <td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="upper">upper</code>
+<code id="height">height</code>
 </td>
 <td>
-Column name (string) for upper confidence interval bounds.
+Plot height in inches. Default <code>5</code>.
 </td>
 </tr>
 <tr>
 <td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="label">label</code>
+<code id="dpi">dpi</code>
 </td>
 <td>
-Column name (string) for row labels displayed on the y-axis or in the left text panel. If <code>NULL</code>, row numbers are used.
+Resolution in dots per inch for raster formats (<code>.png</code>, <code>.tiff</code>). Ignored for vector formats (<code>.pdf</code>, <code>.svg</code>). Default <code>300</code>.
 </td>
 </tr>
 <tr>
 <td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="group">group</code>
+<code id="bg">bg</code>
 </td>
 <td>
-Column name (string) for a grouping variable. Rows that share a group value receive the same colour, and a legend is drawn automatically.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="is_summary">is_summary</code>
-</td>
-<td>
-Column name (string) of a logical vector. Rows where this is <code>TRUE</code> are drawn as filled diamonds (e.g.&nbsp;pooled or overall estimates) rather than squares with whiskers.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="weight">weight</code>
-</td>
-<td>
-Column name (string) of numeric row weights. When provided, point size scales as <code>cex * sqrt(weight / max(weight))</code>, so rows with larger weights appear with a bigger marker. Weights for summary rows are ignored (diamond size is fixed by <code>cex</code>).
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="ref_line">ref_line</code>
-</td>
-<td>
-Numeric. Position of the vertical reference line (e.g.&nbsp;<code>0</code> for differences, <code>1</code> for ratio measures on the natural scale). Set to <code>NULL</code> to suppress. Default is <code>0</code>.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="log_scale">log_scale</code>
-</td>
-<td>
-Logical. If <code>TRUE</code>, apply a log transformation to the x-axis. Useful when plotting odds ratios, hazard ratios, or risk ratios on the natural scale. Default is <code>FALSE</code>.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="xlim">xlim</code>
-</td>
-<td>
-Numeric vector of length 2 giving x-axis limits. Computed from the data when <code>NULL</code> (default). Confidence intervals that extend beyond <code>xlim</code> are clipped at the axis boundary and an arrow is drawn to indicate truncation.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="xlab">xlab</code>
-</td>
-<td>
-Label for the x-axis. Default is <code>“Estimate (95% CI)”</code>.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="title">title</code>
-</td>
-<td>
-Plot title. Default is <code>NULL</code> (no title).
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="header">header</code>
-</td>
-<td>
-Optional header string placed above the label column. When <code>cols</code> is provided this appears above the left text panel; otherwise it is drawn above the topmost row on the y-axis.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="cols">cols</code>
-</td>
-<td>
-Named character vector specifying extra text columns to display to the right of the plot. Names become column headers; values are column names in <code>data</code>. Example: <code>cols = c(“OR (95% CI)” = “or_text”, “P” = “pval_text”)</code>.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="widths">widths</code>
-</td>
-<td>
-Numeric vector of relative panel widths. When <code>cols</code> is <code>NULL</code>, ignored. Otherwise, length must equal <code>2 + length(cols)</code>: label panel, plot panel, then one entry per extra column. Sensible defaults are chosen automatically.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="stripe">stripe</code>
-</td>
-<td>
-Logical. If <code>TRUE</code>, alternate rows are shaded with a light grey background to improve readability. Default is <code>FALSE</code>.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="pch">pch</code>
-</td>
-<td>
-Point character for non-summary rows. Default is <code>15</code> (filled square), which is conventional for forest plots.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="lwd">lwd</code>
-</td>
-<td>
-Line width for confidence interval whiskers. Default is <code>2</code>.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="cex">cex</code>
-</td>
-<td>
-Point size multiplier. Default is <code>1</code>.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="col">col</code>
-</td>
-<td>
-Colour or character vector of colours. When <code>NULL</code> (default) and <code>group</code> is specified, the Okabe-Ito colorblind-safe palette is used. When <code>NULL</code> and no <code>group</code>, a single dark colour is used.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="legend_pos">legend_pos</code>
-</td>
-<td>
-Position of the legend when <code>group</code> is supplied. Passed to <code>legend()</code>. Set to <code>NULL</code> to suppress the legend. Default is <code>“topright”</code>.
-</td>
-</tr>
-<tr>
-<td style="white-space: collapse; font-family: monospace; vertical-align: top">
-<code id="...">…</code>
-</td>
-<td>
-Additional graphical parameters passed to the internal <code>tinyplot::tinyplot()</code> call that sets up the main plot area (e.g. <code>cex.axis</code>, <code>cex.lab</code>, <code>font.main</code>).
+Background colour. Default <code>“white”</code>.
 </td>
 </tr>
 </tbody></table>
 </section>
 <section id="value" class="level3">
 <h3 class="anchored" data-anchor-id="value">Value</h3>
-<p>Invisibly returns <code>NULL</code>. Called for its side effect of producing a plot.</p>
+<p>Invisibly returns <code>file</code>.</p>
 </section>
 <section id="examples" class="level3">
 <h3 class="anchored" data-anchor-id="examples">Examples</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"forrest"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic forest plot — results from a single regression model</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="fu">c</span>(<span class="st">"Exposure A"</span>, <span class="st">"Exposure B"</span>, <span class="st">"Exposure C"</span>, <span class="st">"Exposure D"</span>),</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="fu">c</span>(<span class="fl">0.42</span>, <span class="sc">-</span><span class="fl">0.18</span>, <span class="fl">0.31</span>, <span class="sc">-</span><span class="fl">0.07</span>),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="fu">c</span>(<span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.38</span>, <span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.24</span>),</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="fu">c</span>(<span class="fl">0.62</span>,  <span class="fl">0.02</span>, <span class="fl">0.50</span>,  <span class="fl">0.10</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(dat,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"lower"</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"upper"</span>,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"label"</span>,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Regression coefficient (95% CI)"</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="forrest_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiple models with subgroup headers and a text column</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="fu">c</span>(</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Model 1"</span>, <span class="st">"  Exposure A"</span>, <span class="st">"  Exposure B"</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>, <span class="st">"Model 2"</span>, <span class="st">"  Exposure A"</span>, <span class="st">"  Exposure B"</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="fu">c</span>(<span class="cn">NA</span>,  <span class="fl">0.42</span>, <span class="sc">-</span><span class="fl">0.18</span>, <span class="cn">NA</span>, <span class="cn">NA</span>,  <span class="fl">0.35</span>, <span class="sc">-</span><span class="fl">0.14</span>),</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="fu">c</span>(<span class="cn">NA</span>,  <span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.38</span>, <span class="cn">NA</span>, <span class="cn">NA</span>,  <span class="fl">0.16</span>, <span class="sc">-</span><span class="fl">0.32</span>),</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="fu">c</span>(<span class="cn">NA</span>,  <span class="fl">0.62</span>,  <span class="fl">0.02</span>, <span class="cn">NA</span>, <span class="cn">NA</span>,  <span class="fl">0.54</span>,  <span class="fl">0.04</span>),</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_sum   =</span> <span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="dv">7</span>),</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">est_ci   =</span> <span class="fu">c</span>(</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>, <span class="st">"0.42 (0.22, 0.62)"</span>, <span class="st">"-0.18 (-0.38, 0.02)"</span>,</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>, <span class="st">""</span>, <span class="st">"0.35 (0.16, 0.54)"</span>, <span class="st">"-0.14 (-0.32, 0.04)"</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(dat2,</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate   =</span> <span class="st">"estimate"</span>,</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower      =</span> <span class="st">"lower"</span>,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper      =</span> <span class="st">"upper"</span>,</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">label      =</span> <span class="st">"label"</span>,</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_summary =</span> <span class="st">"is_sum"</span>,</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">header     =</span> <span class="st">"Predictor"</span>,</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols       =</span> <span class="fu">c</span>(<span class="st">"Coef (95% CI)"</span> <span class="ot">=</span> <span class="st">"est_ci"</span>)</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="forrest_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="fu">c</span>(<span class="st">"Exposure A"</span>, <span class="st">"Exposure B"</span>, <span class="st">"Exposure C"</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="fu">c</span>(<span class="fl">0.42</span>, <span class="sc">-</span><span class="fl">0.18</span>, <span class="fl">0.31</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="fu">c</span>(<span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.38</span>, <span class="fl">0.12</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="fu">c</span>(<span class="fl">0.62</span>,  <span class="fl">0.02</span>, <span class="fl">0.50</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".pdf"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">save_forrest</span>(tmp, <span class="cf">function</span>() {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forrest</span>(</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    dat,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower    =</span> <span class="st">"lower"</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper    =</span> <span class="st">"upper"</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">label    =</span> <span class="st">"label"</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab     =</span> <span class="st">"Regression coefficient (95% CI)"</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 
