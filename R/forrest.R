@@ -258,7 +258,7 @@ forrest <- function(
 
   # ── 7. Dodge: visual groups and y positions ─────────────────────────────────
   dodge_amt <- if (isTRUE(dodge)) 0.25 else
-               if (is.numeric(dodge) && dodge > 0) as.numeric(dodge) else 0
+    if (is.numeric(dodge) && dodge > 0) as.numeric(dodge) else 0
 
   if (dodge_amt > 0) {
     group_ids    <- compute_dodge_groups(lbl, is_header)
@@ -269,9 +269,9 @@ forrest <- function(
     row_y <- numeric(n)
     for (g in seq_len(n_vis)) {
       idx <- which(group_ids == g)
-      K   <- length(idx)
-      offsets <- if (K == 1L) 0 else
-        seq(-(K - 1L) / 2, (K - 1L) / 2, length.out = K) * dodge_amt
+      k   <- length(idx)
+      offsets <- if (k == 1L) 0 else
+        seq(-(k - 1L) / 2, (k - 1L) / 2, length.out = k) * dodge_amt
       row_y[idx] <- grp_center_y[g] + offsets
     }
 
@@ -371,7 +371,9 @@ forrest <- function(
     x_lo <- if (log_scale) 10^usr[1L] else usr[1L]
     x_hi <- if (log_scale) 10^usr[2L] else usr[2L]
     for (yc in vis_center_y[vis_center_y %% 2 == 0]) {
-      graphics::rect(x_lo, yc - 0.5, x_hi, yc + 0.5, col = "#f2f2f2", border = NA)
+      graphics::rect(
+        x_lo, yc - 0.5, x_hi, yc + 0.5, col = "#f2f2f2", border = NA
+      )
     }
   }
 

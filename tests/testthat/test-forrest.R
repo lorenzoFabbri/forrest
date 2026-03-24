@@ -15,7 +15,7 @@ basic_dat <- function() {
   )
 }
 
-# ── Basic rendering ────────────────────────────────────────────────────────────
+# ── Basic rendering ───────────────────────────────────────────────────────────
 
 test_that("forrest() renders without error for minimal input", {
   pdf(nullfile())
@@ -102,7 +102,7 @@ test_that("forrest() renders on log scale with ref_line = 1", {
   )
 })
 
-# ── Subgroup header rows (NA estimates) ────────────────────────────────────────
+# ── Subgroup header rows (NA estimates) ──────────────────────────────────────
 
 test_that("forrest() handles NA estimate rows as headers", {
   pdf(nullfile())
@@ -125,7 +125,7 @@ test_that("forrest() handles NA estimate rows as headers", {
   )
 })
 
-# ── Input type compatibility ───────────────────────────────────────────────────
+# ── Input type compatibility ──────────────────────────────────────────────────
 
 test_that("forrest() accepts a tibble", {
   skip_if_not_installed("tibble")
@@ -147,7 +147,7 @@ test_that("forrest() accepts a data.table", {
   )
 })
 
-# ── Error handling ─────────────────────────────────────────────────────────────
+# ── Error handling ────────────────────────────────────────────────────────────
 
 test_that("forrest() errors on missing estimate column", {
   dat <- basic_dat()
@@ -260,15 +260,15 @@ test_that("forrest() renders with stripe = TRUE", {
   )
 })
 
-# ── dodge ──────────────────────────────────────────────────────────────────────
+# ── dodge ─────────────────────────────────────────────────────────────────────
 
 dodge_dat <- function() {
   data.frame(
     label    = rep(c("A", "B", "C"), each = 2),
     period   = rep(c("early", "late"), 3),
-    estimate = c( 0.42,  0.30, -0.18, -0.10,  0.31,  0.22),
-    lower    = c( 0.22,  0.12, -0.38, -0.28,  0.12,  0.04),
-    upper    = c( 0.62,  0.48,  0.02,  0.08,  0.50,  0.40)
+    estimate = c(0.42,  0.30, -0.18, -0.10,  0.31,  0.22),
+    lower    = c(0.22,  0.12, -0.38, -0.28,  0.12,  0.04),
+    upper    = c(0.62,  0.48,  0.02,  0.08,  0.50,  0.40)
   )
 }
 
@@ -424,7 +424,7 @@ test_that("forrest() dodge works with header rows (NA estimates)", {
   )
 })
 
-# ── shape ──────────────────────────────────────────────────────────────────────
+# ── shape ─────────────────────────────────────────────────────────────────────
 
 test_that("forrest() renders with shape column", {
   pdf(nullfile())
@@ -450,9 +450,9 @@ test_that("forrest() renders with dodge + group + shape", {
     label    = rep(c("A", "B"), each = 4),
     period   = rep(rep(c("early", "late"), each = 2), 2),
     sex      = rep(c("F", "M"), 4),
-    estimate = c( 0.42,  0.30,  0.22,  0.15, -0.18, -0.10, -0.25, -0.20),
-    lower    = c( 0.22,  0.12,  0.05,  0.00, -0.38, -0.28, -0.45, -0.38),
-    upper    = c( 0.62,  0.48,  0.39,  0.30,  0.02,  0.08, -0.05, -0.02)
+    estimate = c(0.42,  0.30,  0.22,  0.15, -0.18, -0.10, -0.25, -0.20),
+    lower    = c(0.22,  0.12,  0.05,  0.00, -0.38, -0.28, -0.45, -0.38),
+    upper    = c(0.62,  0.48,  0.39,  0.30,  0.02,  0.08, -0.05, -0.02)
   )
   expect_no_error(
     forrest(
@@ -500,7 +500,7 @@ test_that("forrest() errors on missing shape column", {
   )
 })
 
-# ── save_forrest() ─────────────────────────────────────────────────────────────
+# ── save_forrest() ────────────────────────────────────────────────────────────
 
 test_that("save_forrest() writes a PDF file", {
   tmp <- tempfile(fileext = ".pdf")

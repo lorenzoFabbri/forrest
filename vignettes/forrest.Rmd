@@ -35,9 +35,9 @@ The simplest call requires only three column names: `estimate`, `lower`, and
 dat <- data.frame(
   predictor = c("Age (per 10 y)", "Female sex", "BMI (per 5 kg/m²)",
                 "Current smoker", "Physical activity"),
-  estimate  = c( 0.18, -0.42,  0.11, -0.31,  0.24),
-  lower     = c( 0.05, -0.61, -0.04, -0.52,  0.08),
-  upper     = c( 0.31, -0.23,  0.26, -0.10,  0.40)
+  estimate  = c(0.18, -0.42,  0.11, -0.31,  0.24),
+  lower     = c(0.05, -0.61, -0.04, -0.52,  0.08),
+  upper     = c(0.31, -0.23,  0.26, -0.10,  0.40)
 )
 
 forrest(
@@ -146,7 +146,7 @@ grp_dat <- data.frame(
                "Garcia 2021", "Lee 2022", "Kim 2023"),
   estimate = c(-0.18,  0.05, -0.12,  0.22, -0.08,  0.15),
   lower    = c(-0.38, -0.12, -0.30,  0.04, -0.24, -0.01),
-  upper    = c( 0.02,  0.22,  0.06,  0.40,  0.08,  0.31),
+  upper    = c(0.02,  0.22,  0.06,  0.40,  0.08,  0.31),
   region   = c("Europe", "Europe", "Europe",
                "Americas", "Americas", "Americas")
 )
@@ -171,11 +171,19 @@ series.
 
 ```{r dodge, fig.height = 4, fig.width = 9}
 dodge_dat <- data.frame(
-  exposure = rep(c("Metals", "OPPs", "PFAS", "Phenols", "Phthalates"), each = 2),
+  exposure = rep(
+    c("Metals", "OPPs", "PFAS", "Phenols", "Phthalates"), each = 2
+  ),
   period   = rep(c("Pregnancy", "Childhood"), 5),
-  estimate = c( 0.03, -0.04, -0.03,  0.04, -0.17, -0.02,  0.10, -0.02,  0.07,  0.10),
-  lower    = c(-0.25, -0.26, -0.19, -0.12, -0.40, -0.24, -0.06, -0.10, -0.15, -0.08),
-  upper    = c( 0.30,  0.19,  0.13,  0.21,  0.06,  0.19,  0.26,  0.07,  0.29,  0.28)
+  estimate = c(
+    0.03, -0.04, -0.03,  0.04, -0.17, -0.02,  0.10, -0.02,  0.07,  0.10
+  ),
+  lower    = c(
+    -0.25, -0.26, -0.19, -0.12, -0.40, -0.24, -0.06, -0.10, -0.15, -0.08
+  ),
+  upper    = c(
+    0.30,  0.19,  0.13,  0.21,  0.06,  0.19,  0.26,  0.07,  0.29,  0.28
+  )
 )
 
 forrest(

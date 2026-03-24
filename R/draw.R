@@ -77,7 +77,9 @@ draw_text_panel <- function(
       cex = cex,
       xpd = TRUE
     )
-    graphics::segments(0, n_vis + 0.2, 1, n_vis + 0.2, col = "gray70", xpd = TRUE)
+    graphics::segments(
+      0, n_vis + 0.2, 1, n_vis + 0.2, col = "gray70", xpd = TRUE
+    )
   }
 
   row_y    <- if (!is.null(y_positions)) y_positions else seq(n_vis, 1L)
