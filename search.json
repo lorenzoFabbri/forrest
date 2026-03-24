@@ -1,0 +1,202 @@
+[
+  {
+    "objectID": "vignettes/forrest.html",
+    "href": "vignettes/forrest.html",
+    "title": "Getting started with forrest",
+    "section": "",
+    "text": "forrest creates publication-ready forest plots with a single dependency (tinyplot) and a clean, minimal API. It works with base R data frames, tibbles, and data.tables.",
+    "crumbs": [
+      "Articles",
+      "Getting started with forrest"
+    ]
+  },
+  {
+    "objectID": "vignettes/forrest.html#basic-forest-plot",
+    "href": "vignettes/forrest.html#basic-forest-plot",
+    "title": "Getting started with forrest",
+    "section": "Basic forest plot",
+    "text": "Basic forest plot\nThe simplest call requires only three column names: estimate, lower, and upper.\n\ndat &lt;- data.frame(\n  study    = c(\"Smith 2018\", \"Jones 2019\", \"Brown 2020\",\n               \"Garcia 2021\", \"Lee 2022\"),\n  estimate = c(-0.18, 0.05, -0.12, -0.08, 0.02),\n  lower    = c(-0.38, -0.12, -0.30, -0.24, -0.14),\n  upper    = c(0.02, 0.22, 0.06, 0.08, 0.18)\n)\n\nforrest(\n  dat,\n  estimate = \"estimate\",\n  lower    = \"lower\",\n  upper    = \"upper\",\n  label    = \"study\",\n  xlab     = \"Mean difference (95% CI)\"\n)",
+    "crumbs": [
+      "Articles",
+      "Getting started with forrest"
+    ]
+  },
+  {
+    "objectID": "vignettes/forrest.html#adding-a-summary-pooled-estimate",
+    "href": "vignettes/forrest.html#adding-a-summary-pooled-estimate",
+    "title": "Getting started with forrest",
+    "section": "Adding a summary (pooled) estimate",
+    "text": "Adding a summary (pooled) estimate\nMark one or more rows as summary estimates with an is_summary logical column. Those rows are drawn as filled diamonds instead of squares.\n\ndat$is_pooled &lt;- c(FALSE, FALSE, FALSE, FALSE, FALSE)\ndat &lt;- rbind(dat, data.frame(\n  study      = \"Pooled\",\n  estimate   = -0.07,\n  lower      = -0.16,\n  upper      =  0.02,\n  is_pooled  = TRUE\n))\n\nforrest(\n  dat,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"study\",\n  is_summary = \"is_pooled\",\n  xlab       = \"Mean difference (95% CI)\",\n  title      = \"Association with outcome\"\n)",
+    "crumbs": [
+      "Articles",
+      "Getting started with forrest"
+    ]
+  },
+  {
+    "objectID": "vignettes/forrest.html#log-scale-for-ratio-measures",
+    "href": "vignettes/forrest.html#log-scale-for-ratio-measures",
+    "title": "Getting started with forrest",
+    "section": "Log scale for ratio measures",
+    "text": "Log scale for ratio measures\nWhen plotting odds ratios, hazard ratios, or risk ratios, set log_scale = TRUE and ref_line = 1.\n\nor_dat &lt;- data.frame(\n  study    = c(\"Adams 2016\", \"Baker 2018\", \"Chen 2019\",\n               \"Davis 2020\", \"Evans 2021\", \"Pooled\"),\n  estimate = c(1.45, 0.88, 1.21, 1.07, 0.95, 1.09),\n  lower    = c(1.10, 0.65, 0.92, 0.80, 0.72, 0.94),\n  upper    = c(1.91, 1.19, 1.59, 1.43, 1.25, 1.26),\n  is_sum   = c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)\n)\n\nforrest(\n  or_dat,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"study\",\n  is_summary = \"is_sum\",\n  log_scale  = TRUE,\n  ref_line   = 1,\n  xlab       = \"Odds ratio (95% CI)\"\n)",
+    "crumbs": [
+      "Articles",
+      "Getting started with forrest"
+    ]
+  },
+  {
+    "objectID": "vignettes/forrest.html#subgroup-headers-and-spacer-rows",
+    "href": "vignettes/forrest.html#subgroup-headers-and-spacer-rows",
+    "title": "Getting started with forrest",
+    "section": "Subgroup headers and spacer rows",
+    "text": "Subgroup headers and spacer rows\nRows whose estimate is NA are treated as visual separators. A non-empty label is rendered in bold as a subgroup header; an empty label creates a blank spacer line.\n\nsub_dat &lt;- data.frame(\n  label    = c(\n    \"Sex\",\n    \"  Female\", \"  Male\", \"  Pooled\",\n    \"\",\n    \"Age group\",\n    \"  18–44 years\", \"  45–64 years\", \"  65+ years\", \"  Pooled\",\n    \"\",\n    \"Overall\"\n  ),\n  estimate = c(\n    NA,  -0.10, -0.05, -0.07,\n    NA,\n    NA,  -0.12, -0.06, -0.02, -0.07,\n    NA,\n    -0.07\n  ),\n  lower    = c(\n    NA,  -0.22, -0.18, -0.16,\n    NA,\n    NA,  -0.28, -0.18, -0.12, -0.16,\n    NA,\n    -0.16\n  ),\n  upper    = c(\n    NA,  0.02, 0.08, 0.02,\n    NA,\n    NA,  0.04, 0.06, 0.08, 0.02,\n    NA,\n    0.02\n  ),\n  is_sum   = c(\n    FALSE, FALSE, FALSE, TRUE,\n    FALSE,\n    FALSE, FALSE, FALSE, FALSE, TRUE,\n    FALSE,\n    TRUE\n  )\n)\n\nforrest(\n  sub_dat,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"label\",\n  is_summary = \"is_sum\",\n  xlab       = \"Mean difference (95% CI)\"\n)",
+    "crumbs": [
+      "Articles",
+      "Getting started with forrest"
+    ]
+  },
+  {
+    "objectID": "vignettes/forrest.html#group-coloring",
+    "href": "vignettes/forrest.html#group-coloring",
+    "title": "Getting started with forrest",
+    "section": "Group coloring",
+    "text": "Group coloring\nPass a group column to color estimates by a categorical variable. A legend is added automatically.\n\ngrp_dat &lt;- data.frame(\n  study    = c(\"Smith 2018\", \"Jones 2019\", \"Brown 2020\",\n               \"Garcia 2021\", \"Lee 2022\", \"Kim 2023\"),\n  estimate = c(-0.18, 0.05, -0.12, 0.22, -0.08, 0.15),\n  lower    = c(-0.38, -0.12, -0.30,  0.04, -0.24, -0.01),\n  upper    = c(0.02, 0.22, 0.06,  0.40, 0.08, 0.31),\n  region   = c(\"Europe\", \"Europe\", \"Europe\",\n               \"Americas\", \"Americas\", \"Americas\")\n)\n\nforrest(\n  grp_dat,\n  estimate = \"estimate\",\n  lower    = \"lower\",\n  upper    = \"upper\",\n  label    = \"study\",\n  group    = \"region\",\n  xlab     = \"Mean difference (95% CI)\"\n)",
+    "crumbs": [
+      "Articles",
+      "Getting started with forrest"
+    ]
+  },
+  {
+    "objectID": "vignettes/forrest.html#adding-text-columns",
+    "href": "vignettes/forrest.html#adding-text-columns",
+    "title": "Getting started with forrest",
+    "section": "Adding text columns",
+    "text": "Adding text columns\nUse the cols argument — a named character vector mapping display headers to column names — to show statistics alongside the plot. This triggers a multi-panel layout with a label panel on the left and text columns on the right.\n\nor_dat$or_text &lt;- c(\n  \"1.45 (1.10, 1.91)\",\n  \"0.88 (0.65, 1.19)\",\n  \"1.21 (0.92, 1.59)\",\n  \"1.07 (0.80, 1.43)\",\n  \"0.95 (0.72, 1.25)\",\n  \"1.09 (0.94, 1.26)\"\n)\nor_dat$pval &lt;- c(\"0.009\", \"0.372\", \"0.175\", \"0.647\", \"0.676\", \"&lt;0.001\")\n\nforrest(\n  or_dat,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"study\",\n  is_summary = \"is_sum\",\n  log_scale  = TRUE,\n  ref_line   = 1,\n  header     = \"Study\",\n  cols       = c(\"OR (95% CI)\" = \"or_text\", \"P-value\" = \"pval\"),\n  widths     = c(2, 4, 2, 1.2)\n)",
+    "crumbs": [
+      "Articles",
+      "Getting started with forrest"
+    ]
+  },
+  {
+    "objectID": "vignettes/forrest.html#study-weights",
+    "href": "vignettes/forrest.html#study-weights",
+    "title": "Getting started with forrest",
+    "section": "Study weights",
+    "text": "Study weights\nPass weight as a column name of numeric study weights (e.g. inverse-variance weights). Point size scales proportionally to sqrt(weight / max(weight)), so larger studies appear with a bigger marker — a convention in meta-analysis forest plots.\n\nset.seed(42)\nwt_dat &lt;- data.frame(\n  study    = paste(\"Study\", LETTERS[1:7]),\n  estimate = c(-0.20, 0.04, -0.09, -0.15, 0.03, -0.08, -0.07),\n  lower    = c(-0.38, -0.10, -0.24, -0.32, -0.11, -0.22, -0.16),\n  upper    = c(-0.02, 0.18, 0.06, 0.02, 0.17, 0.06, 0.02),\n  weight   = c(12.1, 4.5, 9.8, 7.2, 5.3, 11.0, 50.1),\n  is_sum   = c(rep(FALSE, 6), TRUE)\n)\n\nforrest(\n  wt_dat,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"study\",\n  is_summary = \"is_sum\",\n  weight     = \"weight\",\n  xlab       = \"Mean difference (95% CI)\"\n)",
+    "crumbs": [
+      "Articles",
+      "Getting started with forrest"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "forrest ",
+    "section": "",
+    "text": "forrest creates publication-ready forest plots with a single dependency — tinyplot. It is designed for epidemiologists and data scientists who need clean, customisable forest plots without pulling in a large dependency tree.\nKey features:\n\nMinimal dependency footprint (only tinyplot)\nSubgroup headers and spacer rows via NA estimate rows\nSummary estimates rendered as filled diamonds\nStudy weights scale point size (meta-analysis convention)\nConfidence intervals clipped at axis limits with directional arrows\nGroup coloring with automatic Okabe-Ito legend\nOptional text columns (OR, p-value, …) alongside the plot\nLog-scale x-axis for ratio measures\nWorks with data.frame, tibble, and data.table\n\n\n\n# Development version from GitHub:\n# install.packages(\"pak\")\npak::pak(\"lorenzoFabbri/forrest\")\n\n\n\nlibrary(forrest)\n\ndat &lt;- data.frame(\n  study = c(\n    \"Smith 2018\", \"Jones 2019\", \"Brown 2020\",\n    \"Garcia 2021\", \"Lee 2022\", \"Pooled\"\n  ),\n  estimate = c(-0.18, 0.05, -0.12, -0.08, 0.02, -0.07),\n  lower = c(-0.38, -0.12, -0.30, -0.24, -0.14, -0.16),\n  upper = c(0.02, 0.22, 0.06, 0.08, 0.18, 0.02),\n  is_sum = c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE),\n  weight = c(12.1, 4.5, 9.8, 7.2, 5.3, NA)\n)\n\nforrest(\n  dat,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"study\",\n  is_summary = \"is_sum\",\n  weight     = \"weight\",\n  xlab       = \"Mean difference (95% CI)\"\n)\n\n\n\n\nsub &lt;- data.frame(\n  label = c(\n    \"Sex\", \"  Female\", \"  Male\", \"  Pooled\",\n    \"\", \"Region\", \"  North\", \"  South\", \"  Pooled\"\n  ),\n  est = c(NA, -0.10, -0.05, -0.07, NA, NA, -0.12, -0.02, -0.07),\n  lo = c(NA, -0.22, -0.18, -0.16, NA, NA, -0.28, -0.12, -0.16),\n  hi = c(NA, 0.02, 0.08, 0.02, NA, NA, 0.04, 0.08, 0.02),\n  is_sum = c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE),\n  or_text = c(\n    \"\", \"-0.10 (-0.22, 0.02)\", \"-0.05 (-0.18, 0.08)\",\n    \"-0.07 (-0.16, 0.02)\", \"\",\n    \"\", \"-0.12 (-0.28, 0.04)\", \"-0.02 (-0.12, 0.08)\",\n    \"-0.07 (-0.16, 0.02)\"\n  )\n)\n\nforrest(\n  sub,\n  estimate   = \"est\",\n  lower      = \"lo\",\n  upper      = \"hi\",\n  label      = \"label\",\n  is_summary = \"is_sum\",\n  header     = \"Subgroup\",\n  cols       = c(\"Estimate (95% CI)\" = \"or_text\"),\n  widths     = c(2.2, 4, 2.5)\n)\n\n\n\n\nor_dat &lt;- data.frame(\n  study  = c(\"Adams 2016\", \"Baker 2018\", \"Chen 2019\", \"Pooled\"),\n  est    = c(1.45, 0.88, 1.21, 1.09),\n  lo     = c(1.10, 0.65, 0.92, 0.94),\n  hi     = c(1.91, 1.19, 1.59, 1.26),\n  is_sum = c(FALSE, FALSE, FALSE, TRUE)\n)\n\nforrest(\n  or_dat,\n  estimate   = \"est\",\n  lower      = \"lo\",\n  upper      = \"hi\",\n  label      = \"study\",\n  is_summary = \"is_sum\",\n  log_scale  = TRUE,\n  ref_line   = 1,\n  xlab       = \"Odds ratio (95% CI)\"\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFeature\nforrest\nforestplot\nforestploter\nggforestplot\n\n\n\n\nMinimal dependencies\n✅\n❌\n❌\n❌\n\n\nStudy weight sizing\n✅\n✅\n✅\n❌\n\n\nSubgroup headers\n✅\n✅\n✅\n❌\n\n\nSummary diamonds\n✅\n✅\n✅\n✅\n\n\nText columns\n✅\n✅\n✅\n❌\n\n\nCI clipping with arrows\n✅\n✅\n❌\n❌\n\n\nGroup coloring + legend\n✅\n❌\n✅\n✅\n\n\nLog-scale axis\n✅\n✅\n✅\n❌\n\n\ndata.table support\n✅\n❌\n❌\n❌\n\n\nActively maintained\n✅\n⚠️\n✅\n❌",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "forrest ",
+    "section": "",
+    "text": "# Development version from GitHub:\n# install.packages(\"pak\")\npak::pak(\"lorenzoFabbri/forrest\")",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#quick-start",
+    "href": "index.html#quick-start",
+    "title": "forrest ",
+    "section": "",
+    "text": "library(forrest)\n\ndat &lt;- data.frame(\n  study = c(\n    \"Smith 2018\", \"Jones 2019\", \"Brown 2020\",\n    \"Garcia 2021\", \"Lee 2022\", \"Pooled\"\n  ),\n  estimate = c(-0.18, 0.05, -0.12, -0.08, 0.02, -0.07),\n  lower = c(-0.38, -0.12, -0.30, -0.24, -0.14, -0.16),\n  upper = c(0.02, 0.22, 0.06, 0.08, 0.18, 0.02),\n  is_sum = c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE),\n  weight = c(12.1, 4.5, 9.8, 7.2, 5.3, NA)\n)\n\nforrest(\n  dat,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"study\",\n  is_summary = \"is_sum\",\n  weight     = \"weight\",\n  xlab       = \"Mean difference (95% CI)\"\n)",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#subgroup-analysis-with-text-columns",
+    "href": "index.html#subgroup-analysis-with-text-columns",
+    "title": "forrest ",
+    "section": "",
+    "text": "sub &lt;- data.frame(\n  label = c(\n    \"Sex\", \"  Female\", \"  Male\", \"  Pooled\",\n    \"\", \"Region\", \"  North\", \"  South\", \"  Pooled\"\n  ),\n  est = c(NA, -0.10, -0.05, -0.07, NA, NA, -0.12, -0.02, -0.07),\n  lo = c(NA, -0.22, -0.18, -0.16, NA, NA, -0.28, -0.12, -0.16),\n  hi = c(NA, 0.02, 0.08, 0.02, NA, NA, 0.04, 0.08, 0.02),\n  is_sum = c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE),\n  or_text = c(\n    \"\", \"-0.10 (-0.22, 0.02)\", \"-0.05 (-0.18, 0.08)\",\n    \"-0.07 (-0.16, 0.02)\", \"\",\n    \"\", \"-0.12 (-0.28, 0.04)\", \"-0.02 (-0.12, 0.08)\",\n    \"-0.07 (-0.16, 0.02)\"\n  )\n)\n\nforrest(\n  sub,\n  estimate   = \"est\",\n  lower      = \"lo\",\n  upper      = \"hi\",\n  label      = \"label\",\n  is_summary = \"is_sum\",\n  header     = \"Subgroup\",\n  cols       = c(\"Estimate (95% CI)\" = \"or_text\"),\n  widths     = c(2.2, 4, 2.5)\n)",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#log-scale-for-ratio-measures",
+    "href": "index.html#log-scale-for-ratio-measures",
+    "title": "forrest ",
+    "section": "",
+    "text": "or_dat &lt;- data.frame(\n  study  = c(\"Adams 2016\", \"Baker 2018\", \"Chen 2019\", \"Pooled\"),\n  est    = c(1.45, 0.88, 1.21, 1.09),\n  lo     = c(1.10, 0.65, 0.92, 0.94),\n  hi     = c(1.91, 1.19, 1.59, 1.26),\n  is_sum = c(FALSE, FALSE, FALSE, TRUE)\n)\n\nforrest(\n  or_dat,\n  estimate   = \"est\",\n  lower      = \"lo\",\n  upper      = \"hi\",\n  label      = \"study\",\n  is_summary = \"is_sum\",\n  log_scale  = TRUE,\n  ref_line   = 1,\n  xlab       = \"Odds ratio (95% CI)\"\n)",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#compared-with-other-packages",
+    "href": "index.html#compared-with-other-packages",
+    "title": "forrest ",
+    "section": "",
+    "text": "Feature\nforrest\nforestplot\nforestploter\nggforestplot\n\n\n\n\nMinimal dependencies\n✅\n❌\n❌\n❌\n\n\nStudy weight sizing\n✅\n✅\n✅\n❌\n\n\nSubgroup headers\n✅\n✅\n✅\n❌\n\n\nSummary diamonds\n✅\n✅\n✅\n✅\n\n\nText columns\n✅\n✅\n✅\n❌\n\n\nCI clipping with arrows\n✅\n✅\n❌\n❌\n\n\nGroup coloring + legend\n✅\n❌\n✅\n✅\n\n\nLog-scale axis\n✅\n✅\n✅\n❌\n\n\ndata.table support\n✅\n❌\n❌\n❌\n\n\nActively maintained\n✅\n⚠️\n✅\n❌",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "LICENSE.html",
+    "href": "LICENSE.html",
+    "title": "MIT License",
+    "section": "",
+    "text": "MIT License\nCopyright (c) 2026 Lorenzo Fabbri\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\nTHE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+    "crumbs": [
+      "License"
+    ]
+  },
+  {
+    "objectID": "NEWS.html",
+    "href": "NEWS.html",
+    "title": "forrest 0.1.0",
+    "section": "",
+    "text": "forrest 0.1.0\n\nInitial release.\nforrest() creates publication-ready forest plots with support for subgroup headers, summary estimates (diamonds), grouped color mapping, and optional text columns alongside the plot.\nforrest() gains a weight argument to scale point size proportionally to study weights — the conventional meta-analysis display.\nConfidence intervals that extend beyond xlim are now clipped at the axis boundary; a directional arrow indicates the truncated side.",
+    "crumbs": [
+      "News"
+    ]
+  },
+  {
+    "objectID": "man/forrest.html",
+    "href": "man/forrest.html",
+    "title": "forrest",
+    "section": "",
+    "text": "Draws a publication-ready forest plot from a data frame. Each row represents one study, subgroup, or estimate. Rows whose estimate is NA are treated as spacer/header rows: they produce no point or confidence interval, and their label is rendered in bold if non-empty.\n\n\n\nforrest(\n  data,\n  estimate,\n  lower,\n  upper,\n  label = NULL,\n  group = NULL,\n  is_summary = NULL,\n  weight = NULL,\n  ref_line = 0,\n  log_scale = FALSE,\n  xlim = NULL,\n  xlab = \"Estimate (95% CI)\",\n  title = NULL,\n  header = NULL,\n  cols = NULL,\n  widths = NULL,\n  pch = 15,\n  lwd = 2,\n  cex = 1,\n  col = NULL,\n  legend_pos = \"topright\",\n  ...\n)\n\n\n\n\n\n\n\ndata\n\n\nA data frame, tibble, or data.table.\n\n\n\n\nestimate\n\n\nColumn name (string) for point estimates.\n\n\n\n\nlower\n\n\nColumn name (string) for lower confidence interval bounds.\n\n\n\n\nupper\n\n\nColumn name (string) for upper confidence interval bounds.\n\n\n\n\nlabel\n\n\nColumn name (string) for row labels displayed on the y-axis or in the left text panel. If NULL, row numbers are used.\n\n\n\n\ngroup\n\n\nColumn name (string) for a grouping variable. Rows that share a group value receive the same color, and a legend is drawn automatically.\n\n\n\n\nis_summary\n\n\nColumn name (string) of a logical vector. Rows where this is TRUE are drawn as filled diamonds (pooled / summary estimates) rather than squares with whiskers.\n\n\n\n\nweight\n\n\nColumn name (string) of numeric study weights (e.g. inverse-variance weights or effective sample sizes). When provided, point size scales as cex * sqrt(weight / max(weight)), so larger studies are displayed with a bigger marker — the conventional meta-analysis convention. Weights for summary rows are ignored (diamond size is controlled by cex).\n\n\n\n\nref_line\n\n\nNumeric. Position of the vertical reference line (e.g. 0 for log-odds / risk differences, 1 for odds ratios on the natural scale). Set to NULL to suppress. Default is 0.\n\n\n\n\nlog_scale\n\n\nLogical. If TRUE, apply a log transformation to the x-axis. Useful when plotting odds ratios, hazard ratios, or risk ratios on the natural scale. Default is FALSE.\n\n\n\n\nxlim\n\n\nNumeric vector of length 2 giving x-axis limits. Computed from the data when NULL (default). Confidence intervals that extend beyond xlim are clipped at the axis boundary and an arrow is drawn to indicate truncation.\n\n\n\n\nxlab\n\n\nLabel for the x-axis. Default is “Estimate (95% CI)”.\n\n\n\n\ntitle\n\n\nPlot title. Default is NULL (no title).\n\n\n\n\nheader\n\n\nOptional header string placed above the label column. When cols is provided this appears above the left text panel; otherwise it is drawn above the topmost row on the y-axis.\n\n\n\n\ncols\n\n\nNamed character vector specifying extra text columns to display to the right of the plot. Names become column headers; values are column names in data. Example: cols = c(“OR (95% CI)” = “or_text”, “P” = “pval_text”).\n\n\n\n\nwidths\n\n\nNumeric vector of relative panel widths. When cols is NULL, ignored. Otherwise, length must equal 2 + length(cols): label panel, plot panel, then one entry per extra column. Sensible defaults are chosen automatically.\n\n\n\n\npch\n\n\nPoint character for non-summary rows. Default is 15 (filled square), which is conventional for forest plots.\n\n\n\n\nlwd\n\n\nLine width for confidence interval whiskers. Default is 2.\n\n\n\n\ncex\n\n\nPoint size multiplier. Default is 1.\n\n\n\n\ncol\n\n\nColor or character vector of colors. When NULL (default) and group is specified, the Okabe-Ito colorblind-safe palette is used. When NULL and no group, a single dark color is used.\n\n\n\n\nlegend_pos\n\n\nPosition of the legend when group is supplied. Passed to legend(). Set to NULL to suppress the legend. Default is “topright”.\n\n\n\n\n…\n\n\nAdditional graphical parameters passed to the internal tinyplot::tinyplot() call that sets up the main plot area (e.g. cex.axis, cex.lab, font.main).\n\n\n\n\n\n\nInvisibly returns NULL. Called for its side effect of producing a plot.\n\n\n\n\nlibrary(\"forrest\")\n\n# Basic forest plot\ndat &lt;- data.frame(\n  label    = c(\"Study A\", \"Study B\", \"Study C\", \"Pooled\"),\n  estimate = c(-0.15, 0.10, -0.05, -0.05),\n  lower    = c(-0.40, -0.10, -0.25, -0.20),\n  upper    = c(0.10, 0.30, 0.15, 0.10),\n  is_sum   = c(FALSE, FALSE, FALSE, TRUE)\n)\nforrest(dat,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"label\",\n  is_summary = \"is_sum\"\n)\n\n\n\n\n\n\n\n# With subgroup headers (NA estimate rows) and text columns\ndat2 &lt;- data.frame(\n  label    = c(\n    \"Subgroup A\", \"Study 1\", \"Study 2\", \"Pooled A\",\n    \"\", \"Subgroup B\", \"Study 3\", \"Study 4\", \"Pooled B\"\n  ),\n  estimate = c(NA, 0.5, 0.7, 0.6, NA, NA, 1.1, 0.9, 1.0),\n  lower    = c(NA, 0.3, 0.5, 0.45, NA, NA, 0.8, 0.6, 0.75),\n  upper    = c(NA, 0.7, 0.9, 0.75, NA, NA, 1.4, 1.2, 1.25),\n  is_sum   = c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE),\n  or_ci    = c(\n    \"\", \"0.50 (0.30-0.70)\", \"0.70 (0.50-0.90)\", \"0.60 (0.45-0.75)\",\n    \"\", \"\", \"1.10 (0.80-1.40)\", \"0.90 (0.60-1.20)\", \"1.00 (0.75-1.25)\"\n  )\n)\nforrest(dat2,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"label\",\n  is_summary = \"is_sum\",\n  ref_line   = 1,\n  log_scale  = TRUE,\n  header     = \"Study\",\n  cols       = c(\"OR (95% CI)\" = \"or_ci\")\n)",
+    "crumbs": [
+      "Reference",
+      "forrest"
+    ]
+  },
+  {
+    "objectID": "man/forrest.html#create-a-forest-plot",
+    "href": "man/forrest.html#create-a-forest-plot",
+    "title": "forrest",
+    "section": "",
+    "text": "Draws a publication-ready forest plot from a data frame. Each row represents one study, subgroup, or estimate. Rows whose estimate is NA are treated as spacer/header rows: they produce no point or confidence interval, and their label is rendered in bold if non-empty.\n\n\n\nforrest(\n  data,\n  estimate,\n  lower,\n  upper,\n  label = NULL,\n  group = NULL,\n  is_summary = NULL,\n  weight = NULL,\n  ref_line = 0,\n  log_scale = FALSE,\n  xlim = NULL,\n  xlab = \"Estimate (95% CI)\",\n  title = NULL,\n  header = NULL,\n  cols = NULL,\n  widths = NULL,\n  pch = 15,\n  lwd = 2,\n  cex = 1,\n  col = NULL,\n  legend_pos = \"topright\",\n  ...\n)\n\n\n\n\n\n\n\ndata\n\n\nA data frame, tibble, or data.table.\n\n\n\n\nestimate\n\n\nColumn name (string) for point estimates.\n\n\n\n\nlower\n\n\nColumn name (string) for lower confidence interval bounds.\n\n\n\n\nupper\n\n\nColumn name (string) for upper confidence interval bounds.\n\n\n\n\nlabel\n\n\nColumn name (string) for row labels displayed on the y-axis or in the left text panel. If NULL, row numbers are used.\n\n\n\n\ngroup\n\n\nColumn name (string) for a grouping variable. Rows that share a group value receive the same color, and a legend is drawn automatically.\n\n\n\n\nis_summary\n\n\nColumn name (string) of a logical vector. Rows where this is TRUE are drawn as filled diamonds (pooled / summary estimates) rather than squares with whiskers.\n\n\n\n\nweight\n\n\nColumn name (string) of numeric study weights (e.g. inverse-variance weights or effective sample sizes). When provided, point size scales as cex * sqrt(weight / max(weight)), so larger studies are displayed with a bigger marker — the conventional meta-analysis convention. Weights for summary rows are ignored (diamond size is controlled by cex).\n\n\n\n\nref_line\n\n\nNumeric. Position of the vertical reference line (e.g. 0 for log-odds / risk differences, 1 for odds ratios on the natural scale). Set to NULL to suppress. Default is 0.\n\n\n\n\nlog_scale\n\n\nLogical. If TRUE, apply a log transformation to the x-axis. Useful when plotting odds ratios, hazard ratios, or risk ratios on the natural scale. Default is FALSE.\n\n\n\n\nxlim\n\n\nNumeric vector of length 2 giving x-axis limits. Computed from the data when NULL (default). Confidence intervals that extend beyond xlim are clipped at the axis boundary and an arrow is drawn to indicate truncation.\n\n\n\n\nxlab\n\n\nLabel for the x-axis. Default is “Estimate (95% CI)”.\n\n\n\n\ntitle\n\n\nPlot title. Default is NULL (no title).\n\n\n\n\nheader\n\n\nOptional header string placed above the label column. When cols is provided this appears above the left text panel; otherwise it is drawn above the topmost row on the y-axis.\n\n\n\n\ncols\n\n\nNamed character vector specifying extra text columns to display to the right of the plot. Names become column headers; values are column names in data. Example: cols = c(“OR (95% CI)” = “or_text”, “P” = “pval_text”).\n\n\n\n\nwidths\n\n\nNumeric vector of relative panel widths. When cols is NULL, ignored. Otherwise, length must equal 2 + length(cols): label panel, plot panel, then one entry per extra column. Sensible defaults are chosen automatically.\n\n\n\n\npch\n\n\nPoint character for non-summary rows. Default is 15 (filled square), which is conventional for forest plots.\n\n\n\n\nlwd\n\n\nLine width for confidence interval whiskers. Default is 2.\n\n\n\n\ncex\n\n\nPoint size multiplier. Default is 1.\n\n\n\n\ncol\n\n\nColor or character vector of colors. When NULL (default) and group is specified, the Okabe-Ito colorblind-safe palette is used. When NULL and no group, a single dark color is used.\n\n\n\n\nlegend_pos\n\n\nPosition of the legend when group is supplied. Passed to legend(). Set to NULL to suppress the legend. Default is “topright”.\n\n\n\n\n…\n\n\nAdditional graphical parameters passed to the internal tinyplot::tinyplot() call that sets up the main plot area (e.g. cex.axis, cex.lab, font.main).\n\n\n\n\n\n\nInvisibly returns NULL. Called for its side effect of producing a plot.\n\n\n\n\nlibrary(\"forrest\")\n\n# Basic forest plot\ndat &lt;- data.frame(\n  label    = c(\"Study A\", \"Study B\", \"Study C\", \"Pooled\"),\n  estimate = c(-0.15, 0.10, -0.05, -0.05),\n  lower    = c(-0.40, -0.10, -0.25, -0.20),\n  upper    = c(0.10, 0.30, 0.15, 0.10),\n  is_sum   = c(FALSE, FALSE, FALSE, TRUE)\n)\nforrest(dat,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"label\",\n  is_summary = \"is_sum\"\n)\n\n\n\n\n\n\n\n# With subgroup headers (NA estimate rows) and text columns\ndat2 &lt;- data.frame(\n  label    = c(\n    \"Subgroup A\", \"Study 1\", \"Study 2\", \"Pooled A\",\n    \"\", \"Subgroup B\", \"Study 3\", \"Study 4\", \"Pooled B\"\n  ),\n  estimate = c(NA, 0.5, 0.7, 0.6, NA, NA, 1.1, 0.9, 1.0),\n  lower    = c(NA, 0.3, 0.5, 0.45, NA, NA, 0.8, 0.6, 0.75),\n  upper    = c(NA, 0.7, 0.9, 0.75, NA, NA, 1.4, 1.2, 1.25),\n  is_sum   = c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE),\n  or_ci    = c(\n    \"\", \"0.50 (0.30-0.70)\", \"0.70 (0.50-0.90)\", \"0.60 (0.45-0.75)\",\n    \"\", \"\", \"1.10 (0.80-1.40)\", \"0.90 (0.60-1.20)\", \"1.00 (0.75-1.25)\"\n  )\n)\nforrest(dat2,\n  estimate   = \"estimate\",\n  lower      = \"lower\",\n  upper      = \"upper\",\n  label      = \"label\",\n  is_summary = \"is_sum\",\n  ref_line   = 1,\n  log_scale  = TRUE,\n  header     = \"Study\",\n  cols       = c(\"OR (95% CI)\" = \"or_ci\")\n)",
+    "crumbs": [
+      "Reference",
+      "forrest"
+    ]
+  },
+  {
+    "objectID": "CITATION.html",
+    "href": "CITATION.html",
+    "title": "Citation",
+    "section": "",
+    "text": "Citation\nTo cite package ‘forrest’ in publications use:\n\nFabbri L (2026). forrest: Publication-Ready Forest Plots. R package version 0.1.0, https://github.com/lorenzoFabbri/forrest.",
+    "crumbs": [
+      "Citation"
+    ]
+  }
+]
