@@ -12,9 +12,6 @@
 *.so
 *.dll
 
-# renv (library is ignored via renv/.gitignore; lock + activate.R are committed)
-renv/staging/
-
 # altdoc / quarto docs
 /docs/
 _quarto/*
