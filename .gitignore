@@ -12,9 +12,13 @@
 *.so
 *.dll
 
+# renv (library is ignored via renv/.gitignore; lock + activate.R are committed)
+renv/staging/
+
 # altdoc / quarto docs
 /docs/
 _quarto/*
+!_quarto/.gitignore
 !_quarto/_freeze/
 altdoc/freeze.rds
 .quarto/

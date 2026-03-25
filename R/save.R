@@ -5,8 +5,8 @@
 #'
 #' @param file Output file path. Supported extensions: `.pdf`, `.png`, `.svg`,
 #'   `.tiff`.
-#' @param plot A zero-argument function (or `function() { ... }` block) whose
-#'   body calls [forrest()]. It is evaluated inside the open graphics device.
+#' @param plot A zero-argument function whose body calls [forrest()].
+#'   Evaluated inside the open graphics device.
 #' @param width Plot width in inches. Default `7`.
 #' @param height Plot height in inches. Default `5`.
 #' @param dpi Resolution in dots per inch for raster formats (`.png`, `.tiff`).
@@ -17,10 +17,10 @@
 #'
 #' @examples
 #' dat <- data.frame(
-#'   label    = c("Exposure A", "Exposure B", "Exposure C"),
-#'   estimate = c(0.42, -0.18, 0.31),
-#'   lower    = c(0.22, -0.38, 0.12),
-#'   upper    = c(0.62,  0.02, 0.50)
+#'   label    = c("Age (per 10 y)", "Female sex", "Current smoker"),
+#'   estimate = c(0.42, -0.38, -0.31),
+#'   lower    = c(0.22, -0.56, -0.51),
+#'   upper    = c(0.62, -0.20, -0.11)
 #' )
 #' tmp <- tempfile(fileext = ".pdf")
 #' save_forrest(tmp, function() {
@@ -34,6 +34,9 @@
 #'   )
 #' })
 #'
+#' @usage
+#' save_forrest(file, plot, width = 7, height = 5,
+#'              dpi = 300, bg = "white")
 #' @export
 save_forrest <- function(
   file,
@@ -43,36 +46,42 @@ save_forrest <- function(
   dpi = 300,
   bg = "white"
 ) {
+  # Extract the file extension and dispatch to the right graphics device.
+  # `tools::file_ext()` handles paths like "dir/plot.pdf" → "pdf"
   ext <- tolower(tools::file_ext(file))
   switch(
     ext,
+    # Vector formats: PDF and SVG ignore `dpi`
     pdf = grDevices::pdf(
       file,
-      width = width,
+      width  = width,
       height = height,
-      bg = bg
+      bg     = bg
     ),
+    # Raster format: PNG — `units = "in"` + `res` converts from inches to pixels
     png = grDevices::png(
       file,
-      width = width,
+      width  = width,
       height = height,
-      units = "in",
-      res = dpi,
-      bg = bg
+      units  = "in",
+      res    = dpi,
+      bg     = bg
     ),
+    # Vector format: SVG
     svg = grDevices::svg(
       file,
-      width = width,
+      width  = width,
       height = height,
-      bg = bg
+      bg     = bg
     ),
+    # Raster format: TIFF with lossless LZW compression
     tiff = grDevices::tiff(
       file,
-      width = width,
-      height = height,
-      units = "in",
-      res = dpi,
-      bg = bg,
+      width       = width,
+      height      = height,
+      units       = "in",
+      res         = dpi,
+      bg          = bg,
       compression = "lzw"
     ),
     stop(
@@ -83,6 +92,8 @@ save_forrest <- function(
       call. = FALSE
     )
   )
+  # Register `dev.off()` before calling `plot()` so the device is always
+  # closed even if plotting raises an error
   on.exit(grDevices::dev.off(), add = TRUE)
   plot()
   invisible(file)

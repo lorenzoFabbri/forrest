@@ -28,11 +28,14 @@ Suggests:
     covr,
     data.table,
     knitr,
+    marginaleffects,
+    MatchIt,
+    quarto,
     rmarkdown,
     tibble,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Config/Needs/coverage: covr
-VignetteBuilder: knitr
+VignetteBuilder: quarto, knitr
 URL: https://lorenzofabbri.github.io/forrest/, https://github.com/lorenzoFabbri/forrest
 BugReports: https://github.com/lorenzoFabbri/forrest/issues

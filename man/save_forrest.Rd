@@ -4,14 +4,15 @@
 \alias{save_forrest}
 \title{Save a forest plot to a file}
 \usage{
-save_forrest(file, plot, width = 7, height = 5, dpi = 300, bg = "white")
+save_forrest(file, plot, width = 7, height = 5,
+             dpi = 300, bg = "white")
 }
 \arguments{
 \item{file}{Output file path. Supported extensions: \code{.pdf}, \code{.png}, \code{.svg},
 \code{.tiff}.}
 
-\item{plot}{A zero-argument function (or \code{function() { ... }} block) whose
-body calls \code{\link[=forrest]{forrest()}}. It is evaluated inside the open graphics device.}
+\item{plot}{A zero-argument function whose body calls \code{\link[=forrest]{forrest()}}.
+Evaluated inside the open graphics device.}
 
 \item{width}{Plot width in inches. Default \code{7}.}
 
@@ -31,10 +32,10 @@ file. The graphics device is inferred from the file extension.
 }
 \examples{
 dat <- data.frame(
-  label    = c("Exposure A", "Exposure B", "Exposure C"),
-  estimate = c(0.42, -0.18, 0.31),
-  lower    = c(0.22, -0.38, 0.12),
-  upper    = c(0.62,  0.02, 0.50)
+  label    = c("Age (per 10 y)", "Female sex", "Current smoker"),
+  estimate = c(0.42, -0.38, -0.31),
+  lower    = c(0.22, -0.56, -0.51),
+  upper    = c(0.62, -0.20, -0.11)
 )
 tmp <- tempfile(fileext = ".pdf")
 save_forrest(tmp, function() {

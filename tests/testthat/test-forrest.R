@@ -548,3 +548,37 @@ test_that("save_forrest() errors on unsupported extension", {
     "Supported extensions"
   )
 })
+
+# ── Theme support ─────────────────────────────────────────────────────────────
+
+test_that("forrest() accepts built-in theme names", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  for (th in c("default", "minimal", "classic")) {
+    expect_no_error(
+      forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+              theme = th)
+    )
+  }
+})
+
+test_that("forrest() accepts theme as a named list", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  expect_no_error(
+    forrest(dat,
+            estimate = "estimate", lower = "lower", upper = "upper",
+            theme = list(ref_col = "red", grid_lwd = 0.2))
+  )
+})
+
+test_that("forrest() errors on unknown theme name", {
+  dat <- basic_dat()
+  expect_error(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            theme = "nonexistent"),
+    "must be one of"
+  )
+})

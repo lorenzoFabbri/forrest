@@ -31,12 +31,12 @@ forrest(
   cols_by_group = FALSE,
   legend_pos = "topright",
   legend_shape_pos = "bottomright",
+  theme = "default",
   ...
 )
 }
 \arguments{
-\item{data}{A data frame, \link[tibble:tibble]{tibble}, or
-\link[data.table:data.table]{data.table}.}
+\item{data}{A data frame, tibble, or data.table.}
 
 \item{estimate}{Column name (string) for point estimates.}
 
@@ -82,8 +82,7 @@ drawn above the topmost row on the y-axis.}
 
 \item{cols}{Named character vector specifying extra text columns to display
 to the right of the plot. Names become column headers; values are column
-names in \code{data}. Example:
-\code{cols = c("OR (95\\\% CI)" = "or_text", "P" = "pval_text")}.}
+names in \code{data}. Example: \code{cols = c("OR (95\\\\\% CI)" = "or_ci")}.}
 
 \item{widths}{Numeric vector of relative panel widths. When \code{cols} is
 \code{NULL}, ignored. Otherwise, length must equal \code{2 + length(cols)}: label
@@ -124,23 +123,25 @@ sex).}
 \code{TRUE}, each text column in \code{cols} is collapsed to one value per label
 group: the first non-empty entry within the group is displayed at the
 group centre y position. This produces a wide-format text table with one
-row per label and one column per condition — the same layout as Figures 2
-and 3 in multi-period epidemiology papers. Populate each text column so
+row per label and one column per condition. Populate each text column so
 that the value is non-empty only for the matching condition row and empty
 (\code{""}) for all others; \code{forrest()} picks up the right value automatically.
 When \code{FALSE} (default), text values are drawn at each individual row's
-dodged y position, keeping them visually aligned with their CI whiskers.}
+dodged y position, keeping them aligned with their CI whiskers.}
 
 \item{legend_pos}{Position of the colour legend when \code{group} is supplied.
-Passed to \code{\link[=legend]{legend()}}. Set to \code{NULL} to suppress. Default is \code{"topright"}.}
+Passed to \code{legend()}. Use \code{NULL} to suppress.
+Default is \code{"topright"}.}
 
 \item{legend_shape_pos}{Position of the shape legend when \code{shape} is
-supplied. Passed to \code{\link[=legend]{legend()}}. Set to \code{NULL} to suppress. Default is
-\code{"bottomright"}.}
+supplied. Passed to \code{legend()}. Use \code{NULL} to suppress.
+Default is \code{"bottomright"}.}
 
-\item{...}{Additional graphical parameters passed to the internal
-\code{\link[tinyplot:tinyplot]{tinyplot::tinyplot()}} call that sets up the main plot area (e.g.
-\code{cex.axis}, \code{cex.lab}, \code{font.main}).}
+\item{theme}{Visual theme name ("default", "minimal", "classic") or a
+named list of style overrides. Default is \code{"default"}.}
+
+\item{...}{Graphical parameters forwarded to the internal tinyplot call
+(e.g. \code{cex.axis}, \code{cex.lab}).}
 }
 \value{
 Invisibly returns \code{NULL}. Called for its side effect of producing a
@@ -154,34 +155,37 @@ spacer/header rows: they produce no point or confidence interval, and their
 label is rendered in bold if non-empty.
 }
 \examples{
-# Basic forest plot — results from a single regression model
+# Basic forest plot: linear model coefficients
 dat <- data.frame(
-  label    = c("Exposure A", "Exposure B", "Exposure C", "Exposure D"),
-  estimate = c(0.42, -0.18, 0.31, -0.07),
-  lower    = c(0.22, -0.38, 0.12, -0.24),
-  upper    = c(0.62,  0.02, 0.50,  0.10)
+  predictor = c("Age (per 10 y)", "Female sex",
+                "BMI (per 5 kg/m\u00b2)", "Current smoker"),
+  estimate  = c(0.42, -0.38,  0.19, -0.31),
+  lower     = c(0.22, -0.56, -0.02, -0.51),
+  upper     = c(0.62, -0.20,  0.40, -0.11)
 )
 forrest(dat,
   estimate = "estimate",
   lower    = "lower",
   upper    = "upper",
-  label    = "label",
+  label    = "predictor",
   xlab     = "Regression coefficient (95\% CI)"
 )
 
-# Multiple estimates per row (dodge) — two periods for the same predictors
+# Multiple estimates per row (dodge) - same predictor in two time windows
 dat2 <- data.frame(
-  label    = rep(c("Exposure A", "Exposure B", "Exposure C"), each = 2),
-  period   = rep(c("Early", "Late"), 3),
-  estimate = c(0.42, 0.30, -0.18, -0.10, 0.31, 0.22),
-  lower    = c(0.22, 0.12, -0.38, -0.28, 0.12,  0.04),
-  upper    = c(0.62, 0.48,  0.02,  0.08, 0.50,  0.40)
+  predictor = rep(c("Air pollution (PM2.5)",
+                    "Sedentary behaviour",
+                    "Diet quality score"), each = 2),
+  period    = rep(c("Childhood", "Adulthood"), 3),
+  estimate  = c( 0.18,  0.30, -0.12, -0.22,  0.09,  0.14),
+  lower     = c(-0.02,  0.10, -0.30, -0.40, -0.08, -0.04),
+  upper     = c( 0.38,  0.50,  0.06, -0.04,  0.26,  0.32)
 )
 forrest(dat2,
   estimate = "estimate",
   lower    = "lower",
   upper    = "upper",
-  label    = "label",
+  label    = "predictor",
   group    = "period",
   dodge    = TRUE,
   xlab     = "Regression coefficient (95\% CI)"
