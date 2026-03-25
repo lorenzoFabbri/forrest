@@ -171,14 +171,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../vignettes/forrest.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Getting started with forrest</span></a>
+  <a href="../vignettes/intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction to forrest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vignettes/meta.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Forest plots for meta-analyses</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../vignettes/regression.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Forest plots for regression results</span></a>
+ <span class="menu-text">Forest plots for regression models</span></a>
   </div>
 </li>
       </ul>
@@ -246,7 +252,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="usage" class="level3">
 <h3 class="anchored" data-anchor-id="usage">Usage</h3>
-<pre><code class="language-R">save_forrest(file, plot, width = 7, height = 5, dpi = 300, bg = "white")
+<pre><code class="language-R">save_forrest(file, plot, width = 7, height = 5,
+             dpi = 300, bg = "white")
 </code></pre>
 </section>
 <section id="arguments" class="level3">
@@ -265,7 +272,7 @@ Output file path. Supported extensions: <code>.pdf</code>, <code>.png</code>, <c
 <code id="plot">plot</code>
 </td>
 <td>
-A zero-argument function (or <code>function() { … }</code> block) whose body calls <code>forrest()</code>. It is evaluated inside the open graphics device.
+A zero-argument function whose body calls <code>forrest()</code>. Evaluated inside the open graphics device.
 </td>
 </tr>
 <tr>
@@ -312,10 +319,10 @@ Background colour. Default <code>“white”</code>.
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"forrest"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="fu">c</span>(<span class="st">"Exposure A"</span>, <span class="st">"Exposure B"</span>, <span class="st">"Exposure C"</span>),</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="fu">c</span>(<span class="fl">0.42</span>, <span class="sc">-</span><span class="fl">0.18</span>, <span class="fl">0.31</span>),</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="fu">c</span>(<span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.38</span>, <span class="fl">0.12</span>),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="fu">c</span>(<span class="fl">0.62</span>,  <span class="fl">0.02</span>, <span class="fl">0.50</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="fu">c</span>(<span class="st">"Age (per 10 y)"</span>, <span class="st">"Female sex"</span>, <span class="st">"Current smoker"</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="fu">c</span>(<span class="fl">0.42</span>, <span class="sc">-</span><span class="fl">0.38</span>, <span class="sc">-</span><span class="fl">0.31</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="fu">c</span>(<span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.56</span>, <span class="sc">-</span><span class="fl">0.51</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="fu">c</span>(<span class="fl">0.62</span>, <span class="sc">-</span><span class="fl">0.20</span>, <span class="sc">-</span><span class="fl">0.11</span>)</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".pdf"</span>)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">save_forrest</span>(tmp, <span class="cf">function</span>() {</span>
