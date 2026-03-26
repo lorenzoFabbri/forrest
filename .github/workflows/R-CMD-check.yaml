@@ -45,8 +45,19 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
-      - uses: r-lib/actions/check-r-package@v2
+      - name: Check package (non-Windows)
+        if: runner.os != 'Windows'
+        uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-          build_args: 'c("--no-manual", if (.Platform$OS.type == "windows") "--no-build-vignettes" else "--compact-vignettes=qpdf")'
-          args: 'c("--no-manual", "--as-cran", if (.Platform$OS.type == "windows") "--no-vignettes" else character(0))'
+          build_args: 'c("--no-manual", "--compact-vignettes=qpdf")'
+          args: 'c("--no-manual", "--as-cran")'
+
+      - name: Check package (Windows)
+        if: runner.os == 'Windows'
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual", "--no-build-vignettes")'
+          args: 'c("--no-manual", "--as-cran", "--no-vignettes")'
+          error-on: '"error"'
