@@ -34,9 +34,6 @@
 #'   )
 #' })
 #'
-#' @usage
-#' save_forrest(file, plot, width = 7, height = 5,
-#'              dpi = 300, bg = "white")
 #' @export
 save_forrest <- function(
   file,

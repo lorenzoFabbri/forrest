@@ -4,8 +4,7 @@
 \alias{save_forrest}
 \title{Save a forest plot to a file}
 \usage{
-save_forrest(file, plot, width = 7, height = 5,
-             dpi = 300, bg = "white")
+save_forrest(file, plot, width = 7, height = 5, dpi = 300, bg = "white")
 }
 \arguments{
 \item{file}{Output file path. Supported extensions: \code{.pdf}, \code{.png}, \code{.svg},
