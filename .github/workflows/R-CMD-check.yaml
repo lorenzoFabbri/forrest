@@ -48,5 +48,5 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-          build_args: 'c("--no-manual", "--compact-vignettes=qpdf")'
+          build_args: 'c("--no-manual", if (.Platform$OS.type == "windows") "--no-build-vignettes" else "--compact-vignettes=qpdf")'
           args: 'c("--no-manual", "--as-cran", if (.Platform$OS.type == "windows") "--no-build-vignettes" else character(0))'
