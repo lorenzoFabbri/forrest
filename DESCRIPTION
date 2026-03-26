@@ -3,7 +3,7 @@ Title: Publication-Ready Forest Plots
 Version: 0.3.0
 Authors@R: c(
     person("Lorenzo", "Fabbri", email = "lorenzo.fabbri92sm@gmail.com",
-           role = c("aut", "cre"))
+           role = c("aut", "cre", "cph"))
   )
 Description: Creates publication-ready forest plots from any tabular data
     containing point estimates and confidence intervals. Suitable for
@@ -17,6 +17,7 @@ Description: Creates publication-ready forest plots from any tabular data
     visual styling with a minimal dependency footprint.
 License: MIT + file LICENSE
 Encoding: UTF-8
+Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Depends:

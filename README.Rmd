@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/lorenzoFabbri/forrest/branch/main/graph/badge.svg)](https://app.codecov.io/gh/lorenzoFabbri/forrest?branch=main)
 [![](https://cranlogs.r-pkg.org/badges/forrest)](https://cran.r-project.org/package=forrest)
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95-yellow.svg)](https://www.buymeacoffee.com/epilorenzo)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95-yellow.svg)](https://buymeacoffee.com/epilorenzo)
 <!-- badges: end -->
 
 `forrest` creates publication-ready forest plots from any data frame that
@@ -50,6 +50,8 @@ footprint minimal.
 ## Installation
 
 ```{r, eval = FALSE}
+install.packages("forrest")
+
 # Development version from GitHub:
 # install.packages("pak")
 pak::pak("lorenzoFabbri/forrest")
@@ -57,51 +59,37 @@ pak::pak("lorenzoFabbri/forrest")
 
 ## Quick start
 
-### Regression model predictors
+### Introduction
 
-Use [`broom::tidy()`](https://broom.tidymodels.org/) to extract parameters
-from a fitted model and pass the result directly to `forrest()`. The `cols`
-argument adds a formatted text column alongside the plot; `header` labels the
-row-label panel.
+The minimal call requires only three column names — `estimate`, `lower`, and
+`upper`. Use `group` and `dodge = TRUE` to place multiple CIs per row when
+comparing results across categories (e.g., time periods, sexes, models).
+See the [Introduction vignette](https://lorenzofabbri.github.io/forrest/vignettes/intro.html)
+for the full feature tour.
 
-```{r regression, fig.height = 4.5, fig.width = 9}
+```{r intro, fig.height = 4, fig.width = 9}
 library(forrest)
 
-set.seed(1)
-n   <- 300
-dat <- data.frame(
-  sbp    = 120 + rnorm(n, sd = 15),
-  age    = runif(n, 30, 70),
-  female = rbinom(n, 1, 0.5),
-  bmi    = rnorm(n, 26, 4),
-  smoker = rbinom(n, 1, 0.2)
-)
-dat$sbp <- dat$sbp + 0.3 * dat$age - 4 * dat$female +
-           0.5 * dat$bmi - 2 * dat$smoker + rnorm(n, sd = 6)
-
-fit   <- lm(sbp ~ age + female + bmi + smoker, data = dat)
-coefs <- broom::tidy(fit, conf.int = TRUE)
-coefs <- coefs[coefs$term != "(Intercept)", ]
-coefs$term <- c("Age (per 1 y)", "Female sex",
-                "BMI (per 1 kg/m²)", "Current smoker")
-
-# Formatted text column shown alongside the plot
-coefs$coef_ci <- sprintf(
-  "%.2f (%.2f, %.2f)",
-  coefs$estimate, coefs$conf.low, coefs$conf.high
+# Two estimates per exposure (e.g., two time windows)
+periods <- data.frame(
+  exposure = rep(c("Metals", "OPPs", "PFAS", "Phenols", "Phthalates"), each = 2),
+  period   = rep(c("Pregnancy", "Childhood"), 5),
+  est      = c( 0.03, -0.04, -0.03,  0.04, -0.17, -0.02,  0.10, -0.02,  0.07,  0.10),
+  lo       = c(-0.25, -0.26, -0.19, -0.12, -0.40, -0.24, -0.06, -0.10, -0.15, -0.08),
+  hi       = c( 0.30,  0.19,  0.13,  0.21,  0.06,  0.19,  0.26,  0.07,  0.29,  0.28)
 )
 
 forrest(
-  coefs,
-  estimate = "estimate",
-  lower    = "conf.low",
-  upper    = "conf.high",
-  label    = "term",
-  header   = "Predictor",
-  cols     = c("Coef (95% CI)" = "coef_ci"),
-  widths   = c(3, 4, 2.5),
-  xlab     = "Regression coefficient (95% CI)",
-  stripe   = TRUE
+  periods,
+  estimate = "est",
+  lower    = "lo",
+  upper    = "hi",
+  label    = "exposure",
+  group    = "period",
+  dodge    = TRUE,
+  header   = "Exposure class",
+  ref_line = 0,
+  xlab     = "Coefficient (95% CI)"
 )
 ```
 
@@ -109,7 +97,9 @@ forrest(
 
 Use `log_scale = TRUE` and `ref_line = 1` for ratio measures, `is_summary = TRUE`
 to draw the pooled row as a filled diamond, and `weight` to scale point sizes by
-inverse-variance weights.
+inverse-variance weights. See the
+[Meta-analysis vignette](https://lorenzofabbri.github.io/forrest/vignettes/meta.html)
+for subgroup analyses and multi-exposure layouts.
 
 ```{r meta, fig.height = 4.5, fig.width = 9}
 ma <- data.frame(
@@ -140,32 +130,51 @@ forrest(
 )
 ```
 
-### Multiple estimates per row
+### Regression models
 
-Set `dodge = TRUE` and supply a `group` column to stack multiple CIs within
-each row — useful for comparing results across time periods, sexes, models,
-or any other categorical dimension.
+Use [`broom::tidy()`](https://broom.tidymodels.org/) to extract parameters
+from a fitted model and pass the result directly to `forrest()`. The `cols`
+argument adds a formatted text column alongside the plot; `header` labels the
+row-label panel. See the
+[Regression models vignette](https://lorenzofabbri.github.io/forrest/vignettes/regression.html)
+for progressive adjustment, multiple outcomes, dose-response, and causal
+inference (g-computation, IPW) examples.
 
-```{r dodge, fig.height = 4, fig.width = 9}
-periods <- data.frame(
-  exposure = rep(c("Metals", "OPPs", "PFAS", "Phenols", "Phthalates"), each = 2),
-  period   = rep(c("Pregnancy", "Childhood"), 5),
-  est      = c( 0.03, -0.04, -0.03,  0.04, -0.17, -0.02,  0.10, -0.02,  0.07,  0.10),
-  lo       = c(-0.25, -0.26, -0.19, -0.12, -0.40, -0.24, -0.06, -0.10, -0.15, -0.08),
-  hi       = c( 0.30,  0.19,  0.13,  0.21,  0.06,  0.19,  0.26,  0.07,  0.29,  0.28)
+```{r regression, fig.height = 4.5, fig.width = 9}
+set.seed(1)
+n   <- 300
+dat <- data.frame(
+  sbp    = 120 + rnorm(n, sd = 15),
+  age    = runif(n, 30, 70),
+  female = rbinom(n, 1, 0.5),
+  bmi    = rnorm(n, 26, 4),
+  smoker = rbinom(n, 1, 0.2)
+)
+dat$sbp <- dat$sbp + 0.3 * dat$age - 4 * dat$female +
+           0.5 * dat$bmi - 2 * dat$smoker + rnorm(n, sd = 6)
+
+fit   <- lm(sbp ~ age + female + bmi + smoker, data = dat)
+coefs <- broom::tidy(fit, conf.int = TRUE)
+coefs <- coefs[coefs$term != "(Intercept)", ]
+coefs$term <- c("Age (per 1 y)", "Female sex",
+                "BMI (per 1 kg/m²)", "Current smoker")
+
+coefs$coef_ci <- sprintf(
+  "%.2f (%.2f, %.2f)",
+  coefs$estimate, coefs$conf.low, coefs$conf.high
 )
 
 forrest(
-  periods,
-  estimate = "est",
-  lower    = "lo",
-  upper    = "hi",
-  label    = "exposure",
-  group    = "period",
-  dodge    = TRUE,
-  header   = "Exposure class",
-  ref_line = 0,
-  xlab     = "Coefficient (95% CI)"
+  coefs,
+  estimate = "estimate",
+  lower    = "conf.low",
+  upper    = "conf.high",
+  label    = "term",
+  header   = "Predictor",
+  cols     = c("Coef (95% CI)" = "coef_ci"),
+  widths   = c(3, 4, 2.5),
+  xlab     = "Regression coefficient (95% CI)",
+  stripe   = TRUE
 )
 ```
 

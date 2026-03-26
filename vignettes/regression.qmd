@@ -472,10 +472,10 @@ strata <- list(
 rows <- do.call(rbind, lapply(strata, function(s) {
   # G-computation: standard avg_comparisons on the interaction model
   gc  <- avg_comparisons(fit_sbp,     variables = "activity",
-                          vcov = "HC3", newdata = s$nd)
-  # IPW (Hajek): pass trimmed weights via the `wts` argument
+                          newdata = s$nd)
+  # IPW (Hajek): weighted outcome model + Hajek normalisation via `wts`
   ipw <- avg_comparisons(fit_sbp_ipw, variables = "activity",
-                          wts = "ipw_t", vcov = "HC3", newdata = s$nd)
+                          wts = "ipw_t", newdata = s$nd)
   rbind(
     data.frame(label = s$label, method = "G-computation",
                estimate = gc$estimate,  lower = gc$conf.low,

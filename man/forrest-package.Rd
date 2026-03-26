@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Lorenzo Fabbri \email{lorenzo.fabbri92sm@gmail.com}
+\strong{Maintainer}: Lorenzo Fabbri \email{lorenzo.fabbri92sm@gmail.com} [copyright holder]
 
 }
 \keyword{internal}
