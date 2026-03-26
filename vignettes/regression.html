@@ -687,10 +687,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>rows <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(strata, <span class="cf">function</span>(s) {</span>
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># G-computation: standard avg_comparisons on the interaction model</span></span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  gc  <span class="ot">&lt;-</span> <span class="fu">avg_comparisons</span>(fit_sbp,     <span class="at">variables =</span> <span class="st">"activity"</span>,</span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>                          <span class="at">vcov =</span> <span class="st">"HC3"</span>, <span class="at">newdata =</span> s<span class="sc">$</span>nd)</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># IPW (Hajek): pass trimmed weights via the `wts` argument</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>                          <span class="at">newdata =</span> s<span class="sc">$</span>nd)</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># IPW (Hajek): weighted outcome model + Hajek normalisation via `wts`</span></span>
 <span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  ipw <span class="ot">&lt;-</span> <span class="fu">avg_comparisons</span>(fit_sbp_ipw, <span class="at">variables =</span> <span class="st">"activity"</span>,</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>                          <span class="at">wts =</span> <span class="st">"ipw_t"</span>, <span class="at">vcov =</span> <span class="st">"HC3"</span>, <span class="at">newdata =</span> s<span class="sc">$</span>nd)</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>                          <span class="at">wts =</span> <span class="st">"ipw_t"</span>, <span class="at">newdata =</span> s<span class="sc">$</span>nd)</span>
 <span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
 <span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(<span class="at">label =</span> s<span class="sc">$</span>label, <span class="at">method =</span> <span class="st">"G-computation"</span>,</span>
 <span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>               <span class="at">estimate =</span> gc<span class="sc">$</span>estimate,  <span class="at">lower =</span> gc<span class="sc">$</span>conf.low,</span>
@@ -700,93 +700,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>               <span class="at">upper    =</span> ipw<span class="sc">$</span>conf.high, <span class="at">is_sum =</span> s<span class="sc">$</span>is_sum)</span>
 <span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>}))</span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Unable to extract a variance-covariance matrix using this `vcov`</span></span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument. Standard errors are computed using the default variance instead.</span></span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perhaps the model or argument is not supported by the `sandwich` ('HC0', 'HC3',</span></span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ~clusterid, etc.) or `clubSandwich` ('CR0', etc.) packages. If you believe that</span></span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; the model is supported by one of these two packages, you can open a feature</span></span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; request on Github.</span></span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Unable to extract a variance-covariance matrix using this `vcov`</span></span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument. Standard errors are computed using the default variance instead.</span></span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perhaps the model or argument is not supported by the `sandwich` ('HC0', 'HC3',</span></span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ~clusterid, etc.) or `clubSandwich` ('CR0', etc.) packages. If you believe that</span></span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; the model is supported by one of these two packages, you can open a feature</span></span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; request on Github.</span></span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Unable to extract a variance-covariance matrix using this `vcov`</span></span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument. Standard errors are computed using the default variance instead.</span></span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perhaps the model or argument is not supported by the `sandwich` ('HC0', 'HC3',</span></span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ~clusterid, etc.) or `clubSandwich` ('CR0', etc.) packages. If you believe that</span></span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; the model is supported by one of these two packages, you can open a feature</span></span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; request on Github.</span></span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Unable to extract a variance-covariance matrix using this `vcov`</span></span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument. Standard errors are computed using the default variance instead.</span></span>
-<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perhaps the model or argument is not supported by the `sandwich` ('HC0', 'HC3',</span></span>
-<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ~clusterid, etc.) or `clubSandwich` ('CR0', etc.) packages. If you believe that</span></span>
-<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; the model is supported by one of these two packages, you can open a feature</span></span>
-<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; request on Github.</span></span>
-<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Unable to extract a variance-covariance matrix using this `vcov`</span></span>
-<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument. Standard errors are computed using the default variance instead.</span></span>
-<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perhaps the model or argument is not supported by the `sandwich` ('HC0', 'HC3',</span></span>
-<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ~clusterid, etc.) or `clubSandwich` ('CR0', etc.) packages. If you believe that</span></span>
-<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; the model is supported by one of these two packages, you can open a feature</span></span>
-<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; request on Github.</span></span>
-<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Unable to extract a variance-covariance matrix using this `vcov`</span></span>
-<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument. Standard errors are computed using the default variance instead.</span></span>
-<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perhaps the model or argument is not supported by the `sandwich` ('HC0', 'HC3',</span></span>
-<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ~clusterid, etc.) or `clubSandwich` ('CR0', etc.) packages. If you believe that</span></span>
-<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; the model is supported by one of these two packages, you can open a feature</span></span>
-<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; request on Github.</span></span>
-<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Unable to extract a variance-covariance matrix using this `vcov`</span></span>
-<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument. Standard errors are computed using the default variance instead.</span></span>
-<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perhaps the model or argument is not supported by the `sandwich` ('HC0', 'HC3',</span></span>
-<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ~clusterid, etc.) or `clubSandwich` ('CR0', etc.) packages. If you believe that</span></span>
-<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; the model is supported by one of these two packages, you can open a feature</span></span>
-<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; request on Github.</span></span>
-<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Unable to extract a variance-covariance matrix using this `vcov`</span></span>
-<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument. Standard errors are computed using the default variance instead.</span></span>
-<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perhaps the model or argument is not supported by the `sandwich` ('HC0', 'HC3',</span></span>
-<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ~clusterid, etc.) or `clubSandwich` ('CR0', etc.) packages. If you believe that</span></span>
-<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; the model is supported by one of these two packages, you can open a feature</span></span>
-<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; request on Github.</span></span>
-<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Unable to extract a variance-covariance matrix using this `vcov`</span></span>
-<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument. Standard errors are computed using the default variance instead.</span></span>
-<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perhaps the model or argument is not supported by the `sandwich` ('HC0', 'HC3',</span></span>
-<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ~clusterid, etc.) or `clubSandwich` ('CR0', etc.) packages. If you believe that</span></span>
-<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; the model is supported by one of these two packages, you can open a feature</span></span>
-<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; request on Github.</span></span>
-<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Unable to extract a variance-covariance matrix using this `vcov`</span></span>
-<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; argument. Standard errors are computed using the default variance instead.</span></span>
-<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Perhaps the model or argument is not supported by the `sandwich` ('HC0', 'HC3',</span></span>
-<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ~clusterid, etc.) or `clubSandwich` ('CR0', etc.) packages. If you believe that</span></span>
-<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; the model is supported by one of these two packages, you can open a feature</span></span>
-<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; request on Github.</span></span>
-<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate text columns per method for cols_by_group display</span></span>
-<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>rows<span class="sc">$</span>text_gc  <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(rows<span class="sc">$</span>method <span class="sc">==</span> <span class="st">"G-computation"</span>,</span>
-<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">sprintf</span>(<span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
-<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>                                 rows<span class="sc">$</span>estimate, rows<span class="sc">$</span>lower, rows<span class="sc">$</span>upper), <span class="st">""</span>)</span>
-<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>rows<span class="sc">$</span>text_ipw <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(rows<span class="sc">$</span>method <span class="sc">==</span> <span class="st">"IPW (Hajek)"</span>,</span>
-<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">sprintf</span>(<span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
-<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>                                 rows<span class="sc">$</span>estimate, rows<span class="sc">$</span>lower, rows<span class="sc">$</span>upper), <span class="st">""</span>)</span>
-<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>  rows,</span>
-<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate      =</span> <span class="st">"estimate"</span>,</span>
-<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower         =</span> <span class="st">"lower"</span>,</span>
-<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper         =</span> <span class="st">"upper"</span>,</span>
-<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">label         =</span> <span class="st">"label"</span>,</span>
-<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>  <span class="at">group         =</span> <span class="st">"method"</span>,</span>
-<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_summary    =</span> <span class="st">"is_sum"</span>,</span>
-<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>  <span class="at">dodge         =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols_by_group =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols          =</span> <span class="fu">c</span>(<span class="st">"G-comp (95% CI)"</span> <span class="ot">=</span> <span class="st">"text_gc"</span>,</span>
-<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"IPW (95% CI)"</span>    <span class="ot">=</span> <span class="st">"text_ipw"</span>),</span>
-<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths        =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="fl">3.5</span>, <span class="fl">2.5</span>, <span class="fl">2.5</span>),</span>
-<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line      =</span> <span class="dv">0</span>,</span>
-<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_pos    =</span> <span class="st">"topright"</span>,</span>
-<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>  <span class="at">header        =</span> <span class="st">"Subgroup"</span>,</span>
-<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab          =</span> <span class="st">"Marginal effect on SBP (mmHg): physical activity (95% CI)"</span></span>
-<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate text columns per method for cols_by_group display</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>rows<span class="sc">$</span>text_gc  <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(rows<span class="sc">$</span>method <span class="sc">==</span> <span class="st">"G-computation"</span>,</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">sprintf</span>(<span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>                                 rows<span class="sc">$</span>estimate, rows<span class="sc">$</span>lower, rows<span class="sc">$</span>upper), <span class="st">""</span>)</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>rows<span class="sc">$</span>text_ipw <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(rows<span class="sc">$</span>method <span class="sc">==</span> <span class="st">"IPW (Hajek)"</span>,</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">sprintf</span>(<span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>                                 rows<span class="sc">$</span>estimate, rows<span class="sc">$</span>lower, rows<span class="sc">$</span>upper), <span class="st">""</span>)</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>  rows,</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate      =</span> <span class="st">"estimate"</span>,</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower         =</span> <span class="st">"lower"</span>,</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper         =</span> <span class="st">"upper"</span>,</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">label         =</span> <span class="st">"label"</span>,</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">group         =</span> <span class="st">"method"</span>,</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_summary    =</span> <span class="st">"is_sum"</span>,</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>  <span class="at">dodge         =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols_by_group =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols          =</span> <span class="fu">c</span>(<span class="st">"G-comp (95% CI)"</span> <span class="ot">=</span> <span class="st">"text_gc"</span>,</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"IPW (95% CI)"</span>    <span class="ot">=</span> <span class="st">"text_ipw"</span>),</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths        =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="fl">3.5</span>, <span class="fl">2.5</span>, <span class="fl">2.5</span>),</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line      =</span> <span class="dv">0</span>,</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_pos    =</span> <span class="st">"topright"</span>,</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">header        =</span> <span class="st">"Subgroup"</span>,</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab          =</span> <span class="st">"Marginal effect on SBP (mmHg): physical activity (95% CI)"</span></span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">

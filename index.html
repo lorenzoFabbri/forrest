@@ -248,7 +248,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="forrest" class="level1">
 <h1>forrest <img src="man/figures/logo.png" align="right" height="139" alt=""></h1>
 <!-- badges: start -->
-<p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" class="img-fluid" alt="Lifecycle: experimental"></a> <a href="https://CRAN.R-project.org/package=forrest"><img src="https://www.r-pkg.org/badges/version/forrest.png" class="img-fluid" alt="CRAN status"></a> <a href="https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml"><img src="https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml/badge.svg" class="img-fluid" alt="R-CMD-check"></a> <a href="https://app.codecov.io/gh/lorenzoFabbri/forrest?branch=main"><img src="https://codecov.io/gh/lorenzoFabbri/forrest/branch/main/graph/badge.svg" class="img-fluid" alt="Codecov test coverage"></a> <a href="https://cran.r-project.org/package=forrest"><img src="https://cranlogs.r-pkg.org/badges/forrest.png" class="img-fluid"></a> <a href="https://www.buymeacoffee.com/epilorenzo"><img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95-yellow.svg" class="img-fluid" alt="Buy Me A Coffee"></a> <!-- badges: end --></p>
+<p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" class="img-fluid" alt="Lifecycle: experimental"></a> <a href="https://CRAN.R-project.org/package=forrest"><img src="https://www.r-pkg.org/badges/version/forrest.png" class="img-fluid" alt="CRAN status"></a> <a href="https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml"><img src="https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml/badge.svg" class="img-fluid" alt="R-CMD-check"></a> <a href="https://app.codecov.io/gh/lorenzoFabbri/forrest?branch=main"><img src="https://codecov.io/gh/lorenzoFabbri/forrest/branch/main/graph/badge.svg" class="img-fluid" alt="Codecov test coverage"></a> <a href="https://cran.r-project.org/package=forrest"><img src="https://cranlogs.r-pkg.org/badges/forrest.png" class="img-fluid"></a> <a href="https://buymeacoffee.com/epilorenzo"><img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95-yellow.svg" class="img-fluid" alt="Buy Me A Coffee"></a> <!-- badges: end --></p>
 <p><code>forrest</code> creates publication-ready forest plots from any data frame that contains point estimates and confidence intervals — regression models, subgroup analyses, meta-analyses, dose-response patterns, and more. A single dependency (<a href="https://github.com/grantmcdermott/tinyplot">tinyplot</a>) keeps the footprint minimal.</p>
 <p><strong>Key features:</strong></p>
 <ul>
@@ -266,58 +266,45 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <section id="installation" class="level2">
 <h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Development version from GitHub:</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("pak")</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"lorenzoFabbri/forrest"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"forrest"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Development version from GitHub:</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("pak")</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"lorenzoFabbri/forrest"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="quick-start" class="level2">
 <h2 class="anchored" data-anchor-id="quick-start">Quick start</h2>
-<section id="regression-model-predictors" class="level3">
-<h3 class="anchored" data-anchor-id="regression-model-predictors">Regression model predictors</h3>
-<p>Use <a href="https://broom.tidymodels.org/"><code>broom::tidy()</code></a> to extract parameters from a fitted model and pass the result directly to <code>forrest()</code>. The <code>cols</code> argument adds a formatted text column alongside the plot; <code>header</code> labels the row-label panel.</p>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>The minimal call requires only three column names — <code>estimate</code>, <code>lower</code>, and <code>upper</code>. Use <code>group</code> and <code>dodge = TRUE</code> to place multiple CIs per row when comparing results across categories (e.g., time periods, sexes, models). See the <a href="https://lorenzofabbri.github.io/forrest/vignettes/intro.html">Introduction vignette</a> for the full feature tour.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forrest)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>n   <span class="ot">&lt;-</span> <span class="dv">300</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sbp    =</span> <span class="dv">120</span> <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="dv">15</span>),</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">age    =</span> <span class="fu">runif</span>(n, <span class="dv">30</span>, <span class="dv">70</span>),</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">female =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>),</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">bmi    =</span> <span class="fu">rnorm</span>(n, <span class="dv">26</span>, <span class="dv">4</span>),</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">smoker =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.2</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>sbp <span class="ot">&lt;-</span> dat<span class="sc">$</span>sbp <span class="sc">+</span> <span class="fl">0.3</span> <span class="sc">*</span> dat<span class="sc">$</span>age <span class="sc">-</span> <span class="dv">4</span> <span class="sc">*</span> dat<span class="sc">$</span>female <span class="sc">+</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>           <span class="fl">0.5</span> <span class="sc">*</span> dat<span class="sc">$</span>bmi <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> dat<span class="sc">$</span>smoker <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="dv">6</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>fit   <span class="ot">&lt;-</span> <span class="fu">lm</span>(sbp <span class="sc">~</span> age <span class="sc">+</span> female <span class="sc">+</span> bmi <span class="sc">+</span> smoker, <span class="at">data =</span> dat)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> broom<span class="sc">::</span><span class="fu">tidy</span>(fit, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> coefs[coefs<span class="sc">$</span>term <span class="sc">!=</span> <span class="st">"(Intercept)"</span>, ]</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>coefs<span class="sc">$</span>term <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Age (per 1 y)"</span>, <span class="st">"Female sex"</span>,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                <span class="st">"BMI (per 1 kg/m²)"</span>, <span class="st">"Current smoker"</span>)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Formatted text column shown alongside the plot</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>coefs<span class="sc">$</span>coef_ci <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  coefs<span class="sc">$</span>estimate, coefs<span class="sc">$</span>conf.low, coefs<span class="sc">$</span>conf.high</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  coefs,</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"conf.low"</span>,</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"conf.high"</span>,</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"term"</span>,</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">header   =</span> <span class="st">"Predictor"</span>,</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols     =</span> <span class="fu">c</span>(<span class="st">"Coef (95% CI)"</span> <span class="ot">=</span> <span class="st">"coef_ci"</span>),</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths   =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="fl">2.5</span>),</span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Regression coefficient (95% CI)"</span>,</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">stripe   =</span> <span class="cn">TRUE</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><img src="man/figures/README-regression-1.png" alt="" width="100%"></p>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Two estimates per exposure (e.g., two time windows)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>periods <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Metals"</span>, <span class="st">"OPPs"</span>, <span class="st">"PFAS"</span>, <span class="st">"Phenols"</span>, <span class="st">"Phthalates"</span>), <span class="at">each =</span> <span class="dv">2</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">period   =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Pregnancy"</span>, <span class="st">"Childhood"</span>), <span class="dv">5</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">est      =</span> <span class="fu">c</span>( <span class="fl">0.03</span>, <span class="sc">-</span><span class="fl">0.04</span>, <span class="sc">-</span><span class="fl">0.03</span>,  <span class="fl">0.04</span>, <span class="sc">-</span><span class="fl">0.17</span>, <span class="sc">-</span><span class="fl">0.02</span>,  <span class="fl">0.10</span>, <span class="sc">-</span><span class="fl">0.02</span>,  <span class="fl">0.07</span>,  <span class="fl">0.10</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo       =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.25</span>, <span class="sc">-</span><span class="fl">0.26</span>, <span class="sc">-</span><span class="fl">0.19</span>, <span class="sc">-</span><span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.40</span>, <span class="sc">-</span><span class="fl">0.24</span>, <span class="sc">-</span><span class="fl">0.06</span>, <span class="sc">-</span><span class="fl">0.10</span>, <span class="sc">-</span><span class="fl">0.15</span>, <span class="sc">-</span><span class="fl">0.08</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi       =</span> <span class="fu">c</span>( <span class="fl">0.30</span>,  <span class="fl">0.19</span>,  <span class="fl">0.13</span>,  <span class="fl">0.21</span>,  <span class="fl">0.06</span>,  <span class="fl">0.19</span>,  <span class="fl">0.26</span>,  <span class="fl">0.07</span>,  <span class="fl">0.29</span>,  <span class="fl">0.28</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  periods,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"est"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"lo"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"hi"</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"exposure"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">group    =</span> <span class="st">"period"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">dodge    =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">header   =</span> <span class="st">"Exposure class"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line =</span> <span class="dv">0</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Coefficient (95% CI)"</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><img src="man/figures/README-intro-1.png" alt="" width="100%"></p>
 </section>
 <section id="meta-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="meta-analysis">Meta-analysis</h3>
-<p>Use <code>log_scale = TRUE</code> and <code>ref_line = 1</code> for ratio measures, <code>is_summary = TRUE</code> to draw the pooled row as a filled diamond, and <code>weight</code> to scale point sizes by inverse-variance weights.</p>
+<p>Use <code>log_scale = TRUE</code> and <code>ref_line = 1</code> for ratio measures, <code>is_summary = TRUE</code> to draw the pooled row as a filled diamond, and <code>weight</code> to scale point sizes by inverse-variance weights. See the <a href="https://lorenzofabbri.github.io/forrest/vignettes/meta.html">Meta-analysis vignette</a> for subgroup analyses and multi-exposure layouts.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ma <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">study  =</span> <span class="fu">c</span>(<span class="st">"Adams 2016"</span>, <span class="st">"Baker 2018"</span>, <span class="st">"Chen 2019"</span>,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Davis 2020"</span>, <span class="st">"Evans 2021"</span>, <span class="st">"Pooled"</span>),</span>
@@ -346,30 +333,45 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><img src="man/figures/README-meta-1.png" alt="" width="100%"></p>
 </section>
-<section id="multiple-estimates-per-row" class="level3">
-<h3 class="anchored" data-anchor-id="multiple-estimates-per-row">Multiple estimates per row</h3>
-<p>Set <code>dodge = TRUE</code> and supply a <code>group</code> column to stack multiple CIs within each row — useful for comparing results across time periods, sexes, models, or any other categorical dimension.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>periods <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Metals"</span>, <span class="st">"OPPs"</span>, <span class="st">"PFAS"</span>, <span class="st">"Phenols"</span>, <span class="st">"Phthalates"</span>), <span class="at">each =</span> <span class="dv">2</span>),</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">period   =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Pregnancy"</span>, <span class="st">"Childhood"</span>), <span class="dv">5</span>),</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est      =</span> <span class="fu">c</span>( <span class="fl">0.03</span>, <span class="sc">-</span><span class="fl">0.04</span>, <span class="sc">-</span><span class="fl">0.03</span>,  <span class="fl">0.04</span>, <span class="sc">-</span><span class="fl">0.17</span>, <span class="sc">-</span><span class="fl">0.02</span>,  <span class="fl">0.10</span>, <span class="sc">-</span><span class="fl">0.02</span>,  <span class="fl">0.07</span>,  <span class="fl">0.10</span>),</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo       =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.25</span>, <span class="sc">-</span><span class="fl">0.26</span>, <span class="sc">-</span><span class="fl">0.19</span>, <span class="sc">-</span><span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.40</span>, <span class="sc">-</span><span class="fl">0.24</span>, <span class="sc">-</span><span class="fl">0.06</span>, <span class="sc">-</span><span class="fl">0.10</span>, <span class="sc">-</span><span class="fl">0.15</span>, <span class="sc">-</span><span class="fl">0.08</span>),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi       =</span> <span class="fu">c</span>( <span class="fl">0.30</span>,  <span class="fl">0.19</span>,  <span class="fl">0.13</span>,  <span class="fl">0.21</span>,  <span class="fl">0.06</span>,  <span class="fl">0.19</span>,  <span class="fl">0.26</span>,  <span class="fl">0.07</span>,  <span class="fl">0.29</span>,  <span class="fl">0.28</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  periods,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"est"</span>,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"lo"</span>,</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"hi"</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"exposure"</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">group    =</span> <span class="st">"period"</span>,</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">dodge    =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">header   =</span> <span class="st">"Exposure class"</span>,</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line =</span> <span class="dv">0</span>,</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Coefficient (95% CI)"</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><img src="man/figures/README-dodge-1.png" alt="" width="100%"></p>
+<section id="regression-models" class="level3">
+<h3 class="anchored" data-anchor-id="regression-models">Regression models</h3>
+<p>Use <a href="https://broom.tidymodels.org/"><code>broom::tidy()</code></a> to extract parameters from a fitted model and pass the result directly to <code>forrest()</code>. The <code>cols</code> argument adds a formatted text column alongside the plot; <code>header</code> labels the row-label panel. See the <a href="https://lorenzofabbri.github.io/forrest/vignettes/regression.html">Regression models vignette</a> for progressive adjustment, multiple outcomes, dose-response, and causal inference (g-computation, IPW) examples.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>n   <span class="ot">&lt;-</span> <span class="dv">300</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sbp    =</span> <span class="dv">120</span> <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="dv">15</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">age    =</span> <span class="fu">runif</span>(n, <span class="dv">30</span>, <span class="dv">70</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">female =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">bmi    =</span> <span class="fu">rnorm</span>(n, <span class="dv">26</span>, <span class="dv">4</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">smoker =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.2</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>sbp <span class="ot">&lt;-</span> dat<span class="sc">$</span>sbp <span class="sc">+</span> <span class="fl">0.3</span> <span class="sc">*</span> dat<span class="sc">$</span>age <span class="sc">-</span> <span class="dv">4</span> <span class="sc">*</span> dat<span class="sc">$</span>female <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>           <span class="fl">0.5</span> <span class="sc">*</span> dat<span class="sc">$</span>bmi <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> dat<span class="sc">$</span>smoker <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="dv">6</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>fit   <span class="ot">&lt;-</span> <span class="fu">lm</span>(sbp <span class="sc">~</span> age <span class="sc">+</span> female <span class="sc">+</span> bmi <span class="sc">+</span> smoker, <span class="at">data =</span> dat)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> broom<span class="sc">::</span><span class="fu">tidy</span>(fit, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> coefs[coefs<span class="sc">$</span>term <span class="sc">!=</span> <span class="st">"(Intercept)"</span>, ]</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>coefs<span class="sc">$</span>term <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Age (per 1 y)"</span>, <span class="st">"Female sex"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                <span class="st">"BMI (per 1 kg/m²)"</span>, <span class="st">"Current smoker"</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>coefs<span class="sc">$</span>coef_ci <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  coefs<span class="sc">$</span>estimate, coefs<span class="sc">$</span>conf.low, coefs<span class="sc">$</span>conf.high</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  coefs,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"conf.low"</span>,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"conf.high"</span>,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"term"</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">header   =</span> <span class="st">"Predictor"</span>,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols     =</span> <span class="fu">c</span>(<span class="st">"Coef (95% CI)"</span> <span class="ot">=</span> <span class="st">"coef_ci"</span>),</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths   =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="fl">2.5</span>),</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Regression coefficient (95% CI)"</span>,</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">stripe   =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><img src="man/figures/README-regression-1.png" alt="" width="100%"></p>
 </section>
 </section>
 <section id="compared-with-other-packages" class="level2">
