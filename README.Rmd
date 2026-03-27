@@ -219,16 +219,16 @@ forrest(
 | Feature                                   | forrest | forestplot | forestploter | ggforestplot |
 | ----------------------------------------- | :-----: | :--------: | :----------: | :----------: |
 | Minimal dependencies                      |   ✅    |     ❌     |      ❌      |      ❌      |
-| General (not meta-analysis only)          |   ✅    |     ⚠️     |      ⚠️      |      ❌      |
+| General (not meta-analysis only)          |   ✅    |     ✅     |      ✅      |      ⚠️      |
 | Study weight sizing                       |   ✅    |     ✅     |      ✅      |      ❌      |
-| Auto section headers from grouping column |   ✅    |     ❌     |      ❌      |      ❌      |
+| Auto section headers from grouping column |   ✅    |     ⚠️     |      ❌      |      ❌      |
 | Two-level nested section hierarchy        |   ✅    |     ❌     |      ❌      |      ❌      |
-| Summary diamonds                          |   ✅    |     ✅     |      ✅      |      ✅      |
+| Summary diamonds                          |   ✅    |     ✅     |      ✅      |      ❌      |
 | Text columns                              |   ✅    |     ✅     |      ✅      |      ❌      |
-| Alternating row stripes                   |   ✅    |     ❌     |      ✅      |      ❌      |
-| CI clipping with arrows                   |   ✅    |     ✅     |      ❌      |      ❌      |
-| Group colouring + legend                  |   ✅    |     ❌     |      ✅      |      ✅      |
-| Log-scale axis                            |   ✅    |     ✅     |      ✅      |      ❌      |
-| Export helper                             |   ✅    |     ❌     |      ❌      |      ❌      |
+| Alternating row stripes                   |   ✅    |     ✅     |      ✅      |      ✅      |
+| CI clipping with arrows                   |   ✅    |     ✅     |      ⚠️      |      ❌      |
+| Group colouring + legend                  |   ✅    |     ✅     |      ✅      |      ✅      |
+| Log-scale axis                            |   ✅    |     ✅     |      ✅      |      ✅      |
+| Export helper                             |   ✅    |     ❌     |      ⚠️      |      ❌      |
 | data.table support                        |   ✅    |     ❌     |      ❌      |      ❌      |
-| Actively maintained                       |   ✅    |     ⚠️     |      ✅      |      ❌      |
+| Actively maintained                       |   ✅    |     ✅     |      ✅      |      ❌      |
