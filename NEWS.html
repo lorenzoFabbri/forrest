@@ -42,7 +42,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-cc75b09f5250c27d17e89c6d0d56fedc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-12acf3a2dea5fb6071b1261511aaf884.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -136,6 +136,12 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./vignettes/internals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">How forrest works</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./vignettes/intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Introduction to forrest</span></a>
   </div>
@@ -224,25 +230,15 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="documentation">Documentation</h2>
 <ul>
 <li><p>README quick-start gains a <em>Multiple estimates per row</em> example demonstrating <code>dodge</code> with <code>group</code>.</p></li>
-<li><p>Getting-started vignette gains two new sections: <em>Multiple estimates per row</em> and <em>Point shapes</em>.</p></li>
-<li><p>Internal helper <code>compute_dodge_groups()</code> and <code>group_shapes()</code> added to <code>R/utils.R</code>.</p></li>
-<li><p><code>draw_text_panel()</code> updated to accept explicit <code>y_positions</code> and <code>n_vis</code> arguments, enabling per-row dodged text placement in right-side panels.</p></li>
-</ul>
-</section>
-<section id="earlier-changes" class="level2">
-<h2 class="anchored" data-anchor-id="earlier-changes">Earlier changes</h2>
-<ul>
 <li><p>README quick-start regression example now shows a formatted text column (<code>cols</code>) and a panel header (<code>header</code>) alongside the plot, making all three core features visible in one place.</p></li>
+<li><p>Getting-started vignette gains two new sections: <em>Multiple estimates per row</em> and <em>Point shapes</em>.</p></li>
 <li><p>Regression vignette: the <em>Multiple predictors from one model</em> example now includes a <code>cols = c("Coef (95% CI)" = "coef_ci")</code> column and matching <code>header</code>, consistent with the logistic and dose-response examples.</p></li>
 </ul>
 </section>
 <section id="infrastructure" class="level2">
 <h2 class="anchored" data-anchor-id="infrastructure">Infrastructure</h2>
 <ul>
-<li><p><code>covr</code> added to <code>Suggests</code> and <code>Config/Needs/coverage</code> so the test-coverage CI workflow installs it automatically via <code>r-lib/actions/setup-r-dependencies</code>.</p></li>
-<li><p>Website URL added to <code>DESCRIPTION</code> <code>URL</code> field.</p></li>
-<li><p>Upgraded <code>codecov/codecov-action</code> from v4 to v5 in the test-coverage workflow.</p></li>
-<li><p>New <code>lint.yaml</code> GitHub Actions workflow runs <code>lintr::lint_package()</code> on every push and pull request to <code>main</code>.</p></li>
+<li>Website URL added to <code>DESCRIPTION</code> <code>URL</code> field.</li>
 </ul>
 <hr>
 </section>

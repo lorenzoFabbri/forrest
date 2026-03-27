@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cc75b09f5250c27d17e89c6d0d56fedc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-12acf3a2dea5fb6071b1261511aaf884.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -142,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/intro.html">Articles</a></li><li class="breadcrumb-item"><a href="../vignettes/meta.html">Forest plots for meta-analyses</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/internals.html">Articles</a></li><li class="breadcrumb-item"><a href="../vignettes/meta.html">Forest plots for meta-analyses</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -169,6 +169,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vignettes/internals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">How forrest works</span></a>
+  </div>
+</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../vignettes/intro.html" class="sidebar-item-text sidebar-link">
@@ -241,7 +247,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/intro.html">Articles</a></li><li class="breadcrumb-item"><a href="../vignettes/meta.html">Forest plots for meta-analyses</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/internals.html">Articles</a></li><li class="breadcrumb-item"><a href="../vignettes/meta.html">Forest plots for meta-analyses</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Forest plots for meta-analyses</h1>
 </div>
@@ -428,7 +434,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="structured-subgroup-analysis-with-section-headers" class="level2">
 <h2 class="anchored" data-anchor-id="structured-subgroup-analysis-with-section-headers">Structured subgroup analysis with section headers</h2>
-<p>Use <code>NA</code> estimates to insert bold section headers and blank spacers, grouping studies by region with a region-level pooled diamond.</p>
+<p>Pass <code>section = "region"</code> to group studies under bold region headers automatically. <code>forrest()</code> inserts headers, indents study labels, and adds spacers — no manual data manipulation required.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper: compute fixed-effect pooled row for a subset</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pool_region <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, region_label) {</span>
@@ -436,7 +442,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  lp  <span class="ot">&lt;-</span> <span class="fu">sum</span>(w <span class="sc">*</span> dat<span class="sc">$</span>log_or) <span class="sc">/</span> <span class="fu">sum</span>(w)</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  se  <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="fu">sum</span>(w))</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">study    =</span> <span class="fu">sprintf</span>(<span class="st">"  %s (pooled)"</span>, region_label),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">study    =</span> <span class="fu">sprintf</span>(<span class="st">"%s (pooled)"</span>, region_label),</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">region   =</span> region_label,</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">n        =</span> <span class="fu">sum</span>(dat<span class="sc">$</span>n),</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">events   =</span> <span class="fu">sum</span>(dat<span class="sc">$</span>events),</span>
@@ -450,51 +456,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>regions     <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Asia"</span>, <span class="st">"Europe"</span>, <span class="st">"Latin America"</span>, <span class="st">"North America"</span>)</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>region_data <span class="ot">&lt;-</span> <span class="fu">lapply</span>(regions, <span class="cf">function</span>(r) {</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  sub <span class="ot">&lt;-</span> meta_dat[meta_dat<span class="sc">$</span>region <span class="sc">==</span> r, ]</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Indent study names within section</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  sub<span class="sc">$</span>study <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"  "</span>, sub<span class="sc">$</span>study)</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(<span class="at">study =</span> r, <span class="at">region =</span> r, <span class="at">n =</span> <span class="cn">NA</span>, <span class="at">events =</span> <span class="cn">NA</span>,</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>               <span class="at">log_or =</span> <span class="cn">NA</span>, <span class="at">se =</span> <span class="cn">NA</span>, <span class="at">or =</span> <span class="cn">NA</span>, <span class="at">lower =</span> <span class="cn">NA</span>,</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>               <span class="at">upper =</span> <span class="cn">NA</span>, <span class="at">weight =</span> <span class="cn">NA</span>, <span class="at">is_sum =</span> <span class="cn">FALSE</span>),</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    sub,</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pool_region</span>(sub, r),</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(<span class="at">study =</span> <span class="st">""</span>, <span class="at">region =</span> <span class="cn">NA</span>, <span class="at">n =</span> <span class="cn">NA</span>, <span class="at">events =</span> <span class="cn">NA</span>,</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>               <span class="at">log_or =</span> <span class="cn">NA</span>, <span class="at">se =</span> <span class="cn">NA</span>, <span class="at">or =</span> <span class="cn">NA</span>, <span class="at">lower =</span> <span class="cn">NA</span>,</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>               <span class="at">upper =</span> <span class="cn">NA</span>, <span class="at">weight =</span> <span class="cn">NA</span>, <span class="at">is_sum =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>structured <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, region_data)</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>structured <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  structured,</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  pooled_row[, <span class="fu">names</span>(structured)]</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>structured<span class="sc">$</span>or_text <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">is.na</span>(structured<span class="sc">$</span>or), <span class="st">""</span>,</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sprintf</span>(<span class="st">"%.2f (%.2f\u2013%.2f)"</span>,</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>          structured<span class="sc">$</span>or, structured<span class="sc">$</span>lower, structured<span class="sc">$</span>upper)</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>  structured,</span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate   =</span> <span class="st">"or"</span>,</span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower      =</span> <span class="st">"lower"</span>,</span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper      =</span> <span class="st">"upper"</span>,</span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>  <span class="at">label      =</span> <span class="st">"study"</span>,</span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_summary =</span> <span class="st">"is_sum"</span>,</span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight     =</span> <span class="st">"weight"</span>,</span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">log_scale  =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line   =</span> <span class="dv">1</span>,</span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">header     =</span> <span class="st">"Study"</span>,</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols       =</span> <span class="fu">c</span>(<span class="st">"OR (95% CI)"</span> <span class="ot">=</span> <span class="st">"or_text"</span>),</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths     =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="fl">3.5</span>, <span class="fl">2.5</span>),</span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>  <span class="at">stripe     =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab       =</span> <span class="st">"OR for hypertension per 10 \u03bcg/m\u00b3 PM2.5 (95% CI)"</span></span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Build data: just the study rows and region-level pooled rows.</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co"># No manual header or spacer rows needed.</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>regions    <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Asia"</span>, <span class="st">"Europe"</span>, <span class="st">"Latin America"</span>, <span class="st">"North America"</span>)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>structured <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(regions, <span class="cf">function</span>(r) {</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  sub <span class="ot">&lt;-</span> meta_dat[meta_dat<span class="sc">$</span>region <span class="sc">==</span> r, ]</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(sub, <span class="fu">pool_region</span>(sub, r))</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>structured<span class="sc">$</span>or_text <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="st">"%.2f (%.2f\u2013%.2f)"</span>,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  structured<span class="sc">$</span>or, structured<span class="sc">$</span>lower, structured<span class="sc">$</span>upper</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  structured,</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate   =</span> <span class="st">"or"</span>,</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower      =</span> <span class="st">"lower"</span>,</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper      =</span> <span class="st">"upper"</span>,</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">label      =</span> <span class="st">"study"</span>,</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">section    =</span> <span class="st">"region"</span>,</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_summary =</span> <span class="st">"is_sum"</span>,</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight     =</span> <span class="st">"weight"</span>,</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">log_scale  =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line   =</span> <span class="dv">1</span>,</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">header     =</span> <span class="st">"Study"</span>,</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols       =</span> <span class="fu">c</span>(<span class="st">"OR (95% CI)"</span> <span class="ot">=</span> <span class="st">"or_text"</span>),</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths     =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="fl">3.5</span>, <span class="fl">2.5</span>),</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">stripe     =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab       =</span> <span class="st">"OR for hypertension per 10 \u03bcg/m\u00b3 PM2.5 (95% CI)"</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">

@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-cc75b09f5250c27d17e89c6d0d56fedc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-12acf3a2dea5fb6071b1261511aaf884.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -171,6 +171,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./vignettes/internals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">How forrest works</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./vignettes/intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Introduction to forrest</span></a>
   </div>
@@ -253,11 +259,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Key features:</strong></p>
 <ul>
 <li>Works with any estimates and CIs: regression coefficients, ORs, HRs, MDs, …</li>
-<li>Group and subgroup headings via <code>NA</code> estimate rows</li>
-<li>Summary estimates rendered as filled diamonds</li>
+<li>Automatic section headers from a grouping column (<code>section</code> argument) — no manual NA rows</li>
+<li>Two-level hierarchy with <code>subsection</code> for nested grouping structures</li>
+<li>Summary estimates rendered as filled diamonds (<code>is_summary</code>)</li>
+<li>Reference-category rows (NA estimate) rendered without CI, optionally annotated with <code>" (Ref.)"</code></li>
 <li>Alternating row stripes for readability (<code>stripe = TRUE</code>)</li>
 <li>Group colouring with automatic Okabe-Ito legend</li>
 <li>Optional text columns (formatted estimates, p-values, …) alongside the plot</li>
+<li>Section-level text column annotations via <code>section_cols</code></li>
 <li>Log-scale x-axis for ratio measures</li>
 <li>CI clipping at axis limits with directional arrows</li>
 <li>Point size proportional to row weights</li>
@@ -333,44 +342,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><img src="man/figures/README-meta-1.png" alt="" width="100%"></p>
 </section>
+<section id="section-headers" class="level3">
+<h3 class="anchored" data-anchor-id="section-headers">Section headers</h3>
+<p>Pass a column name to <code>section</code> to group rows under automatic bold headers. <code>forrest()</code> inserts a header wherever the section value changes, indents the row labels, and adds a blank spacer after each group — no manual data manipulation required.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>subgroups <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">domain   =</span> <span class="fu">c</span>(<span class="st">"Lifestyle"</span>,  <span class="st">"Lifestyle"</span>,  <span class="st">"Lifestyle"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Clinical"</span>,   <span class="st">"Clinical"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Socioeconomic"</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="fu">c</span>(<span class="st">"Physical activity"</span>, <span class="st">"Diet quality"</span>, <span class="st">"Sleep duration"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Systolic BP (per 10 mmHg)"</span>, <span class="st">"BMI (per 5 kg/m\u00b2)"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Area deprivation"</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">est      =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.31</span>, <span class="sc">-</span><span class="fl">0.18</span>, <span class="fl">0.09</span>, <span class="fl">0.25</span>,  <span class="fl">0.19</span>, <span class="fl">0.14</span>),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo       =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.51</span>, <span class="sc">-</span><span class="fl">0.36</span>, <span class="sc">-</span><span class="fl">0.08</span>, <span class="fl">0.08</span>, <span class="sc">-</span><span class="fl">0.02</span>, <span class="sc">-</span><span class="fl">0.04</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi       =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.11</span>, <span class="sc">-</span><span class="fl">0.00</span>,  <span class="fl">0.26</span>, <span class="fl">0.42</span>,  <span class="fl">0.40</span>,  <span class="fl">0.32</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  subgroups,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"est"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"lo"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"hi"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"exposure"</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">section  =</span> <span class="st">"domain"</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">header   =</span> <span class="st">"Exposure"</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line =</span> <span class="dv">0</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Regression coefficient (95% CI)"</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><img src="man/figures/README-section-1.png" alt="" width="100%"></p>
+</section>
 <section id="regression-models" class="level3">
 <h3 class="anchored" data-anchor-id="regression-models">Regression models</h3>
 <p>Use <a href="https://broom.tidymodels.org/"><code>broom::tidy()</code></a> to extract parameters from a fitted model and pass the result directly to <code>forrest()</code>. The <code>cols</code> argument adds a formatted text column alongside the plot; <code>header</code> labels the row-label panel. See the <a href="https://lorenzofabbri.github.io/forrest/vignettes/regression.html">Regression models vignette</a> for progressive adjustment, multiple outcomes, dose-response, and causal inference (g-computation, IPW) examples.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>n   <span class="ot">&lt;-</span> <span class="dv">300</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sbp    =</span> <span class="dv">120</span> <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="dv">15</span>),</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">age    =</span> <span class="fu">runif</span>(n, <span class="dv">30</span>, <span class="dv">70</span>),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">female =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">bmi    =</span> <span class="fu">rnorm</span>(n, <span class="dv">26</span>, <span class="dv">4</span>),</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">smoker =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.2</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>sbp <span class="ot">&lt;-</span> dat<span class="sc">$</span>sbp <span class="sc">+</span> <span class="fl">0.3</span> <span class="sc">*</span> dat<span class="sc">$</span>age <span class="sc">-</span> <span class="dv">4</span> <span class="sc">*</span> dat<span class="sc">$</span>female <span class="sc">+</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>           <span class="fl">0.5</span> <span class="sc">*</span> dat<span class="sc">$</span>bmi <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> dat<span class="sc">$</span>smoker <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="dv">6</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>fit   <span class="ot">&lt;-</span> <span class="fu">lm</span>(sbp <span class="sc">~</span> age <span class="sc">+</span> female <span class="sc">+</span> bmi <span class="sc">+</span> smoker, <span class="at">data =</span> dat)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> broom<span class="sc">::</span><span class="fu">tidy</span>(fit, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> coefs[coefs<span class="sc">$</span>term <span class="sc">!=</span> <span class="st">"(Intercept)"</span>, ]</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>coefs<span class="sc">$</span>term <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Age (per 1 y)"</span>, <span class="st">"Female sex"</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                <span class="st">"BMI (per 1 kg/m²)"</span>, <span class="st">"Current smoker"</span>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>coefs<span class="sc">$</span>coef_ci <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  coefs<span class="sc">$</span>estimate, coefs<span class="sc">$</span>conf.low, coefs<span class="sc">$</span>conf.high</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  coefs,</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"conf.low"</span>,</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"conf.high"</span>,</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"term"</span>,</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">header   =</span> <span class="st">"Predictor"</span>,</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols     =</span> <span class="fu">c</span>(<span class="st">"Coef (95% CI)"</span> <span class="ot">=</span> <span class="st">"coef_ci"</span>),</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths   =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="fl">2.5</span>),</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Regression coefficient (95% CI)"</span>,</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">stripe   =</span> <span class="cn">TRUE</span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n   <span class="ot">&lt;-</span> <span class="dv">300</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sbp    =</span> <span class="dv">120</span> <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="dv">15</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">age    =</span> <span class="fu">runif</span>(n, <span class="dv">30</span>, <span class="dv">70</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">female =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">bmi    =</span> <span class="fu">rnorm</span>(n, <span class="dv">26</span>, <span class="dv">4</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">smoker =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.2</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>sbp <span class="ot">&lt;-</span> dat<span class="sc">$</span>sbp <span class="sc">+</span> <span class="fl">0.3</span> <span class="sc">*</span> dat<span class="sc">$</span>age <span class="sc">-</span> <span class="dv">4</span> <span class="sc">*</span> dat<span class="sc">$</span>female <span class="sc">+</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>           <span class="fl">0.5</span> <span class="sc">*</span> dat<span class="sc">$</span>bmi <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> dat<span class="sc">$</span>smoker <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="dv">6</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>fit   <span class="ot">&lt;-</span> <span class="fu">lm</span>(sbp <span class="sc">~</span> age <span class="sc">+</span> female <span class="sc">+</span> bmi <span class="sc">+</span> smoker, <span class="at">data =</span> dat)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> broom<span class="sc">::</span><span class="fu">tidy</span>(fit, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> coefs[coefs<span class="sc">$</span>term <span class="sc">!=</span> <span class="st">"(Intercept)"</span>, ]</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>coefs<span class="sc">$</span>term <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Age (per 1 y)"</span>, <span class="st">"Female sex"</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>                <span class="st">"BMI (per 1 kg/m²)"</span>, <span class="st">"Current smoker"</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>coefs<span class="sc">$</span>coef_ci <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  coefs<span class="sc">$</span>estimate, coefs<span class="sc">$</span>conf.low, coefs<span class="sc">$</span>conf.high</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  coefs,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"conf.low"</span>,</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"conf.high"</span>,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"term"</span>,</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">header   =</span> <span class="st">"Predictor"</span>,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols     =</span> <span class="fu">c</span>(<span class="st">"Coef (95% CI)"</span> <span class="ot">=</span> <span class="st">"coef_ci"</span>),</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths   =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="fl">2.5</span>),</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Regression coefficient (95% CI)"</span>,</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">stripe   =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><img src="man/figures/README-regression-1.png" alt="" width="100%"></p>
 </section>
 </section>
@@ -409,69 +446,76 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: center;">❌</td>
 </tr>
 <tr class="even">
-<td>Subgroup headers</td>
+<td>Auto section headers from grouping column</td>
 <td style="text-align: center;">✅</td>
-<td style="text-align: center;">✅</td>
-<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
 <td style="text-align: center;">❌</td>
 </tr>
 <tr class="odd">
+<td>Two-level nested section hierarchy</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr class="even">
 <td>Summary diamonds</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">✅</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Text columns</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">❌</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Alternating row stripes</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">❌</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">❌</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>CI clipping with arrows</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">❌</td>
 <td style="text-align: center;">❌</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Group colouring + legend</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">❌</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">✅</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Log-scale axis</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">❌</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Export helper</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">❌</td>
 <td style="text-align: center;">❌</td>
 <td style="text-align: center;">❌</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>data.table support</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">❌</td>
 <td style="text-align: center;">❌</td>
 <td style="text-align: center;">❌</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Actively maintained</td>
 <td style="text-align: center;">✅</td>
 <td style="text-align: center;">⚠️</td>
