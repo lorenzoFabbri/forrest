@@ -26,6 +26,7 @@ Vignettes live in `vignettes/` and are written in Quarto (`.qmd`).
 The vignette engine is `quarto::html` (declared in each file's YAML front-matter).
 
 Render a single vignette during development:
+
 ```bash
 quarto render vignettes/intro.qmd
 quarto render vignettes/meta.qmd
@@ -33,6 +34,7 @@ quarto render vignettes/regression.qmd
 ```
 
 Build all vignettes as part of the package (writes to `inst/doc/`):
+
 ```r
 devtools::build_vignettes()
 ```
@@ -82,7 +84,7 @@ pak::pak("lorenzoFabbri/forrest")      # install latest GitHub version
 ## CRAN release workflow
 
 Based on [R Packages (2e) — Chapter 22](https://r-pkgs.org/release.html).
-The guiding principle: *"If it hurts, do it more often"* — run `R CMD check`
+The guiding principle: _"If it hurts, do it more often"_ — run `R CMD check`
 throughout development, not only before submission.
 
 ### 1. Decide the release type and bump the version
@@ -97,11 +99,12 @@ Update `NEWS.md` to document changes for this version.
 
 ```r
 devtools::spell_check()          # flag spelling errors in docs
-urlchecker::url_check()          # find broken or redirecting URLs
 devtools::build_readme()         # rebuild README.md if README.Rmd changed
+urlchecker::url_check()          # find broken or redirecting URLs
 ```
 
 Run the local CRAN check:
+
 ```r
 devtools::check(cran = TRUE)
 ```
@@ -116,6 +119,7 @@ devtools::check_win_devel()      # submit to CRAN's win-builder (~30 min for res
 ```
 
 Optionally check on multiple platforms via R-hub:
+
 ```r
 rhub::check_for_cran()
 ```
@@ -153,11 +157,11 @@ Monitor CRAN check results across flavors for a few days after acceptance.
 
 ### CRAN check notes policy
 
-| Result | Action |
-|--------|--------|
-| Error  | Must fix before submission |
-| Warning | Must fix before submission |
-| NOTE   | Document in `cran-comments.md`; some are harmless (e.g. first submission, time check) |
+| Result  | Action                                                                                |
+| ------- | ------------------------------------------------------------------------------------- |
+| Error   | Must fix before submission                                                            |
+| Warning | Must fix before submission                                                            |
+| NOTE    | Document in `cran-comments.md`; some are harmless (e.g. first submission, time check) |
 
 ### First submission — extra items
 
