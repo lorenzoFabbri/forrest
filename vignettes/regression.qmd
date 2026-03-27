@@ -270,9 +270,12 @@ forrest(
 
 ## Dose-response (exposure categories)
 
-For categorical exposures (quartiles, tertiles, etc.), the reference category
-has `estimate = NA` — no CI can be drawn for it. Supply a text column to print
-the reference label `"1.00 (ref)"`.
+For categorical exposures (quartiles, tertiles, and so on), the reference category
+has `estimate = NA` because there is no contrast to estimate. `forrest()`
+renders this row without a CI or point but keeps the label, making the
+reference position visually clear. Supply a text column to print `"1.00 (ref)"`
+in the right-hand panel. Set `ref_label = TRUE` to have `forrest()` append
+`" (Ref.)"` to the label automatically.
 
 ```{r dose-response}
 #| eval: !expr has_broom
@@ -385,26 +388,38 @@ educ_rows <- setNames(
   c("  Low", "  Medium", "  High")
 )
 
-# Stack into a single data frame, using blank/header rows as section dividers
+# Stack into a single data frame with a stratum column for section headers.
+# No manual header or spacer rows needed.
 gcomp_dat <- rbind(
-  make_row(ate_sbp, "Overall (ATE)", is_sum = TRUE),
-  data.frame(label = "Sex",             estimate = NA, lower = NA,
-             upper = NA, is_sum = FALSE),
-  make_row(sex_rows[["  Female"]], "  Female"),
-  make_row(sex_rows[["  Male"]],   "  Male"),
-  data.frame(label = "",                estimate = NA, lower = NA,
-             upper = NA, is_sum = FALSE),
-  data.frame(label = "Education level", estimate = NA, lower = NA,
-             upper = NA, is_sum = FALSE),
-  make_row(educ_rows[["  Low"]],    "  Low"),
-  make_row(educ_rows[["  Medium"]], "  Medium"),
-  make_row(educ_rows[["  High"]],   "  High")
+  make_row(ate_sbp, "Overall (ATE)", is_sum = TRUE) |>
+    transform(stratum = "Overall"),
+  do.call(rbind, lapply(
+    list(list(label = "Female", f = 0), list(label = "Male", f = 1)),
+    function(s) {
+      r <- make_row(avg_comparisons(fit_sbp, variables = "activity",
+                                    newdata = subset(cohort, female == s$f)))
+      r$label   <- s$label
+      r$stratum <- "Sex"
+      r
+    }
+  )),
+  do.call(rbind, lapply(
+    list(list(label = "Low", e = "Low"),
+         list(label = "Medium", e = "Medium"),
+         list(label = "High",   e = "High")),
+    function(s) {
+      r <- make_row(avg_comparisons(fit_sbp, variables = "activity",
+                                    newdata = subset(cohort, educ == s$e)))
+      r$label   <- s$label
+      r$stratum <- "Education level"
+      r
+    }
+  ))
 )
 
-gcomp_dat$est_text <- ifelse(
-  is.na(gcomp_dat$estimate), "",
-  sprintf("%.2f (%.2f, %.2f)",
-          gcomp_dat$estimate, gcomp_dat$lower, gcomp_dat$upper)
+gcomp_dat$est_text <- sprintf(
+  "%.2f (%.2f, %.2f)",
+  gcomp_dat$estimate, gcomp_dat$lower, gcomp_dat$upper
 )
 
 forrest(
@@ -413,6 +428,7 @@ forrest(
   lower      = "lower",
   upper      = "upper",
   label      = "label",
+  section    = "stratum",
   is_summary = "is_sum",
   cols       = c("Marginal effect (95% CI)" = "est_text"),
   widths     = c(3.5, 4, 3),
@@ -511,6 +527,153 @@ forrest(
   legend_pos    = "topright",
   header        = "Subgroup",
   xlab          = "Marginal effect on SBP (mmHg): physical activity (95% CI)"
+)
+```
+
+---
+
+## Time-varying exposures and longitudinal studies
+
+Any analysis that produces estimates at multiple time points — distributed lag
+models, life-course analyses, repeated measures, cumulative exposure windows —
+yields a data frame where time is just another dimension. The same
+`section` / `dodge` / `group` building blocks that handle predictor groups and
+subgroup analyses apply here without modification.
+
+### Distributed lag models
+
+A distributed lag model (DLM) estimates the association between an exposure and
+an outcome separately at each lag. The result is one row per lag per exposure.
+Use `section = "exposure"` to group lags under each exposure, and add an
+overall (cumulative) estimate as an `is_summary = TRUE` diamond at the bottom
+of each section.
+
+```{r dlm}
+#| fig-height: 9
+set.seed(2025)
+
+# Simulate lag-specific estimates for three environmental exposures
+# Each exposure has a distinct lag-response shape
+make_lags <- function(pattern) {
+  se  <- runif(length(pattern), 0.03, 0.06)
+  data.frame(
+    estimate = pattern + rnorm(length(pattern), sd = 0.02),
+    lower    = pattern - 1.96 * se,
+    upper    = pattern + 1.96 * se
+  )
+}
+
+pm25  <- make_lags(c(0.04, 0.11, 0.10, 0.06, 0.03,  0.01,  0.00))
+noise <- make_lags(c(0.09, 0.05,  0.02, 0.01, 0.00, -0.01,  0.00))
+green <- make_lags(c(-0.02, -0.04, -0.07, -0.09, -0.10, -0.09, -0.08))
+
+lag_labels <- paste("Lag", 0:6, "(weeks)")
+
+dlm_dat <- rbind(
+  data.frame(exposure = "PM2.5",        lag = lag_labels, pm25,  is_sum = FALSE),
+  data.frame(exposure = "PM2.5",        lag = "Cumulative", estimate = 0.35,
+             lower = 0.18, upper = 0.52, is_sum = TRUE),
+  data.frame(exposure = "Road noise",   lag = lag_labels, noise, is_sum = FALSE),
+  data.frame(exposure = "Road noise",   lag = "Cumulative", estimate = 0.16,
+             lower = 0.04, upper = 0.28, is_sum = TRUE),
+  data.frame(exposure = "Green space",  lag = lag_labels, green, is_sum = FALSE),
+  data.frame(exposure = "Green space",  lag = "Cumulative", estimate = -0.49,
+             lower = -0.68, upper = -0.30, is_sum = TRUE)
+)
+
+dlm_dat$est_text <- ifelse(
+  dlm_dat$is_sum,
+  sprintf("%.2f (%.2f, %.2f)", dlm_dat$estimate, dlm_dat$lower, dlm_dat$upper),
+  sprintf("%.2f (%.2f, %.2f)", dlm_dat$estimate, dlm_dat$lower, dlm_dat$upper)
+)
+
+forrest(
+  dlm_dat,
+  estimate   = "estimate",
+  lower      = "lower",
+  upper      = "upper",
+  label      = "lag",
+  section    = "exposure",
+  is_summary = "is_sum",
+  ref_line   = 0,
+  header     = "Lag",
+  cols       = c("Coef (95% CI)" = "est_text"),
+  widths     = c(3.5, 4, 2.8),
+  xlab       = "Regression coefficient per IQR increase (95% CI)"
+)
+```
+
+### Life-course analysis: same exposure across developmental periods
+
+A life-course design estimates the same exposure–outcome association at multiple
+developmental stages. Use `section = "life_stage"` to organise the stages as
+named groups, with one row per exposure within each stage.
+
+```{r life-course}
+#| fig-height: 7
+set.seed(99)
+
+make_row <- function(exposure, life_stage, est, se) {
+  data.frame(
+    life_stage = life_stage,
+    exposure   = exposure,
+    estimate   = est  + rnorm(1, sd = 0.01),
+    lower      = est  - 1.96 * se,
+    upper      = est  + 1.96 * se
+  )
+}
+
+lc_dat <- rbind(
+  make_row("Noise exposure",         "Prenatal",        0.08, 0.03),
+  make_row("Green space access",     "Prenatal",       -0.05, 0.04),
+  make_row("Traffic-related air",    "Prenatal",        0.06, 0.03),
+  make_row("Noise exposure",         "Early childhood", 0.12, 0.04),
+  make_row("Green space access",     "Early childhood",-0.09, 0.05),
+  make_row("Traffic-related air",    "Early childhood", 0.10, 0.04),
+  make_row("Noise exposure",         "Mid-childhood",   0.15, 0.05),
+  make_row("Green space access",     "Mid-childhood",  -0.13, 0.05),
+  make_row("Traffic-related air",    "Mid-childhood",   0.14, 0.05),
+  make_row("Noise exposure",         "Adolescence",     0.09, 0.04),
+  make_row("Green space access",     "Adolescence",    -0.07, 0.05),
+  make_row("Traffic-related air",    "Adolescence",     0.08, 0.04)
+)
+
+forrest(
+  lc_dat,
+  estimate = "estimate",
+  lower    = "lower",
+  upper    = "upper",
+  label    = "exposure",
+  section  = "life_stage",
+  group    = "exposure",
+  ref_line = 0,
+  header   = "Exposure",
+  xlab     = "Coefficient per IQR increase in SBP (95% CI)"
+)
+```
+
+### Life-course analysis: comparing stages side by side (dodge)
+
+When the question is *how does the association at one developmental stage
+compare to another for the same exposure*, flip the structure: `label` is the
+exposure, `group` is the life stage, and `dodge = TRUE` places all stages
+side by side within each exposure row.
+
+```{r life-course-dodge}
+#| fig-height: 5
+#| fig-width: 10
+# Same data — one row per exposure × life stage
+forrest(
+  lc_dat,
+  estimate = "estimate",
+  lower    = "lower",
+  upper    = "upper",
+  label    = "exposure",
+  group    = "life_stage",
+  dodge    = TRUE,
+  ref_line = 0,
+  header   = "Exposure",
+  xlab     = "Coefficient per IQR increase in SBP (95% CI)"
 )
 ```
 

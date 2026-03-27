@@ -56,26 +56,23 @@ forrest(
 
 ---
 
-## Group and subgroup headings
+## Section headers from a grouping column
 
-Rows whose `estimate` is `NA` become section headings. A non-empty label is
-rendered in bold as a group header; an empty label (`""`) creates a blank spacer
-line between groups. This is useful for presenting stratified analyses where
-estimates are shown within each stratum.
+Pass a column name to `section` to automatically group rows under bold section
+headers. `forrest()` inserts a header row wherever the section value changes,
+indents the row labels within each section, and adds a blank spacer row after
+each section. No manual data manipulation is required.
 
-```{r subgroups}
+```{r section}
 #| fig-height: 5
 sub_dat <- data.frame(
-  label    = c(
-    "Sex",
-    "  Female", "  Male",
-    "",
-    "Age group",
-    "  30\u201349 years", "  50\u201369 years", "  70+ years"
-  ),
-  estimate = c(NA, -0.38,  0.12, NA, NA,  0.22, -0.15, -0.41),
-  lower    = c(NA, -0.58, -0.08, NA, NA,  0.02, -0.38, -0.66),
-  upper    = c(NA, -0.18,  0.32, NA, NA,  0.42,  0.08, -0.16)
+  subgroup = c("Sex",    "Sex",
+               "Age group", "Age group", "Age group"),
+  label    = c("Female", "Male",
+               "30\u201349 years", "50\u201369 years", "70+ years"),
+  estimate = c(-0.38,  0.12,  0.22, -0.15, -0.41),
+  lower    = c(-0.58, -0.08,  0.02, -0.38, -0.66),
+  upper    = c(-0.18,  0.32,  0.42,  0.08, -0.16)
 )
 
 forrest(
@@ -84,8 +81,59 @@ forrest(
   lower    = "lower",
   upper    = "upper",
   label    = "label",
+  section  = "subgroup",
   xlab     = "Regression coefficient (95% CI)",
   header   = "Subgroup"
+)
+```
+
+Use `section_indent = FALSE` to suppress automatic indentation, and
+`section_spacer = FALSE` to suppress the blank row after each section.
+
+### Two-level hierarchy with subsection
+
+For analyses with a nested grouping structure, combine `section` and
+`subsection`. `forrest()` inserts top-level bold headers for `section` changes
+and indented sub-headers for `subsection` changes within each section.
+
+```{r subsection}
+#| fig-height: 7
+nested_dat <- data.frame(
+  domain    = c(
+    "Physical environment", "Physical environment", "Physical environment",
+    "Physical environment", "Physical environment",
+    "Social environment",   "Social environment",
+    "Social environment",   "Social environment"
+  ),
+  type      = c(
+    "Air quality", "Air quality",
+    "Urban form",  "Urban form",  "Urban form",
+    "Support",     "Support",
+    "Deprivation", "Deprivation"
+  ),
+  predictor = c(
+    "PM2.5 (per 10 \u03bcg/m\u00b3)", "NO2 (per 10 ppb)",
+    "Green space (%)", "Walkability", "Noise (per 10 dB)",
+    "Social cohesion", "Social isolation",
+    "Area deprivation", "Employment rate"
+  ),
+  estimate  = c(-0.18,  0.12, -0.22,  0.15, -0.08,
+                -0.11,  0.09,  0.05, -0.03),
+  lower     = c(-0.38, -0.08, -0.42, -0.05, -0.28,
+                -0.31, -0.09, -0.12, -0.20),
+  upper     = c( 0.02,  0.32, -0.02,  0.35,  0.12,
+                 0.09,  0.27,  0.22,  0.14)
+)
+
+forrest(
+  nested_dat,
+  estimate   = "estimate",
+  lower      = "lower",
+  upper      = "upper",
+  label      = "predictor",
+  section    = "domain",
+  subsection = "type",
+  xlab       = "Mean difference in SBP (mmHg, 95% CI)"
 )
 ```
 
@@ -200,8 +248,8 @@ forrest(
 
 A numeric value for `dodge` sets the vertical spacing between rows within a
 group directly (in y-axis units). `dodge = TRUE` uses the default of `0.25`.
-Subgroup header rows (those with `NA` estimate) are always treated as singleton
-groups and are not affected by dodging.
+Structural rows (section and subsection headers, spacers) are always treated as
+singleton groups and are not affected by dodging.
 
 ### Wide-format text columns alongside dodged CIs
 
@@ -339,6 +387,50 @@ forrest(
   cols     = c("Coef (95% CI)" = "coef_ci", "P-value" = "pval"),
   widths   = c(2.8, 4, 2.5, 1.2),
   xlab     = "Regression coefficient (95% CI)"
+)
+```
+
+### Section-level annotations in text columns
+
+When `section` is active, text columns show `""` for section header rows by
+default. Use `section_cols` — a named character vector with the same syntax as
+`cols` — to populate specific columns in section header rows with a
+section-level value (e.g. number of studies, total N). The name must match a
+name in `cols`; the value is a column in `data` whose first non-NA entry in
+each section is used.
+
+```{r section-cols}
+#| fig-height: 5
+#| fig-width: 11
+sc_dat <- data.frame(
+  subgroup  = c("Sex",    "Sex",   "Age group", "Age group", "Age group"),
+  label     = c("Female", "Male",  "30\u201349 y", "50\u201369 y", "70+ y"),
+  estimate  = c(-0.38,  0.12,  0.22, -0.15, -0.41),
+  lower     = c(-0.58, -0.08,  0.02, -0.38, -0.66),
+  upper     = c(-0.18,  0.32,  0.42,  0.08, -0.16),
+  coef_ci   = c(
+    "-0.38 (-0.58, -0.18)",
+    " 0.12 (-0.08,  0.32)",
+    " 0.22 ( 0.02,  0.42)",
+    "-0.15 (-0.38,  0.08)",
+    "-0.41 (-0.66, -0.16)"
+  ),
+  # Constant within each section — section header will show this value
+  k_text    = c("k = 2", "k = 2", "k = 3", "k = 3", "k = 3")
+)
+
+forrest(
+  sc_dat,
+  estimate     = "estimate",
+  lower        = "lower",
+  upper        = "upper",
+  label        = "label",
+  section      = "subgroup",
+  section_cols = c("k" = "k_text"),
+  header       = "Subgroup",
+  cols         = c("Coef (95% CI)" = "coef_ci", "k" = "k_text"),
+  widths       = c(2.5, 4, 2.5, 1.2),
+  xlab         = "Regression coefficient (95% CI)"
 )
 ```
 

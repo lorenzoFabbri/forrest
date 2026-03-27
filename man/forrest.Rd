@@ -13,6 +13,13 @@ forrest(
   group = NULL,
   is_summary = NULL,
   weight = NULL,
+  section = NULL,
+  subsection = NULL,
+  section_indent = TRUE,
+  section_spacer = TRUE,
+  section_cols = NULL,
+  subsection_cols = NULL,
+  ref_label = FALSE,
   ref_line = 0,
   log_scale = FALSE,
   xlim = NULL,
@@ -58,6 +65,36 @@ rather than squares with whiskers.}
 point size scales as \code{cex * sqrt(weight / max(weight))}, so rows with
 larger weights appear with a bigger marker. Weights for summary rows are
 ignored (diamond size is fixed by \code{cex}).}
+
+\item{section}{Column name (string) for a grouping variable that determines
+section structure. Whenever the value of this column changes (run-length
+boundary), a bold section header row is automatically inserted before the
+group. Row order is preserved; no automatic sorting is applied. See also
+\code{section_indent}, \code{section_spacer}, and \code{section_cols}.}
+
+\item{subsection}{Column name (string) for a second-level grouping variable.
+Requires \code{section}. Inserts indented sub-headers beneath each section
+header. See also \code{subsection_cols}.}
+
+\item{section_indent}{Logical. If \code{TRUE} (default), label values of data
+rows within a section are automatically indented by two spaces (four spaces
+for rows within a subsection).}
+
+\item{section_spacer}{Logical. If \code{TRUE} (default), a blank spacer row is
+appended after the last row of each section.}
+
+\item{section_cols}{Named character vector. Names must be a subset of the
+names of \code{cols}. Values are column names in \code{data} whose first non-NA
+entry in each section is shown in that section's header row. Columns not
+listed here display \code{""} in the header row. Use this to show section-level
+summaries (e.g. \code{"k = 3 studies"}) next to the section header.}
+
+\item{subsection_cols}{Like \code{section_cols} but for subsection header rows.}
+
+\item{ref_label}{Logical. When \code{TRUE} and \code{section} is provided, rows with
+\code{NA} estimates that are present in the original data (i.e. reference
+category rows, not auto-generated headers) have \code{" (Ref.)"} appended to
+their label. Default is \code{FALSE}.}
 
 \item{ref_line}{Numeric. Position of the vertical reference line (e.g. \code{0}
 for differences, \code{1} for ratio measures on the natural scale). Set to
@@ -130,14 +167,13 @@ When \code{FALSE} (default), text values are drawn at each individual row's
 dodged y position, keeping them aligned with their CI whiskers.}
 
 \item{legend_pos}{Position of the colour legend when \code{group} is supplied.
-Passed to \code{legend()}. Use \code{NULL} to suppress.
-Default is \code{"topright"}.}
+Passed to \code{legend()}. Use \code{NULL} to suppress. Default is \code{"topright"}.}
 
 \item{legend_shape_pos}{Position of the shape legend when \code{shape} is
 supplied. Passed to \code{legend()}. Use \code{NULL} to suppress.
 Default is \code{"bottomright"}.}
 
-\item{theme}{Visual theme name ("default", "minimal", "classic") or a
+\item{theme}{Visual theme name (\code{"default"}, \code{"minimal"}, \code{"classic"}) or a
 named list of style overrides. Default is \code{"default"}.}
 
 \item{...}{Graphical parameters forwarded to the internal tinyplot call
@@ -150,9 +186,14 @@ plot.
 \description{
 Draws a publication-ready forest plot from a data frame. Each row
 represents one estimate — a study, a predictor, a model, a subgroup, or any
-other unit of analysis. Rows whose \code{estimate} is \code{NA} are treated as
-spacer/header rows: they produce no point or confidence interval, and their
-label is rendered in bold if non-empty.
+other unit of analysis.
+}
+\details{
+Rows with \code{NA} estimates are treated as reference-category rows: they produce
+no point or confidence interval, and their label is rendered in regular
+(non-bold) font.  To create section headers and spacers automatically, use
+the \code{section} (and optionally \code{subsection}) arguments instead of inserting
+NA rows by hand.
 }
 \examples{
 # Basic forest plot: linear model coefficients
@@ -171,24 +212,22 @@ forrest(dat,
   xlab     = "Regression coefficient (95\% CI)"
 )
 
-# Multiple estimates per row (dodge) - same predictor in two time windows
+# Section headers from a grouping column
 dat2 <- data.frame(
-  predictor = rep(c("Air pollution (PM2.5)",
-                    "Sedentary behaviour",
-                    "Diet quality score"), each = 2),
-  period    = rep(c("Childhood", "Adulthood"), 3),
-  estimate  = c( 0.18,  0.30, -0.12, -0.22,  0.09,  0.14),
-  lower     = c(-0.02,  0.10, -0.30, -0.40, -0.08, -0.04),
-  upper     = c( 0.38,  0.50,  0.06, -0.04,  0.26,  0.32)
+  domain    = c("Lifestyle", "Lifestyle", "Clinical", "Clinical"),
+  predictor = c("Physical activity", "Diet quality",
+                "BMI (per 5 kg/m\u00b2)", "Systolic BP (per 10 mmHg)"),
+  estimate  = c(-0.31, -0.18,  0.19,  0.25),
+  lower     = c(-0.51, -0.36, -0.02,  0.08),
+  upper     = c(-0.11, -0.00,  0.40,  0.42)
 )
 forrest(dat2,
-  estimate = "estimate",
-  lower    = "lower",
-  upper    = "upper",
-  label    = "predictor",
-  group    = "period",
-  dodge    = TRUE,
-  xlab     = "Regression coefficient (95\% CI)"
+  estimate  = "estimate",
+  lower     = "lower",
+  upper     = "upper",
+  label     = "predictor",
+  section   = "domain",
+  xlab      = "Regression coefficient (95\% CI)"
 )
 
 }

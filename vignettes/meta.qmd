@@ -186,8 +186,9 @@ forrest(
 
 ## Structured subgroup analysis with section headers
 
-Use `NA` estimates to insert bold section headers and blank spacers, grouping
-studies by region with a region-level pooled diamond.
+Pass `section = "region"` to group studies under bold region headers
+automatically. `forrest()` inserts headers, indents study labels, and adds
+spacers — no manual data manipulation required.
 
 ```{r meta-structured}
 #| fig-height: 10
@@ -197,7 +198,7 @@ pool_region <- function(dat, region_label) {
   lp  <- sum(w * dat$log_or) / sum(w)
   se  <- sqrt(1 / sum(w))
   data.frame(
-    study    = sprintf("  %s (pooled)", region_label),
+    study    = sprintf("%s (pooled)", region_label),
     region   = region_label,
     n        = sum(dat$n),
     events   = sum(dat$events),
@@ -211,33 +212,17 @@ pool_region <- function(dat, region_label) {
   )
 }
 
-regions     <- c("Asia", "Europe", "Latin America", "North America")
-region_data <- lapply(regions, function(r) {
+# Build data: just the study rows and region-level pooled rows.
+# No manual header or spacer rows needed.
+regions    <- c("Asia", "Europe", "Latin America", "North America")
+structured <- do.call(rbind, lapply(regions, function(r) {
   sub <- meta_dat[meta_dat$region == r, ]
-  # Indent study names within section
-  sub$study <- paste0("  ", sub$study)
-  rbind(
-    data.frame(study = r, region = r, n = NA, events = NA,
-               log_or = NA, se = NA, or = NA, lower = NA,
-               upper = NA, weight = NA, is_sum = FALSE),
-    sub,
-    pool_region(sub, r),
-    data.frame(study = "", region = NA, n = NA, events = NA,
-               log_or = NA, se = NA, or = NA, lower = NA,
-               upper = NA, weight = NA, is_sum = FALSE)
-  )
-})
+  rbind(sub, pool_region(sub, r))
+}))
 
-structured <- do.call(rbind, region_data)
-structured <- rbind(
-  structured,
-  pooled_row[, names(structured)]
-)
-
-structured$or_text <- ifelse(
-  is.na(structured$or), "",
-  sprintf("%.2f (%.2f\u2013%.2f)",
-          structured$or, structured$lower, structured$upper)
+structured$or_text <- sprintf(
+  "%.2f (%.2f\u2013%.2f)",
+  structured$or, structured$lower, structured$upper
 )
 
 forrest(
@@ -246,6 +231,7 @@ forrest(
   lower      = "lower",
   upper      = "upper",
   label      = "study",
+  section    = "region",
   is_summary = "is_sum",
   weight     = "weight",
   log_scale  = TRUE,

@@ -28,12 +28,17 @@ footprint minimal.
 
 - Works with any estimates and CIs: regression coefficients, ORs, HRs,
   MDs, …
-- Group and subgroup headings via `NA` estimate rows
-- Summary estimates rendered as filled diamonds
+- Automatic section headers from a grouping column (`section` argument)
+  — no manual NA rows
+- Two-level hierarchy with `subsection` for nested grouping structures
+- Summary estimates rendered as filled diamonds (`is_summary`)
+- Reference-category rows (NA estimate) rendered without CI, optionally
+  annotated with `" (Ref.)"`
 - Alternating row stripes for readability (`stripe = TRUE`)
 - Group colouring with automatic Okabe-Ito legend
 - Optional text columns (formatted estimates, p-values, …) alongside the
   plot
+- Section-level text column annotations via `section_cols`
 - Log-scale x-axis for ratio measures
 - CI clipping at axis limits with directional arrows
 - Point size proportional to row weights
@@ -129,6 +134,41 @@ forrest(
 
 <img src="man/figures/README-meta-1.png" alt="" width="100%" />
 
+### Section headers
+
+Pass a column name to `section` to group rows under automatic bold
+headers. `forrest()` inserts a header wherever the section value
+changes, indents the row labels, and adds a blank spacer after each
+group — no manual data manipulation required.
+
+``` r
+subgroups <- data.frame(
+  domain   = c("Lifestyle",  "Lifestyle",  "Lifestyle",
+               "Clinical",   "Clinical",
+               "Socioeconomic"),
+  exposure = c("Physical activity", "Diet quality", "Sleep duration",
+               "Systolic BP (per 10 mmHg)", "BMI (per 5 kg/m\u00b2)",
+               "Area deprivation"),
+  est      = c(-0.31, -0.18, 0.09, 0.25,  0.19, 0.14),
+  lo       = c(-0.51, -0.36, -0.08, 0.08, -0.02, -0.04),
+  hi       = c(-0.11, -0.00,  0.26, 0.42,  0.40,  0.32)
+)
+
+forrest(
+  subgroups,
+  estimate = "est",
+  lower    = "lo",
+  upper    = "hi",
+  label    = "exposure",
+  section  = "domain",
+  header   = "Exposure",
+  ref_line = 0,
+  xlab     = "Regression coefficient (95% CI)"
+)
+```
+
+<img src="man/figures/README-section-1.png" alt="" width="100%" />
+
 ### Regression models
 
 Use [`broom::tidy()`](https://broom.tidymodels.org/) to extract
@@ -187,7 +227,8 @@ forrest(
 | Minimal dependencies | ✅ | ❌ | ❌ | ❌ |
 | General (not meta-analysis only) | ✅ | ⚠️ | ⚠️ | ❌ |
 | Study weight sizing | ✅ | ✅ | ✅ | ❌ |
-| Subgroup headers | ✅ | ✅ | ✅ | ❌ |
+| Auto section headers from grouping column | ✅ | ❌ | ❌ | ❌ |
+| Two-level nested section hierarchy | ✅ | ❌ | ❌ | ❌ |
 | Summary diamonds | ✅ | ✅ | ✅ | ✅ |
 | Text columns | ✅ | ✅ | ✅ | ❌ |
 | Alternating row stripes | ✅ | ❌ | ✅ | ❌ |

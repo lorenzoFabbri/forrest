@@ -2,9 +2,13 @@
 #'
 #' Draws a publication-ready forest plot from a data frame. Each row
 #' represents one estimate — a study, a predictor, a model, a subgroup, or any
-#' other unit of analysis. Rows whose `estimate` is `NA` are treated as
-#' spacer/header rows: they produce no point or confidence interval, and their
-#' label is rendered in bold if non-empty.
+#' other unit of analysis.
+#'
+#' Rows with `NA` estimates are treated as reference-category rows: they produce
+#' no point or confidence interval, and their label is rendered in regular
+#' (non-bold) font.  To create section headers and spacers automatically, use
+#' the `section` (and optionally `subsection`) arguments instead of inserting
+#' NA rows by hand.
 #'
 #' @param data A data frame, tibble, or data.table.
 #' @param estimate Column name (string) for point estimates.
@@ -21,6 +25,29 @@
 #'   point size scales as `cex * sqrt(weight / max(weight))`, so rows with
 #'   larger weights appear with a bigger marker. Weights for summary rows are
 #'   ignored (diamond size is fixed by `cex`).
+#' @param section Column name (string) for a grouping variable that determines
+#'   section structure. Whenever the value of this column changes (run-length
+#'   boundary), a bold section header row is automatically inserted before the
+#'   group. Row order is preserved; no automatic sorting is applied. See also
+#'   `section_indent`, `section_spacer`, and `section_cols`.
+#' @param subsection Column name (string) for a second-level grouping variable.
+#'   Requires `section`. Inserts indented sub-headers beneath each section
+#'   header. See also `subsection_cols`.
+#' @param section_indent Logical. If `TRUE` (default), label values of data
+#'   rows within a section are automatically indented by two spaces (four spaces
+#'   for rows within a subsection).
+#' @param section_spacer Logical. If `TRUE` (default), a blank spacer row is
+#'   appended after the last row of each section.
+#' @param section_cols Named character vector. Names must be a subset of the
+#'   names of `cols`. Values are column names in `data` whose first non-NA
+#'   entry in each section is shown in that section's header row. Columns not
+#'   listed here display `""` in the header row. Use this to show section-level
+#'   summaries (e.g. `"k = 3 studies"`) next to the section header.
+#' @param subsection_cols Like `section_cols` but for subsection header rows.
+#' @param ref_label Logical. When `TRUE` and `section` is provided, rows with
+#'   `NA` estimates that are present in the original data (i.e. reference
+#'   category rows, not auto-generated headers) have `" (Ref.)"` appended to
+#'   their label. Default is `FALSE`.
 #' @param ref_line Numeric. Position of the vertical reference line (e.g. `0`
 #'   for differences, `1` for ratio measures on the natural scale). Set to
 #'   `NULL` to suppress. Default is `0`.
@@ -67,8 +94,7 @@
 #'   `group` is specified, the Okabe-Ito colorblind-safe palette is used. When
 #'   `NULL` and no `group`, a single dark colour is used.
 #' @param legend_pos Position of the colour legend when `group` is supplied.
-#'   Passed to `legend()`. Use `NULL` to suppress.
-#'   Default is `"topright"`.
+#'   Passed to `legend()`. Use `NULL` to suppress. Default is `"topright"`.
 #' @param cols_by_group Logical. Relevant only when `dodge` is active. When
 #'   `TRUE`, each text column in `cols` is collapsed to one value per label
 #'   group: the first non-empty entry within the group is displayed at the
@@ -81,7 +107,7 @@
 #' @param legend_shape_pos Position of the shape legend when `shape` is
 #'   supplied. Passed to `legend()`. Use `NULL` to suppress.
 #'   Default is `"bottomright"`.
-#' @param theme Visual theme name ("default", "minimal", "classic") or a
+#' @param theme Visual theme name (`"default"`, `"minimal"`, `"classic"`) or a
 #'   named list of style overrides. Default is `"default"`.
 #' @param ... Graphical parameters forwarded to the internal tinyplot call
 #'   (e.g. `cex.axis`, `cex.lab`).
@@ -106,24 +132,22 @@
 #'   xlab     = "Regression coefficient (95% CI)"
 #' )
 #'
-#' # Multiple estimates per row (dodge) - same predictor in two time windows
+#' # Section headers from a grouping column
 #' dat2 <- data.frame(
-#'   predictor = rep(c("Air pollution (PM2.5)",
-#'                     "Sedentary behaviour",
-#'                     "Diet quality score"), each = 2),
-#'   period    = rep(c("Childhood", "Adulthood"), 3),
-#'   estimate  = c( 0.18,  0.30, -0.12, -0.22,  0.09,  0.14),
-#'   lower     = c(-0.02,  0.10, -0.30, -0.40, -0.08, -0.04),
-#'   upper     = c( 0.38,  0.50,  0.06, -0.04,  0.26,  0.32)
+#'   domain    = c("Lifestyle", "Lifestyle", "Clinical", "Clinical"),
+#'   predictor = c("Physical activity", "Diet quality",
+#'                 "BMI (per 5 kg/m\u00b2)", "Systolic BP (per 10 mmHg)"),
+#'   estimate  = c(-0.31, -0.18,  0.19,  0.25),
+#'   lower     = c(-0.51, -0.36, -0.02,  0.08),
+#'   upper     = c(-0.11, -0.00,  0.40,  0.42)
 #' )
 #' forrest(dat2,
-#'   estimate = "estimate",
-#'   lower    = "lower",
-#'   upper    = "upper",
-#'   label    = "predictor",
-#'   group    = "period",
-#'   dodge    = TRUE,
-#'   xlab     = "Regression coefficient (95% CI)"
+#'   estimate  = "estimate",
+#'   lower     = "lower",
+#'   upper     = "upper",
+#'   label     = "predictor",
+#'   section   = "domain",
+#'   xlab      = "Regression coefficient (95% CI)"
 #' )
 #'
 #' @export
@@ -132,29 +156,36 @@ forrest <- function(
   estimate,
   lower,
   upper,
-  label = NULL,
-  group = NULL,
-  is_summary = NULL,
-  weight = NULL,
-  ref_line = 0,
-  log_scale = FALSE,
-  xlim = NULL,
-  xlab = "Estimate (95% CI)",
-  title = NULL,
-  header = NULL,
-  cols = NULL,
-  widths = NULL,
-  stripe = FALSE,
-  dodge = FALSE,
-  pch = 15,
-  shape = NULL,
-  lwd = 2,
-  cex = 1,
-  col = NULL,
-  cols_by_group = FALSE,
-  legend_pos = "topright",
+  label            = NULL,
+  group            = NULL,
+  is_summary       = NULL,
+  weight           = NULL,
+  section          = NULL,
+  subsection       = NULL,
+  section_indent   = TRUE,
+  section_spacer   = TRUE,
+  section_cols     = NULL,
+  subsection_cols  = NULL,
+  ref_label        = FALSE,
+  ref_line         = 0,
+  log_scale        = FALSE,
+  xlim             = NULL,
+  xlab             = "Estimate (95% CI)",
+  title            = NULL,
+  header           = NULL,
+  cols             = NULL,
+  widths           = NULL,
+  stripe           = FALSE,
+  dodge            = FALSE,
+  pch              = 15,
+  shape            = NULL,
+  lwd              = 2,
+  cex              = 1,
+  col              = NULL,
+  cols_by_group    = FALSE,
+  legend_pos       = "topright",
   legend_shape_pos = "bottomright",
-  theme = "default",
+  theme            = "default",
   ...
 ) {
   # ── 1. Input validation ────────────────────────────────────────────────────
@@ -167,47 +198,121 @@ forrest <- function(
   }
   df <- as_df(data)
   n <- nrow(df)
-  if (n == 0L) {
-    stop("`data` has zero rows.", call. = FALSE)
-  }
+  if (n == 0L) stop("`data` has zero rows.", call. = FALSE)
 
   check_col(df, estimate, "estimate")
-  check_col(df, lower, "lower")
-  check_col(df, upper, "upper")
-  check_col_opt(df, label, "label")
-  check_col_opt(df, group, "group")
+  check_col(df, lower,    "lower")
+  check_col(df, upper,    "upper")
+  check_col_opt(df, label,      "label")
+  check_col_opt(df, group,      "group")
   check_col_opt(df, is_summary, "is_summary")
-  check_col_opt(df, weight, "weight")
-  check_col_opt(df, shape, "shape")
+  check_col_opt(df, weight,     "weight")
+  check_col_opt(df, shape,      "shape")
+  check_col_opt(df, section,    "section")
+  check_col_opt(df, subsection, "subsection")
+
+  if (!is.null(subsection) && is.null(section)) {
+    stop("`subsection` requires `section` to also be specified.", call. = FALSE)
+  }
+  if (!is.null(section) && !is.null(label) && section == label) {
+    stop("`section` and `label` must refer to different columns.", call. = FALSE)
+  }
+
   if (!is.null(cols)) {
     if (is.null(names(cols)) || any(names(cols) == "")) {
       stop("`cols` must be a *named* character vector.", call. = FALSE)
     }
-    for (nm in cols) {
-      check_col(df, nm, sprintf("cols[\"%s\"]", nm))
+    for (nm in cols) check_col(df, nm, sprintf("cols[\"%s\"]", nm))
+  }
+
+  # section_cols / subsection_cols keys must be subsets of cols names
+  if (!is.null(section_cols)) {
+    if (is.null(cols)) {
+      stop("`section_cols` requires `cols` to be specified.", call. = FALSE)
     }
+    bad <- setdiff(names(section_cols), names(cols))
+    if (length(bad) > 0L) {
+      stop(
+        sprintf(
+          "`section_cols` names must match `cols` names. Unknown: %s.",
+          paste(bad, collapse = ", ")
+        ),
+        call. = FALSE
+      )
+    }
+    for (cn in unname(section_cols)) check_col(df, cn, "section_cols")
+  }
+  if (!is.null(subsection_cols)) {
+    if (is.null(cols)) {
+      stop("`subsection_cols` requires `cols` to be specified.", call. = FALSE)
+    }
+    bad <- setdiff(names(subsection_cols), names(cols))
+    if (length(bad) > 0L) {
+      stop(
+        sprintf(
+          "`subsection_cols` names must match `cols` names. Unknown: %s.",
+          paste(bad, collapse = ", ")
+        ),
+        call. = FALSE
+      )
+    }
+    for (cn in unname(subsection_cols)) check_col(df, cn, "subsection_cols")
+  }
+
+  # ── 1b. Section expansion ──────────────────────────────────────────────────
+  # When `section` is provided, build_sections() inserts bold header rows,
+  # optional sub-headers, and blank spacer rows into `df` before any drawing.
+  # The three flag vectors identify which of the expanded rows are structural
+  # (auto-inserted) vs. original data rows.
+  if (!is.null(section)) {
+    # Map section_cols / subsection_cols from display-header names to data-
+    # column names so build_sections() can look up values in df
+    sc_data_cols  <- if (!is.null(section_cols))    unname(section_cols)    else NULL
+    ssc_data_cols <- if (!is.null(subsection_cols)) unname(subsection_cols) else NULL
+
+    sec_result <- build_sections(
+      df              = df,
+      estimate        = estimate,
+      lower           = lower,
+      upper           = upper,
+      label           = label,
+      is_summary      = is_summary,
+      weight          = weight,
+      section         = section,
+      subsection      = subsection,
+      section_indent  = section_indent,
+      section_spacer  = section_spacer,
+      cols            = if (!is.null(cols)) unname(cols) else character(0),
+      section_cols    = if (!is.null(sc_data_cols))
+        stats::setNames(sc_data_cols, sc_data_cols) else NULL,
+      subsection_cols = if (!is.null(ssc_data_cols))
+        stats::setNames(ssc_data_cols, ssc_data_cols) else NULL
+    )
+    df                    <- sec_result$df
+    n                     <- nrow(df)
+    .is_section_hdr       <- sec_result$is_section_header
+    .is_subsection_hdr    <- sec_result$is_subsection_header
+    .is_spacer            <- sec_result$is_spacer
+  } else {
+    .is_section_hdr    <- rep(FALSE, n)
+    .is_subsection_hdr <- rep(FALSE, n)
+    .is_spacer         <- rep(FALSE, n)
   }
 
   # ── 2. Theme ───────────────────────────────────────────────────────────────
   th <- resolve_theme(theme)
 
   # ── 3. Extract columns ─────────────────────────────────────────────────────
-  # Coerce to atomic vectors so downstream code can index without
-  # method dispatch
   est <- as.numeric(df[[estimate]])
   lo  <- as.numeric(df[[lower]])
   hi  <- as.numeric(df[[upper]])
-  # Default label: row index as a string (rarely used but keeps the rest of
-  # the function uniform — `lbl` is always a character vector of length n)
   lbl <- if (!is.null(label)) {
     as.character(df[[label]])
   } else {
     as.character(seq_len(n))
   }
-  grp    <- if (!is.null(group))  as.character(df[[group]])  else NULL
-  shp    <- if (!is.null(shape))  as.character(df[[shape]])  else NULL
-  # `is_sum` defaults to all FALSE; summary rows draw a diamond instead of
-  # a point + whiskers
+  grp <- if (!is.null(group))  as.character(df[[group]])  else NULL
+  shp <- if (!is.null(shape))  as.character(df[[shape]])  else NULL
   is_sum <- if (!is.null(is_summary)) {
     as.logical(df[[is_summary]])
   } else {
@@ -215,17 +320,30 @@ forrest <- function(
   }
   wt <- if (!is.null(weight)) as.numeric(df[[weight]]) else NULL
 
-  # Header rows: NA estimate AND not a summary row.  These produce no graphical
-  # element; their label is rendered in bold if non-empty, or as a blank
-  # spacer if empty ("").
-  is_header <- is.na(est) & !is_sum
+  # Structural header rows: auto-inserted section/subsection headers and
+  # spacers.  These produce no graphical element; section/subsection labels
+  # are rendered in bold; spacer labels ("") are skipped.
+  is_struct <- .is_section_hdr | .is_subsection_hdr | .is_spacer
+
+  # Reference-category rows: user-supplied NA-estimate rows that are not
+  # structural.  They produce no CI or point, and their label is regular
+  # (non-bold) font.  Optionally annotated with " (Ref.)".
+  is_ref <- is.na(est) & !is_sum & !is_struct
+
+  # All rows that produce no graphical CI element
+  is_no_ci <- is_struct | is_ref
+
+  # Optionally append "(Ref.)" to reference-category labels
+  if (isTRUE(ref_label) && any(is_ref)) {
+    lbl[is_ref] <- paste0(lbl[is_ref], " (Ref.)")
+  }
+
+  # Bold rows: only auto-inserted structural headers with non-empty labels
+  is_bold <- (.is_section_hdr | .is_subsection_hdr) & nchar(trimws(lbl)) > 0L
 
   # ── 4. Colours ─────────────────────────────────────────────────────────────
-  # Priority: explicit `col` > group-mapped colours > single dark grey.
-  # `grp_col_map` is kept as a named vector (level → hex) so it can be passed
-  # directly to `legend(fill = ...)`.
   if (!is.null(col)) {
-    col_vec    <- rep_len(col, n)
+    col_vec     <- rep_len(col, n)
     grp_col_map <- NULL
   } else if (!is.null(grp)) {
     grp_col_map <- group_colors(grp)
@@ -236,8 +354,6 @@ forrest <- function(
   }
 
   # ── 5. Point characters ────────────────────────────────────────────────────
-  # When `shape` is supplied every unique value gets a distinct pch.
-  # The fallback (`pch` argument) is used for rows whose shape value is NA.
   if (!is.null(shp)) {
     shp_pch_map <- group_shapes(shp)
     pch_vec     <- unname(shp_pch_map[shp])
@@ -247,37 +363,27 @@ forrest <- function(
     shp_pch_map <- NULL
   }
 
-  # ── 6. Per-row point sizes (scaled to weight when provided) ─────────────────
-  # Square-root scaling: size ∝ sqrt(weight) so that the *area* of the marker
-  # is proportional to weight (inverse variance), which is the convention in
-  # meta-analysis forest plots.  Summary and header rows always use `cex` 1×.
+  # ── 6. Per-row point sizes ─────────────────────────────────────────────────
+  # Square-root scaling so marker area is proportional to weight.
+  # Structural, reference, and summary rows always use cex 1x.
   if (!is.null(wt)) {
     reg_wt <- wt
-    # NA out summary and header rows so they don't influence max_wt
-    reg_wt[is_sum | is.na(est)] <- NA_real_
+    reg_wt[is_sum | is_no_ci] <- NA_real_
     max_wt  <- max(reg_wt, na.rm = TRUE)
     cex_vec <- cex * sqrt(reg_wt / max_wt)
-    # Restore cex for summary / header rows (their weight was set to NA above)
     cex_vec[is.na(cex_vec)] <- cex
   } else {
     cex_vec <- rep(cex, n)
   }
 
   # ── 7. X-axis limits ───────────────────────────────────────────────────────
-  # Auto-compute from CI bounds: take the range of all finite lo/hi values,
-  # add 6% padding on each side, then widen slightly so the reference line
-  # always has at least `pad` whitespace around it.
   xlim_auto <- is.null(xlim)
   if (xlim_auto) {
     vals <- c(lo, hi)
     vals <- vals[is.finite(vals)]
-    if (length(vals) == 0L) {
-      stop("No finite CI values found.", call. = FALSE)
-    }
+    if (length(vals) == 0L) stop("No finite CI values found.", call. = FALSE)
     rng <- range(vals)
     if (log_scale) {
-      # On a log axis, padding must be multiplicative (geometric) so that the
-      # left limit stays positive: work in log-space, then exponentiate back.
       log_rng <- log(rng)
       log_pad <- diff(log_rng) * 0.06
       xlim    <- exp(log_rng + c(-log_pad, log_pad))
@@ -296,22 +402,16 @@ forrest <- function(
   }
 
   # ── 8. Dodge: visual groups and y positions ─────────────────────────────────
-  # `dodge_amt` is the vertical offset (in y-axis units) between rows that
-  # share the same label.  0 means no dodging (one row per data row).
   dodge_amt <- if (isTRUE(dodge)) 0.25 else
     if (is.numeric(dodge) && dodge > 0) as.numeric(dodge) else 0
 
   if (dodge_amt > 0) {
-    # Assign each data row to a visual group; consecutive rows with the same
-    # label form one group.  Header/spacer rows are always singletons.
-    group_ids    <- compute_dodge_groups(lbl, is_header)
-    n_vis <- max(group_ids)  # number of vertical slots in the plot
+    # Structural rows (headers, spacers) are always dodge singletons
+    group_ids    <- compute_dodge_groups(lbl, is_struct)
+    n_vis <- max(group_ids)
 
-    # Visual slot centres: slot 1 is at y = n_vis (top), slot n_vis at y = 1.
     grp_center_y <- (n_vis + 1L) - seq_len(n_vis)
 
-    # Per-row y positions: rows within a group are symmetrically spread around
-    # the group's centre y using equally-spaced offsets of `dodge_amt`.
     row_y <- numeric(n)
     for (g in seq_len(n_vis)) {
       idx     <- which(group_ids == g)
@@ -321,35 +421,29 @@ forrest <- function(
       row_y[idx] <- grp_center_y[g] + offsets
     }
 
-    # Collect one representative label and header flag per visual group (first
-    # row of each group) — used for y-axis text and bold formatting
     vis_lbl       <- vapply(
       seq_len(n_vis),
       function(g) lbl[which(group_ids == g)[1L]],
       character(1L)
     )
     vis_center_y  <- grp_center_y
-    vis_is_header <- vapply(
+    vis_is_bold   <- vapply(
       seq_len(n_vis),
-      function(g) is_header[which(group_ids == g)[1L]],
+      function(g) is_bold[which(group_ids == g)[1L]],
       logical(1L)
     )
   } else {
-    # No dodging: one visual row per data row, top to bottom
     n_vis         <- n
-    row_y         <- rev(seq_len(n))  # row 1 maps to y = n (top of plot)
+    row_y         <- rev(seq_len(n))
     vis_lbl       <- lbl
     vis_center_y  <- row_y
-    vis_is_header <- is_header
+    vis_is_bold   <- is_bold
   }
 
-  # y-axis limits include half a row of padding above/below the outermost rows
   ylim <- c(0.5, n_vis + 0.5)
 
   # ── 9. Margins and layout ──────────────────────────────────────────────────
   has_cols <- !is.null(cols)
-  # Extra top margin when a header is displayed without a title, so the header
-  # text and its separator line are not clipped by the plot boundary.
   top_mar  <- if (!is.null(title)) 3 else if (!is.null(header)) 2.5 else 1.5
   bot_mar  <- 4
 
@@ -358,15 +452,12 @@ forrest <- function(
 
   if (has_cols) {
     n_right <- length(cols)
-    if (is.null(widths)) {
-      widths <- c(2.5, 4.5, rep(1.8, n_right))
-    }
+    if (is.null(widths)) widths <- c(2.5, 4.5, rep(1.8, n_right))
     if (length(widths) != 2L + n_right) {
       stop(
         sprintf(
           "`widths` must have length %d (label + plot + %d column(s)).",
-          2L + n_right,
-          n_right
+          2L + n_right, n_right
         ),
         call. = FALSE
       )
@@ -379,13 +470,12 @@ forrest <- function(
 
   # ── 10. Left label panel ───────────────────────────────────────────────────
   if (has_cols) {
-    bold_rows <- which(vis_is_header & nchar(trimws(vis_lbl)) > 0L)
     draw_text_panel(
       labels   = vis_lbl,
       n_vis    = n_vis,
       header   = header,
       align    = "left",
-      bold_idx = bold_rows,
+      bold_idx = which(vis_is_bold),
       top_mar  = top_mar,
       bot_mar  = bot_mar
     )
@@ -395,16 +485,14 @@ forrest <- function(
   if (has_cols) {
     left_mar <- 0.3
   } else {
-    # Approximate the left margin width from the longest label. The 0.6 factor
-    # converts characters to margin lines; the minimum of 4 lines ensures
-    # short labels still have breathing room.
     max_chars <- max(nchar(lbl), na.rm = TRUE)
     left_mar  <- max(4, max_chars * 0.6)
   }
   graphics::par(mar = c(bot_mar, left_mar, top_mar, 1))
 
-  # Regular rows: non-header, non-NA, non-summary
-  reg <- !is_sum & !is.na(est)
+  # Regular rows: have a finite estimate, are not summary, not structural,
+  # and not reference-category rows
+  reg <- !is_sum & !is_no_ci & !is.na(est)
 
   tinyplot::tinyplot(
     x    = xlim,
@@ -420,7 +508,7 @@ forrest <- function(
     ...
   )
 
-  # Alternating row stripes — one stripe per visual group (even-numbered rows)
+  # Alternating row stripes
   if (stripe) {
     usr  <- graphics::par("usr")
     x_lo <- if (log_scale) 10^usr[1L] else usr[1L]
@@ -433,7 +521,7 @@ forrest <- function(
     }
   }
 
-  # Horizontal gridlines — one per visual row, behind data elements
+  # Horizontal gridlines
   graphics::abline(
     h   = seq_len(n_vis),
     col = th$grid_col,
@@ -441,14 +529,13 @@ forrest <- function(
     lwd = th$grid_lwd
   )
 
-  # Vertical reference line (e.g. 0 for differences, 1 for ratios)
+  # Vertical reference line
   if (!is.null(ref_line) && is.finite(ref_line)) {
     graphics::abline(v = ref_line, lty = th$ref_lty, lwd = 1, col = th$ref_col)
   }
 
-  # CI whiskers and points for regular rows (not header, not NA, not summary)
+  # CI whiskers and points for regular rows
   if (any(reg)) {
-    # Subset to regular rows only
     reg_idx <- which(reg)
     lo_reg  <- lo[reg_idx]
     hi_reg  <- hi[reg_idx]
@@ -458,22 +545,17 @@ forrest <- function(
     cex_reg <- cex_vec[reg_idx]
     pch_reg <- pch_vec[reg_idx]
 
-    # Detect CI bounds that fall outside the visible x-range
     clip_lo <- lo_reg < xlim[1L]
     clip_hi <- hi_reg > xlim[2L]
-    # Clamp the drawn endpoints to xlim — the original values are unchanged
     lo_draw <- pmax(lo_reg, xlim[1L])
     hi_draw <- pmin(hi_reg, xlim[2L])
 
-    # Height of the T-cap tick mark at each CI endpoint (in y-axis units)
     cap_h <- 0.12
     for (k in seq_along(reg_idx)) {
-      # Horizontal whisker from lower to upper CI bound
       graphics::segments(
         lo_draw[k], y_reg[k], hi_draw[k], y_reg[k],
         lwd = lwd, col = col_reg[k]
       )
-      # Lower end: arrow if clipped (CI extends off-screen), T-cap otherwise
       if (clip_lo[k]) {
         graphics::arrows(
           lo_draw[k] + diff(xlim) * 0.02, y_reg[k],
@@ -486,7 +568,6 @@ forrest <- function(
           lwd = lwd, col = col_reg[k]
         )
       }
-      # Upper end: same logic
       if (clip_hi[k]) {
         graphics::arrows(
           hi_draw[k] - diff(xlim) * 0.02, y_reg[k],
@@ -501,8 +582,6 @@ forrest <- function(
       }
     }
 
-    # Draw point estimates — skip any whose value is outside xlim (can happen
-    # when the user supplies a manual xlim that doesn't cover all estimates)
     vis_pts <- est_reg >= xlim[1L] & est_reg <= xlim[2L]
     if (any(vis_pts)) {
       graphics::points(
@@ -527,13 +606,9 @@ forrest <- function(
     )
   }
 
-  # Y-axis labels (when no separate label panel is used).
-  # Labels are rendered as horizontal text in the left margin (las = 1).
-  # line = 0.5 gives a small gap between the axis and the text, and together
-  # with left_mar = max(4, max_chars * 0.6) this keeps labels within bounds.
+  # Y-axis labels (when no separate label panel is used)
   if (!has_cols) {
-    bold_rows <- which(vis_is_header & nchar(trimws(vis_lbl)) > 0L)
-    font_vec  <- ifelse(seq_len(n_vis) %in% bold_rows, 2L, 1L)
+    font_vec <- ifelse(vis_is_bold, 2L, 1L)
     for (i in seq_len(n_vis)) {
       graphics::mtext(
         text = vis_lbl[i],
@@ -546,7 +621,6 @@ forrest <- function(
       )
     }
     if (!is.null(header)) {
-      # Bold section header placed just above the topmost row in the top margin
       graphics::mtext(
         text = header,
         side = 2L,
@@ -591,9 +665,10 @@ forrest <- function(
     use_groups <- isTRUE(cols_by_group) && dodge_amt > 0
 
     if (use_groups) {
-      # Wide-format mode: one value per label group, at group centre y.
-      # Take the first non-empty entry within each group for each column.
-      vis_bold <- which(vis_is_header & nchar(trimws(vis_lbl)) > 0L)
+      # Wide-format mode: one value per label group at group centre y.
+      # Section/subsection header rows contribute "" (already set by
+      # build_sections), so they never crowd out row-level values.
+      vis_bold_idx <- which(vis_is_bold)
       for (j in seq_along(cols)) {
         raw <- as.character(df[[cols[j]]])
         grp_vals <- vapply(seq_len(n_vis), function(g) {
@@ -606,14 +681,14 @@ forrest <- function(
           n_vis    = n_vis,
           header   = col_nms[j],
           align    = "center",
-          bold_idx = vis_bold,
+          bold_idx = vis_bold_idx,
           top_mar  = top_mar,
           bot_mar  = bot_mar
         )
       }
     } else {
-      # Row-level mode (default): text at each row's dodged y position.
-      bold_rows <- which(is_header & nchar(trimws(lbl)) > 0L)
+      # Row-level mode: text at each row's (possibly dodged) y position.
+      bold_rows <- which(is_bold)
       for (j in seq_along(cols)) {
         vals <- as.character(df[[cols[j]]])
         draw_text_panel(

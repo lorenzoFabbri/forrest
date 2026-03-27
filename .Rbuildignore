@@ -14,3 +14,5 @@
 ^codecov\.yml$
 ^\.lintr$
 ^CLAUDE\.md$
+^cran-comments\.md$
+^vignettes/.*_files$
