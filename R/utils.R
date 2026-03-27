@@ -94,7 +94,9 @@ compute_dodge_groups <- function(lbl, is_header) {
 group_shapes <- function(shapes) {
   lvls <- unique(shapes)
   pchs <- c(16L, 17L, 15L, 18L, 8L, 10L, 3L, 4L)
-  if (length(lvls) > length(pchs)) pchs <- rep_len(pchs, length(lvls))
+  if (length(lvls) > length(pchs)) {
+    pchs <- rep_len(pchs, length(lvls))
+  }
   stats::setNames(pchs[seq_along(lvls)], as.character(lvls))
 }
 
@@ -155,12 +157,12 @@ build_sections <- function(
   is_summary,
   weight,
   section,
-  subsection       = NULL,
-  section_indent   = TRUE,
-  section_spacer   = TRUE,
-  cols             = character(0),
-  section_cols     = NULL,
-  subsection_cols  = NULL
+  subsection = NULL,
+  section_indent = TRUE,
+  section_spacer = TRUE,
+  cols = character(0),
+  section_cols = NULL,
+  subsection_cols = NULL
 ) {
   n_orig <- nrow(df)
 
@@ -173,16 +175,26 @@ build_sections <- function(
   # cols_vals  — named character vector: data-column name -> value to insert
   make_struct_row <- function(label_val, cols_vals = character(0)) {
     r <- na_row
-    if (!is.null(is_summary)) r[[is_summary]] <- FALSE
-    if (!is.null(label))      r[[label]]      <- label_val
+    if (!is.null(is_summary)) {
+      r[[is_summary]] <- FALSE
+    }
+    if (!is.null(label)) {
+      r[[label]] <- label_val
+    }
     r[[estimate]] <- NA_real_
-    r[[lower]]    <- NA_real_
-    r[[upper]]    <- NA_real_
-    if (!is.null(weight)) r[[weight]] <- NA_real_
+    r[[lower]] <- NA_real_
+    r[[upper]] <- NA_real_
+    if (!is.null(weight)) {
+      r[[weight]] <- NA_real_
+    }
     # Text-panel columns default to ""
-    for (cn in cols) r[[cn]] <- ""
+    for (cn in cols) {
+      r[[cn]] <- ""
+    }
     # Override with any section/subsection-level annotations
-    for (i in seq_along(cols_vals)) r[[names(cols_vals)[i]]] <- cols_vals[[i]]
+    for (i in seq_along(cols_vals)) {
+      r[[names(cols_vals)[i]]] <- cols_vals[[i]]
+    }
     r
   }
 
@@ -195,7 +207,9 @@ build_sections <- function(
 
   # Resolve annotation cols into a mapping: data-column name -> display value
   resolve_annotation <- function(annot_cols, sub_df) {
-    if (is.null(annot_cols) || length(annot_cols) == 0L) return(character(0))
+    if (is.null(annot_cols) || length(annot_cols) == 0L) {
+      return(character(0))
+    }
     vals <- vapply(
       unname(annot_cols),
       function(cn) first_val(sub_df, cn),
@@ -205,46 +219,48 @@ build_sections <- function(
   }
 
   # Section run-length boundaries
-  sec_vals   <- as.character(df[[section]])
-  sec_rle    <- rle(sec_vals)
+  sec_vals <- as.character(df[[section]])
+  sec_rle <- rle(sec_vals)
   sec_starts <- cumsum(c(1L, sec_rle$lengths[-length(sec_rle$lengths)]))
-  sec_ends   <- cumsum(sec_rle$lengths)
+  sec_ends <- cumsum(sec_rle$lengths)
   n_sections <- length(sec_rle$values)
 
-  out_rows              <- vector("list", n_orig * 4L)
-  out_ptr               <- 0L
-  is_section_hdr_vec    <- logical(0)
+  out_rows <- vector("list", n_orig * 4L)
+  out_ptr <- 0L
+  is_section_hdr_vec <- logical(0)
   is_subsection_hdr_vec <- logical(0)
-  is_spacer_vec         <- logical(0)
+  is_spacer_vec <- logical(0)
 
   push <- function(rows_df, is_sec, is_sub, is_sp) {
     k <- nrow(rows_df)
     out_ptr <<- out_ptr + 1L
     out_rows[[out_ptr]] <<- rows_df
-    is_section_hdr_vec    <<- c(is_section_hdr_vec,    rep(is_sec, k))
+    is_section_hdr_vec <<- c(is_section_hdr_vec, rep(is_sec, k))
     is_subsection_hdr_vec <<- c(is_subsection_hdr_vec, rep(is_sub, k))
-    is_spacer_vec         <<- c(is_spacer_vec,         rep(is_sp,  k))
+    is_spacer_vec <<- c(is_spacer_vec, rep(is_sp, k))
   }
 
   for (s in seq_len(n_sections)) {
     sec_label <- sec_rle$values[s]
-    sec_rows  <- df[sec_starts[s]:sec_ends[s], , drop = FALSE]
+    sec_rows <- df[sec_starts[s]:sec_ends[s], , drop = FALSE]
 
     # Section header row
     push(
       make_struct_row(sec_label, resolve_annotation(section_cols, sec_rows)),
-      TRUE, FALSE, FALSE
+      TRUE,
+      FALSE,
+      FALSE
     )
 
     if (!is.null(subsection)) {
-      sub_vals   <- as.character(sec_rows[[subsection]])
-      sub_rle    <- rle(sub_vals)
+      sub_vals <- as.character(sec_rows[[subsection]])
+      sub_rle <- rle(sub_vals)
       sub_starts <- cumsum(c(1L, sub_rle$lengths[-length(sub_rle$lengths)]))
-      sub_ends   <- cumsum(sub_rle$lengths)
+      sub_ends <- cumsum(sub_rle$lengths)
 
-      for (ss in seq_len(length(sub_rle$values))) {
+      for (ss in seq_along(sub_rle$values)) {
         sub_label <- sub_rle$values[ss]
-        sub_rows  <- sec_rows[sub_starts[ss]:sub_ends[ss], , drop = FALSE]
+        sub_rows <- sec_rows[sub_starts[ss]:sub_ends[ss], , drop = FALSE]
 
         # Subsection header (indented by 2 spaces relative to section)
         push(
@@ -252,7 +268,9 @@ build_sections <- function(
             paste0("  ", sub_label),
             resolve_annotation(subsection_cols, sub_rows)
           ),
-          FALSE, TRUE, FALSE
+          FALSE,
+          TRUE,
+          FALSE
         )
 
         # Data rows — indent by 4 spaces (2 for section + 2 for subsection)
@@ -277,9 +295,9 @@ build_sections <- function(
   rownames(out_df) <- NULL
 
   list(
-    df                   = out_df,
-    is_section_header    = is_section_hdr_vec,
+    df = out_df,
+    is_section_header = is_section_hdr_vec,
     is_subsection_header = is_subsection_hdr_vec,
-    is_spacer            = is_spacer_vec
+    is_spacer = is_spacer_vec
   )
 }

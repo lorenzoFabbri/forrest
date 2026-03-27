@@ -40,3 +40,5 @@ cache/
 
 # Claude Code
 .claude
+/doc/
+/Meta/

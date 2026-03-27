@@ -78,11 +78,16 @@ draw_text_panel <- function(
       xpd = TRUE
     )
     graphics::segments(
-      0, n_vis + 0.2, 1, n_vis + 0.2, col = "gray70", xpd = TRUE
+      0,
+      n_vis + 0.2,
+      1,
+      n_vis + 0.2,
+      col = "gray70",
+      xpd = TRUE
     )
   }
 
-  row_y    <- if (!is.null(y_positions)) y_positions else seq(n_vis, 1L)
+  row_y <- if (!is.null(y_positions)) y_positions else seq(n_vis, 1L)
   font_vec <- ifelse(seq_along(labels) %in% bold_idx, 2L, 1L)
   for (i in seq_along(labels)) {
     graphics::text(

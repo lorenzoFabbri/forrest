@@ -156,36 +156,36 @@ forrest <- function(
   estimate,
   lower,
   upper,
-  label            = NULL,
-  group            = NULL,
-  is_summary       = NULL,
-  weight           = NULL,
-  section          = NULL,
-  subsection       = NULL,
-  section_indent   = TRUE,
-  section_spacer   = TRUE,
-  section_cols     = NULL,
-  subsection_cols  = NULL,
-  ref_label        = FALSE,
-  ref_line         = 0,
-  log_scale        = FALSE,
-  xlim             = NULL,
-  xlab             = "Estimate (95% CI)",
-  title            = NULL,
-  header           = NULL,
-  cols             = NULL,
-  widths           = NULL,
-  stripe           = FALSE,
-  dodge            = FALSE,
-  pch              = 15,
-  shape            = NULL,
-  lwd              = 2,
-  cex              = 1,
-  col              = NULL,
-  cols_by_group    = FALSE,
-  legend_pos       = "topright",
+  label = NULL,
+  group = NULL,
+  is_summary = NULL,
+  weight = NULL,
+  section = NULL,
+  subsection = NULL,
+  section_indent = TRUE,
+  section_spacer = TRUE,
+  section_cols = NULL,
+  subsection_cols = NULL,
+  ref_label = FALSE,
+  ref_line = 0,
+  log_scale = FALSE,
+  xlim = NULL,
+  xlab = "Estimate (95% CI)",
+  title = NULL,
+  header = NULL,
+  cols = NULL,
+  widths = NULL,
+  stripe = FALSE,
+  dodge = FALSE,
+  pch = 15,
+  shape = NULL,
+  lwd = 2,
+  cex = 1,
+  col = NULL,
+  cols_by_group = FALSE,
+  legend_pos = "topright",
   legend_shape_pos = "bottomright",
-  theme            = "default",
+  theme = "default",
   ...
 ) {
   # ── 1. Input validation ────────────────────────────────────────────────────
@@ -198,31 +198,38 @@ forrest <- function(
   }
   df <- as_df(data)
   n <- nrow(df)
-  if (n == 0L) stop("`data` has zero rows.", call. = FALSE)
+  if (n == 0L) {
+    stop("`data` has zero rows.", call. = FALSE)
+  }
 
   check_col(df, estimate, "estimate")
-  check_col(df, lower,    "lower")
-  check_col(df, upper,    "upper")
-  check_col_opt(df, label,      "label")
-  check_col_opt(df, group,      "group")
+  check_col(df, lower, "lower")
+  check_col(df, upper, "upper")
+  check_col_opt(df, label, "label")
+  check_col_opt(df, group, "group")
   check_col_opt(df, is_summary, "is_summary")
-  check_col_opt(df, weight,     "weight")
-  check_col_opt(df, shape,      "shape")
-  check_col_opt(df, section,    "section")
+  check_col_opt(df, weight, "weight")
+  check_col_opt(df, shape, "shape")
+  check_col_opt(df, section, "section")
   check_col_opt(df, subsection, "subsection")
 
   if (!is.null(subsection) && is.null(section)) {
     stop("`subsection` requires `section` to also be specified.", call. = FALSE)
   }
   if (!is.null(section) && !is.null(label) && section == label) {
-    stop("`section` and `label` must refer to different columns.", call. = FALSE)
+    stop(
+      "`section` and `label` must refer to different columns.",
+      call. = FALSE
+    )
   }
 
   if (!is.null(cols)) {
     if (is.null(names(cols)) || any(names(cols) == "")) {
       stop("`cols` must be a *named* character vector.", call. = FALSE)
     }
-    for (nm in cols) check_col(df, nm, sprintf("cols[\"%s\"]", nm))
+    for (nm in cols) {
+      check_col(df, nm, sprintf("cols[\"%s\"]", nm))
+    }
   }
 
   # section_cols / subsection_cols keys must be subsets of cols names
@@ -240,7 +247,9 @@ forrest <- function(
         call. = FALSE
       )
     }
-    for (cn in unname(section_cols)) check_col(df, cn, "section_cols")
+    for (cn in unname(section_cols)) {
+      check_col(df, cn, "section_cols")
+    }
   }
   if (!is.null(subsection_cols)) {
     if (is.null(cols)) {
@@ -256,7 +265,9 @@ forrest <- function(
         call. = FALSE
       )
     }
-    for (cn in unname(subsection_cols)) check_col(df, cn, "subsection_cols")
+    for (cn in unname(subsection_cols)) {
+      check_col(df, cn, "subsection_cols")
+    }
   }
 
   # ── 1b. Section expansion ──────────────────────────────────────────────────
@@ -267,36 +278,42 @@ forrest <- function(
   if (!is.null(section)) {
     # Map section_cols / subsection_cols from display-header names to data-
     # column names so build_sections() can look up values in df
-    sc_data_cols  <- if (!is.null(section_cols))    unname(section_cols)    else NULL
-    ssc_data_cols <- if (!is.null(subsection_cols)) unname(subsection_cols) else NULL
+    sc_data_cols <- if (!is.null(section_cols)) unname(section_cols)
+    ssc_data_cols <- if (!is.null(subsection_cols)) unname(subsection_cols)
 
-    sec_result <- build_sections(
-      df              = df,
-      estimate        = estimate,
-      lower           = lower,
-      upper           = upper,
-      label           = label,
-      is_summary      = is_summary,
-      weight          = weight,
-      section         = section,
-      subsection      = subsection,
-      section_indent  = section_indent,
-      section_spacer  = section_spacer,
-      cols            = if (!is.null(cols)) unname(cols) else character(0),
-      section_cols    = if (!is.null(sc_data_cols))
-        stats::setNames(sc_data_cols, sc_data_cols) else NULL,
-      subsection_cols = if (!is.null(ssc_data_cols))
-        stats::setNames(ssc_data_cols, ssc_data_cols) else NULL
+    sec_result <- build_sections( # nolint: object_usage_linter.
+      df = df,
+      estimate = estimate,
+      lower = lower,
+      upper = upper,
+      label = label,
+      is_summary = is_summary,
+      weight = weight,
+      section = section,
+      subsection = subsection,
+      section_indent = section_indent,
+      section_spacer = section_spacer,
+      cols = if (!is.null(cols)) unname(cols) else character(0),
+      section_cols = if (!is.null(sc_data_cols)) {
+        stats::setNames(sc_data_cols, sc_data_cols)
+      } else {
+        NULL
+      },
+      subsection_cols = if (!is.null(ssc_data_cols)) {
+        stats::setNames(ssc_data_cols, ssc_data_cols)
+      } else {
+        NULL
+      }
     )
-    df                    <- sec_result$df
-    n                     <- nrow(df)
-    .is_section_hdr       <- sec_result$is_section_header
-    .is_subsection_hdr    <- sec_result$is_subsection_header
-    .is_spacer            <- sec_result$is_spacer
+    df <- sec_result$df
+    n <- nrow(df)
+    .is_section_hdr <- sec_result$is_section_header
+    .is_subsection_hdr <- sec_result$is_subsection_header
+    .is_spacer <- sec_result$is_spacer
   } else {
-    .is_section_hdr    <- rep(FALSE, n)
+    .is_section_hdr <- rep(FALSE, n)
     .is_subsection_hdr <- rep(FALSE, n)
-    .is_spacer         <- rep(FALSE, n)
+    .is_spacer <- rep(FALSE, n)
   }
 
   # ── 2. Theme ───────────────────────────────────────────────────────────────
@@ -304,15 +321,15 @@ forrest <- function(
 
   # ── 3. Extract columns ─────────────────────────────────────────────────────
   est <- as.numeric(df[[estimate]])
-  lo  <- as.numeric(df[[lower]])
-  hi  <- as.numeric(df[[upper]])
+  lo <- as.numeric(df[[lower]])
+  hi <- as.numeric(df[[upper]])
   lbl <- if (!is.null(label)) {
     as.character(df[[label]])
   } else {
     as.character(seq_len(n))
   }
-  grp <- if (!is.null(group))  as.character(df[[group]])  else NULL
-  shp <- if (!is.null(shape))  as.character(df[[shape]])  else NULL
+  grp <- if (!is.null(group)) as.character(df[[group]]) else NULL
+  shp <- if (!is.null(shape)) as.character(df[[shape]]) else NULL
   is_sum <- if (!is.null(is_summary)) {
     as.logical(df[[is_summary]])
   } else {
@@ -343,23 +360,23 @@ forrest <- function(
 
   # ── 4. Colours ─────────────────────────────────────────────────────────────
   if (!is.null(col)) {
-    col_vec     <- rep_len(col, n)
+    col_vec <- rep_len(col, n)
     grp_col_map <- NULL
   } else if (!is.null(grp)) {
     grp_col_map <- group_colors(grp)
-    col_vec     <- unname(grp_col_map[grp])
+    col_vec <- unname(grp_col_map[grp])
   } else {
-    col_vec     <- rep("#333333", n)
+    col_vec <- rep("#333333", n)
     grp_col_map <- NULL
   }
 
   # ── 5. Point characters ────────────────────────────────────────────────────
   if (!is.null(shp)) {
     shp_pch_map <- group_shapes(shp)
-    pch_vec     <- unname(shp_pch_map[shp])
+    pch_vec <- unname(shp_pch_map[shp])
     pch_vec[is.na(pch_vec)] <- pch
   } else {
-    pch_vec     <- rep(pch, n)
+    pch_vec <- rep(pch, n)
     shp_pch_map <- NULL
   }
 
@@ -369,7 +386,7 @@ forrest <- function(
   if (!is.null(wt)) {
     reg_wt <- wt
     reg_wt[is_sum | is_no_ci] <- NA_real_
-    max_wt  <- max(reg_wt, na.rm = TRUE)
+    max_wt <- max(reg_wt, na.rm = TRUE)
     cex_vec <- cex * sqrt(reg_wt / max_wt)
     cex_vec[is.na(cex_vec)] <- cex
   } else {
@@ -381,18 +398,20 @@ forrest <- function(
   if (xlim_auto) {
     vals <- c(lo, hi)
     vals <- vals[is.finite(vals)]
-    if (length(vals) == 0L) stop("No finite CI values found.", call. = FALSE)
+    if (length(vals) == 0L) {
+      stop("No finite CI values found.", call. = FALSE)
+    }
     rng <- range(vals)
     if (log_scale) {
       log_rng <- log(rng)
       log_pad <- diff(log_rng) * 0.06
-      xlim    <- exp(log_rng + c(-log_pad, log_pad))
+      xlim <- exp(log_rng + c(-log_pad, log_pad))
       if (!is.null(ref_line) && is.finite(ref_line) && ref_line > 0) {
         xlim[1L] <- min(xlim[1L], ref_line / exp(log_pad))
         xlim[2L] <- max(xlim[2L], ref_line * exp(log_pad))
       }
     } else {
-      pad  <- diff(rng) * 0.06
+      pad <- diff(rng) * 0.06
       xlim <- rng + c(-pad, pad)
       if (!is.null(ref_line) && is.finite(ref_line)) {
         xlim[1L] <- min(xlim[1L], ref_line - pad)
@@ -402,62 +421,79 @@ forrest <- function(
   }
 
   # ── 8. Dodge: visual groups and y positions ─────────────────────────────────
-  dodge_amt <- if (isTRUE(dodge)) 0.25 else
-    if (is.numeric(dodge) && dodge > 0) as.numeric(dodge) else 0
+  dodge_amt <- if (isTRUE(dodge)) {
+    0.25
+  } else if (is.numeric(dodge) && dodge > 0) {
+    as.numeric(dodge)
+  } else {
+    0
+  }
 
   if (dodge_amt > 0) {
     # Structural rows (headers, spacers) are always dodge singletons
-    group_ids    <- compute_dodge_groups(lbl, is_struct)
+    group_ids <- compute_dodge_groups(lbl, is_struct)
     n_vis <- max(group_ids)
 
     grp_center_y <- (n_vis + 1L) - seq_len(n_vis)
 
     row_y <- numeric(n)
     for (g in seq_len(n_vis)) {
-      idx     <- which(group_ids == g)
-      k       <- length(idx)
-      offsets <- if (k == 1L) 0 else
+      idx <- which(group_ids == g)
+      k <- length(idx)
+      offsets <- if (k == 1L) {
+        0
+      } else {
         seq(-(k - 1L) / 2, (k - 1L) / 2, length.out = k) * dodge_amt
+      }
       row_y[idx] <- grp_center_y[g] + offsets
     }
 
-    vis_lbl       <- vapply(
+    vis_lbl <- vapply(
       seq_len(n_vis),
       function(g) lbl[which(group_ids == g)[1L]],
       character(1L)
     )
-    vis_center_y  <- grp_center_y
-    vis_is_bold   <- vapply(
+    vis_center_y <- grp_center_y
+    vis_is_bold <- vapply(
       seq_len(n_vis),
       function(g) is_bold[which(group_ids == g)[1L]],
       logical(1L)
     )
   } else {
-    n_vis         <- n
-    row_y         <- rev(seq_len(n))
-    vis_lbl       <- lbl
-    vis_center_y  <- row_y
-    vis_is_bold   <- is_bold
+    n_vis <- n
+    row_y <- rev(seq_len(n))
+    vis_lbl <- lbl
+    vis_center_y <- row_y
+    vis_is_bold <- is_bold
   }
 
   ylim <- c(0.5, n_vis + 0.5)
 
   # ── 9. Margins and layout ──────────────────────────────────────────────────
   has_cols <- !is.null(cols)
-  top_mar  <- if (!is.null(title)) 3 else if (!is.null(header)) 2.5 else 1.5
-  bot_mar  <- 4
+  top_mar <- if (!is.null(title)) {
+    3
+  } else if (!is.null(header)) {
+    2.5
+  } else {
+    1.5
+  }
+  bot_mar <- 4
 
   old_par <- graphics::par(no.readonly = TRUE)
   on.exit(graphics::par(old_par), add = TRUE)
 
   if (has_cols) {
     n_right <- length(cols)
-    if (is.null(widths)) widths <- c(2.5, 4.5, rep(1.8, n_right))
+    if (is.null(widths)) {
+      widths <- c(2.5, 4.5, rep(1.8, n_right))
+    }
     if (length(widths) != 2L + n_right) {
       stop(
         sprintf(
           "`widths` must have length %d (label + plot + %d column(s)).",
-          2L + n_right, n_right
+          2L + n_right,
+          n_right
         ),
         call. = FALSE
       )
@@ -471,13 +507,13 @@ forrest <- function(
   # ── 10. Left label panel ───────────────────────────────────────────────────
   if (has_cols) {
     draw_text_panel(
-      labels   = vis_lbl,
-      n_vis    = n_vis,
-      header   = header,
-      align    = "left",
+      labels = vis_lbl,
+      n_vis = n_vis,
+      header = header,
+      align = "left",
       bold_idx = which(vis_is_bold),
-      top_mar  = top_mar,
-      bot_mar  = bot_mar
+      top_mar = top_mar,
+      bot_mar = bot_mar
     )
   }
 
@@ -486,7 +522,7 @@ forrest <- function(
     left_mar <- 0.3
   } else {
     max_chars <- max(nchar(lbl), na.rm = TRUE)
-    left_mar  <- max(4, max_chars * 0.6)
+    left_mar <- max(4, max_chars * 0.6)
   }
   graphics::par(mar = c(bot_mar, left_mar, top_mar, 1))
 
@@ -495,8 +531,8 @@ forrest <- function(
   reg <- !is_sum & !is_no_ci & !is.na(est)
 
   tinyplot::tinyplot(
-    x    = xlim,
-    y    = c(0.5, n_vis + 0.5),
+    x = xlim,
+    y = c(0.5, n_vis + 0.5),
     type = "n",
     xlim = xlim,
     ylim = ylim,
@@ -504,26 +540,30 @@ forrest <- function(
     ylab = "",
     main = title %||% "",
     yaxt = "n",
-    log  = if (log_scale) "x" else "",
+    log = if (log_scale) "x" else "",
     ...
   )
 
   # Alternating row stripes
   if (stripe) {
-    usr  <- graphics::par("usr")
+    usr <- graphics::par("usr")
     x_lo <- if (log_scale) 10^usr[1L] else usr[1L]
     x_hi <- if (log_scale) 10^usr[2L] else usr[2L]
     for (yc in vis_center_y[vis_center_y %% 2 == 0]) {
       graphics::rect(
-        x_lo, yc - 0.5, x_hi, yc + 0.5,
-        col = th$stripe_col, border = NA
+        x_lo,
+        yc - 0.5,
+        x_hi,
+        yc + 0.5,
+        col = th$stripe_col,
+        border = NA
       )
     }
   }
 
   # Horizontal gridlines
   graphics::abline(
-    h   = seq_len(n_vis),
+    h = seq_len(n_vis),
     col = th$grid_col,
     lty = th$grid_lty,
     lwd = th$grid_lwd
@@ -537,10 +577,10 @@ forrest <- function(
   # CI whiskers and points for regular rows
   if (any(reg)) {
     reg_idx <- which(reg)
-    lo_reg  <- lo[reg_idx]
-    hi_reg  <- hi[reg_idx]
+    lo_reg <- lo[reg_idx]
+    hi_reg <- hi[reg_idx]
     est_reg <- est[reg_idx]
-    y_reg   <- row_y[reg_idx]
+    y_reg <- row_y[reg_idx]
     col_reg <- col_vec[reg_idx]
     cex_reg <- cex_vec[reg_idx]
     pch_reg <- pch_vec[reg_idx]
@@ -553,31 +593,55 @@ forrest <- function(
     cap_h <- 0.12
     for (k in seq_along(reg_idx)) {
       graphics::segments(
-        lo_draw[k], y_reg[k], hi_draw[k], y_reg[k],
-        lwd = lwd, col = col_reg[k]
+        lo_draw[k],
+        y_reg[k],
+        hi_draw[k],
+        y_reg[k],
+        lwd = lwd,
+        col = col_reg[k]
       )
       if (clip_lo[k]) {
         graphics::arrows(
-          lo_draw[k] + diff(xlim) * 0.02, y_reg[k],
-          lo_draw[k], y_reg[k],
-          length = 0.06, angle = 25, lwd = lwd, col = col_reg[k], code = 2L
+          lo_draw[k] + diff(xlim) * 0.02,
+          y_reg[k],
+          lo_draw[k],
+          y_reg[k],
+          length = 0.06,
+          angle = 25,
+          lwd = lwd,
+          col = col_reg[k],
+          code = 2L
         )
       } else {
         graphics::segments(
-          lo_draw[k], y_reg[k] - cap_h, lo_draw[k], y_reg[k] + cap_h,
-          lwd = lwd, col = col_reg[k]
+          lo_draw[k],
+          y_reg[k] - cap_h,
+          lo_draw[k],
+          y_reg[k] + cap_h,
+          lwd = lwd,
+          col = col_reg[k]
         )
       }
       if (clip_hi[k]) {
         graphics::arrows(
-          hi_draw[k] - diff(xlim) * 0.02, y_reg[k],
-          hi_draw[k], y_reg[k],
-          length = 0.06, angle = 25, lwd = lwd, col = col_reg[k], code = 2L
+          hi_draw[k] - diff(xlim) * 0.02,
+          y_reg[k],
+          hi_draw[k],
+          y_reg[k],
+          length = 0.06,
+          angle = 25,
+          lwd = lwd,
+          col = col_reg[k],
+          code = 2L
         )
       } else {
         graphics::segments(
-          hi_draw[k], y_reg[k] - cap_h, hi_draw[k], y_reg[k] + cap_h,
-          lwd = lwd, col = col_reg[k]
+          hi_draw[k],
+          y_reg[k] - cap_h,
+          hi_draw[k],
+          y_reg[k] + cap_h,
+          lwd = lwd,
+          col = col_reg[k]
         )
       }
     }
@@ -585,7 +649,8 @@ forrest <- function(
     vis_pts <- est_reg >= xlim[1L] & est_reg <= xlim[2L]
     if (any(vis_pts)) {
       graphics::points(
-        est_reg[vis_pts], y_reg[vis_pts],
+        est_reg[vis_pts],
+        y_reg[vis_pts],
         pch = pch_reg[vis_pts],
         cex = cex_reg[vis_pts],
         col = col_reg[vis_pts]
@@ -597,12 +662,12 @@ forrest <- function(
   sum_rows <- which(is_sum & !is.na(est))
   for (i in sum_rows) {
     draw_diamond(
-      x      = est[i],
-      y      = row_y[i],
-      xmin   = max(lo[i], xlim[1L]),
-      xmax   = min(hi[i], xlim[2L]),
+      x = est[i],
+      y = row_y[i],
+      xmin = max(lo[i], xlim[1L]),
+      xmax = min(hi[i], xlim[2L]),
       height = 0.38 * cex,
-      col    = col_vec[i]
+      col = col_vec[i]
     )
   }
 
@@ -613,23 +678,23 @@ forrest <- function(
       graphics::mtext(
         text = vis_lbl[i],
         side = 2L,
-        at   = vis_center_y[i],
-        las  = 1L,
+        at = vis_center_y[i],
+        las = 1L,
         line = 0.5,
         font = font_vec[i],
-        cex  = graphics::par("cex.axis")
+        cex = graphics::par("cex.axis")
       )
     }
     if (!is.null(header)) {
       graphics::mtext(
         text = header,
         side = 2L,
-        at   = n_vis + 0.6,
-        las  = 1L,
+        at = n_vis + 0.6,
+        las = 1L,
         line = 0.5,
         font = 2L,
-        cex  = graphics::par("cex.axis"),
-        xpd  = TRUE
+        cex = graphics::par("cex.axis"),
+        xpd = TRUE
       )
     }
   } else {
@@ -639,29 +704,29 @@ forrest <- function(
   # Legend for group colours
   if (!is.null(grp_col_map) && !is.null(legend_pos)) {
     graphics::legend(
-      x      = legend_pos,
+      x = legend_pos,
       legend = names(grp_col_map),
-      fill   = grp_col_map,
+      fill = grp_col_map,
       border = NA,
-      bty    = "n",
-      cex    = 0.85
+      bty = "n",
+      cex = 0.85
     )
   }
 
   # Legend for point shapes
   if (!is.null(shp_pch_map) && !is.null(legend_shape_pos)) {
     graphics::legend(
-      x      = legend_shape_pos,
+      x = legend_shape_pos,
       legend = names(shp_pch_map),
-      pch    = unname(shp_pch_map),
-      bty    = "n",
-      cex    = 0.85
+      pch = unname(shp_pch_map),
+      bty = "n",
+      cex = 0.85
     )
   }
 
   # ── 12. Right text columns ─────────────────────────────────────────────────
   if (has_cols) {
-    col_nms    <- names(cols)
+    col_nms <- names(cols)
     use_groups <- isTRUE(cols_by_group) && dodge_amt > 0
 
     if (use_groups) {
@@ -671,19 +736,23 @@ forrest <- function(
       vis_bold_idx <- which(vis_is_bold)
       for (j in seq_along(cols)) {
         raw <- as.character(df[[cols[j]]])
-        grp_vals <- vapply(seq_len(n_vis), function(g) {
-          v <- raw[which(group_ids == g)]
-          v <- v[nzchar(trimws(v)) & !is.na(v)]
-          if (length(v) == 0L) "" else v[1L]
-        }, character(1L))
+        grp_vals <- vapply(
+          seq_len(n_vis),
+          function(g) {
+            v <- raw[which(group_ids == g)]
+            v <- v[nzchar(trimws(v)) & !is.na(v)]
+            if (length(v) == 0L) "" else v[1L]
+          },
+          character(1L)
+        )
         draw_text_panel(
-          labels   = grp_vals,
-          n_vis    = n_vis,
-          header   = col_nms[j],
-          align    = "center",
+          labels = grp_vals,
+          n_vis = n_vis,
+          header = col_nms[j],
+          align = "center",
           bold_idx = vis_bold_idx,
-          top_mar  = top_mar,
-          bot_mar  = bot_mar
+          top_mar = top_mar,
+          bot_mar = bot_mar
         )
       }
     } else {
@@ -692,13 +761,13 @@ forrest <- function(
       for (j in seq_along(cols)) {
         vals <- as.character(df[[cols[j]]])
         draw_text_panel(
-          labels      = vals,
-          n_vis       = n_vis,
-          header      = col_nms[j],
-          align       = "center",
-          bold_idx    = bold_rows,
-          top_mar     = top_mar,
-          bot_mar     = bot_mar,
+          labels = vals,
+          n_vis = n_vis,
+          header = col_nms[j],
+          align = "center",
+          bold_idx = bold_rows,
+          top_mar = top_mar,
+          bot_mar = bot_mar,
           y_positions = row_y
         )
       }

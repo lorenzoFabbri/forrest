@@ -11,10 +11,10 @@ the package itself.
 
 ## This is the first submission to CRAN
 
-## Platform tested
+## Platforms tested
 
-* macOS aarch64 (local, R 4.5.3)
-* win-builder (r-devel) — see below
+* macOS aarch64 (local, R 4.5.0)
+* win-builder (r-devel) — 0 errors | 0 warnings | 1 note (same timestamp note as above)
 
 ## Method references
 

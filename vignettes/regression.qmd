@@ -397,8 +397,8 @@ gcomp_dat <- rbind(
     list(list(label = "Female", f = 0), list(label = "Male", f = 1)),
     function(s) {
       r <- make_row(avg_comparisons(fit_sbp, variables = "activity",
-                                    newdata = subset(cohort, female == s$f)))
-      r$label   <- s$label
+                                    newdata = subset(cohort, female == s$f)),
+                   label = s$label)
       r$stratum <- "Sex"
       r
     }
@@ -409,8 +409,8 @@ gcomp_dat <- rbind(
          list(label = "High",   e = "High")),
     function(s) {
       r <- make_row(avg_comparisons(fit_sbp, variables = "activity",
-                                    newdata = subset(cohort, educ == s$e)))
-      r$label   <- s$label
+                                    newdata = subset(cohort, educ == s$e)),
+                   label = s$label)
       r$stratum <- "Education level"
       r
     }

@@ -17,11 +17,11 @@
 #' }
 #' @noRd
 .theme_defaults <- list(
-  grid_col   = "#e8e8e8",
-  grid_lty   = 1L,
-  grid_lwd   = 0.7,
-  ref_col    = "gray45",
-  ref_lty    = 2L,
+  grid_col = "#e8e8e8",
+  grid_lty = 1L,
+  grid_lwd = 0.7,
+  ref_col = "gray45",
+  ref_lty = 2L,
   stripe_col = "#f2f2f2"
 )
 
@@ -30,14 +30,14 @@
   minimal = list(
     grid_col = "#f0f0f0",
     grid_lwd = 0.5,
-    ref_col  = "#777777"
+    ref_col = "#777777"
   ),
   classic = list(
-    grid_col   = "lightgray",
-    grid_lty   = 3L,
-    grid_lwd   = 0.7,
-    ref_col    = "black",
-    ref_lty    = 1L,
+    grid_col = "lightgray",
+    grid_lty = 3L,
+    grid_lwd = 0.7,
+    ref_col = "black",
+    ref_lty = 1L,
     stripe_col = "#efefef"
   )
 )
@@ -62,16 +62,18 @@ resolve_theme <- function(theme) {
         call. = FALSE
       )
     }
-    base      <- .theme_defaults
+    base <- .theme_defaults
     overrides <- .themes[[theme]]
     base[names(overrides)] <- overrides
     return(base)
   }
   if (is.list(theme)) {
-    base              <- .theme_defaults
+    base <- .theme_defaults
     base[names(theme)] <- theme
     return(base)
   }
-  stop("`theme` must be NULL, a character string, or a named list.",
-       call. = FALSE)
+  stop(
+    "`theme` must be NULL, a character string, or a named list.",
+    call. = FALSE
+  )
 }

@@ -51,34 +51,34 @@ save_forrest <- function(
     # Vector formats: PDF and SVG ignore `dpi`
     pdf = grDevices::pdf(
       file,
-      width  = width,
+      width = width,
       height = height,
-      bg     = bg
+      bg = bg
     ),
     # Raster format: PNG — `units = "in"` + `res` converts from inches to pixels
     png = grDevices::png(
       file,
-      width  = width,
+      width = width,
       height = height,
-      units  = "in",
-      res    = dpi,
-      bg     = bg
+      units = "in",
+      res = dpi,
+      bg = bg
     ),
     # Vector format: SVG
     svg = grDevices::svg(
       file,
-      width  = width,
+      width = width,
       height = height,
-      bg     = bg
+      bg = bg
     ),
     # Raster format: TIFF with lossless LZW compression
     tiff = grDevices::tiff(
       file,
-      width       = width,
-      height      = height,
-      units       = "in",
-      res         = dpi,
-      bg          = bg,
+      width = width,
+      height = height,
+      units = "in",
+      res = dpi,
+      bg = bg,
       compression = "lzw"
     ),
     stop(

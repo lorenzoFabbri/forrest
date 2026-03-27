@@ -16,3 +16,5 @@
 ^CLAUDE\.md$
 ^cran-comments\.md$
 ^vignettes/.*_files$
+^doc$
+^Meta$

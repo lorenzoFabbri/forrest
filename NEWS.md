@@ -33,20 +33,12 @@
 * README quick-start gains a *Multiple estimates per row* example
   demonstrating `dodge` with `group`.
 
-* Getting-started vignette gains two new sections: *Multiple estimates per
-  row* and *Point shapes*.
-
-* Internal helper `compute_dodge_groups()` and `group_shapes()` added to
-  `R/utils.R`.
-
-* `draw_text_panel()` updated to accept explicit `y_positions` and `n_vis`
-  arguments, enabling per-row dodged text placement in right-side panels.
-
-## Earlier changes
-
 * README quick-start regression example now shows a formatted text column
   (`cols`) and a panel header (`header`) alongside the plot, making all three
   core features visible in one place.
+
+* Getting-started vignette gains two new sections: *Multiple estimates per
+  row* and *Point shapes*.
 
 * Regression vignette: the *Multiple predictors from one model* example now
   includes a `cols = c("Coef (95% CI)" = "coef_ci")` column and matching
@@ -54,17 +46,7 @@
 
 ## Infrastructure
 
-* `covr` added to `Suggests` and `Config/Needs/coverage` so the
-  test-coverage CI workflow installs it automatically via
-  `r-lib/actions/setup-r-dependencies`.
-
 * Website URL added to `DESCRIPTION` `URL` field.
-
-* Upgraded `codecov/codecov-action` from v4 to v5 in the test-coverage
-  workflow.
-
-* New `lint.yaml` GitHub Actions workflow runs `lintr::lint_package()` on
-  every push and pull request to `main`.
 
 ---
 
