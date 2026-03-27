@@ -1,21 +1,15 @@
 
 <!-- README.md is generated from README.Rmd. Do not edit it directly. -->
 
-# forrest <img src="man/figures/logo.png" align="right" height="139" alt="" />
+# forrest <img src="man/figures/logo.svg" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-
-<!-- [![CRAN status](https://www.r-pkg.org/badges/version/forrest)](https://CRAN.R-project.org/package=forrest) -->
-
 [![R-CMD-check](https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/lorenzoFabbri/forrest/branch/main/graph/badge.svg)](https://app.codecov.io/gh/lorenzoFabbri/forrest?branch=main)
-
-<!-- [![](https://cranlogs.r-pkg.org/badges/forrest)](https://cran.r-project.org/package=forrest) -->
-
 [![Buy Me A
 Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95-yellow.svg)](https://buymeacoffee.com/epilorenzo)
 

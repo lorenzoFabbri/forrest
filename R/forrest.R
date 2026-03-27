@@ -521,7 +521,10 @@ forrest <- function(
   if (has_cols) {
     left_mar <- 0.3
   } else {
-    max_chars <- max(nchar(lbl), na.rm = TRUE)
+    max_chars <- max(
+      max(nchar(lbl), na.rm = TRUE),
+      if (!is.null(header)) nchar(header) else 0L
+    )
     left_mar <- max(4, max_chars * 0.6)
   }
   graphics::par(mar = c(bot_mar, left_mar, top_mar, 1))
