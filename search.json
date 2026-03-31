@@ -4,7 +4,7 @@
     "href": "CITATION.html",
     "title": "Citation",
     "section": "",
-    "text": "Citation\nTo cite package ‘forrest’ in publications use:\n\nFabbri L (2026). forrest: Publication-Ready Forest Plots. R package version 0.3.0, https://lorenzofabbri.github.io/forrest/.",
+    "text": "Citation\nTo cite package ‘forrest’ in publications use:\n\nFabbri L (2026). forrest: Publication-Ready Forest Plots. R package version 0.3.0.9000, https://lorenzofabbri.github.io/forrest/.",
     "crumbs": [
       "Citation"
     ]
@@ -336,21 +336,11 @@
     ]
   },
   {
-    "objectID": "NEWS.html",
-    "href": "NEWS.html",
-    "title": "forrest 0.3.0",
-    "section": "",
-    "text": "forrest() gains a dodge argument (logical or positive numeric, default FALSE). When set, consecutive rows that share the same label value are grouped together and their confidence intervals are drawn with a small vertical offset so they do not overlap. The shared label is displayed once at the centre of the group. Designed to be used with group (for colour) and/or shape (for point character) to visually distinguish the overlaid series. A numeric value controls the offset directly; TRUE uses a default of 0.25 y-axis units.\nforrest() gains a shape argument (column name string, default NULL). When provided, different values of the column are rendered with different point characters from a built-in set (circle, triangle, square, diamond, …), and a shape legend is drawn automatically. Most useful in combination with group to encode two categorical dimensions simultaneously (e.g. colour = time period, shape = sex).\nforrest() gains a legend_shape_pos argument (default \"bottomright\") to control the position of the shape legend independently of legend_pos.\nforrest() gains a cols_by_group argument (default FALSE). When TRUE and dodge is active, each text column in cols is collapsed to one value per label group displayed at the group centre y position. This produces a wide-format text table — one row per label, one column per condition — as commonly seen in multi-period epidemiology papers (vs. the default behaviour of stacking text at each individual row’s dodged y position).\n\n\n\n\n\nREADME quick-start gains a Multiple estimates per row example demonstrating dodge with group.\nREADME quick-start regression example now shows a formatted text column (cols) and a panel header (header) alongside the plot, making all three core features visible in one place.\nGetting-started vignette gains two new sections: Multiple estimates per row and Point shapes.\nRegression vignette: the Multiple predictors from one model example now includes a cols = c(\"Coef (95% CI)\" = \"coef_ci\") column and matching header, consistent with the logistic and dose-response examples.\n\n\n\n\n\nWebsite URL added to DESCRIPTION URL field.",
-    "crumbs": [
-      "News"
-    ]
-  },
-  {
     "objectID": "NEWS.html#new-features",
     "href": "NEWS.html#new-features",
-    "title": "forrest 0.3.0",
-    "section": "",
-    "text": "forrest() gains a dodge argument (logical or positive numeric, default FALSE). When set, consecutive rows that share the same label value are grouped together and their confidence intervals are drawn with a small vertical offset so they do not overlap. The shared label is displayed once at the centre of the group. Designed to be used with group (for colour) and/or shape (for point character) to visually distinguish the overlaid series. A numeric value controls the offset directly; TRUE uses a default of 0.25 y-axis units.\nforrest() gains a shape argument (column name string, default NULL). When provided, different values of the column are rendered with different point characters from a built-in set (circle, triangle, square, diamond, …), and a shape legend is drawn automatically. Most useful in combination with group to encode two categorical dimensions simultaneously (e.g. colour = time period, shape = sex).\nforrest() gains a legend_shape_pos argument (default \"bottomright\") to control the position of the shape legend independently of legend_pos.\nforrest() gains a cols_by_group argument (default FALSE). When TRUE and dodge is active, each text column in cols is collapsed to one value per label group displayed at the group centre y position. This produces a wide-format text table — one row per label, one column per condition — as commonly seen in multi-period epidemiology papers (vs. the default behaviour of stacking text at each individual row’s dodged y position).",
+    "title": "forrest (development version)",
+    "section": "New features",
+    "text": "New features\n\nforrest() gains a dodge argument (logical or positive numeric, default FALSE). When set, consecutive rows that share the same label value are grouped together and their confidence intervals are drawn with a small vertical offset so they do not overlap. The shared label is displayed once at the centre of the group. Designed to be used with group (for colour) and/or shape (for point character) to visually distinguish the overlaid series. A numeric value controls the offset directly; TRUE uses a default of 0.25 y-axis units.\nforrest() gains a shape argument (column name string, default NULL). When provided, different values of the column are rendered with different point characters from a built-in set (circle, triangle, square, diamond, …), and a shape legend is drawn automatically. Most useful in combination with group to encode two categorical dimensions simultaneously (e.g. colour = time period, shape = sex).\nforrest() gains a legend_shape_pos argument (default \"bottomright\") to control the position of the shape legend independently of legend_pos.\nforrest() gains a cols_by_group argument (default FALSE). When TRUE and dodge is active, each text column in cols is collapsed to one value per label group displayed at the group centre y position. This produces a wide-format text table — one row per label, one column per condition — as commonly seen in multi-period epidemiology papers (vs. the default behaviour of stacking text at each individual row’s dodged y position).",
     "crumbs": [
       "News"
     ]
@@ -358,9 +348,9 @@
   {
     "objectID": "NEWS.html#documentation",
     "href": "NEWS.html#documentation",
-    "title": "forrest 0.3.0",
-    "section": "",
-    "text": "README quick-start gains a Multiple estimates per row example demonstrating dodge with group.\nREADME quick-start regression example now shows a formatted text column (cols) and a panel header (header) alongside the plot, making all three core features visible in one place.\nGetting-started vignette gains two new sections: Multiple estimates per row and Point shapes.\nRegression vignette: the Multiple predictors from one model example now includes a cols = c(\"Coef (95% CI)\" = \"coef_ci\") column and matching header, consistent with the logistic and dose-response examples.",
+    "title": "forrest (development version)",
+    "section": "Documentation",
+    "text": "Documentation\n\nREADME quick-start gains a Multiple estimates per row example demonstrating dodge with group.\nREADME quick-start regression example now shows a formatted text column (cols) and a panel header (header) alongside the plot, making all three core features visible in one place.\nGetting-started vignette gains two new sections: Multiple estimates per row and Point shapes.\nRegression vignette: the Multiple predictors from one model example now includes a cols = c(\"Coef (95% CI)\" = \"coef_ci\") column and matching header, consistent with the logistic and dose-response examples.",
     "crumbs": [
       "News"
     ]
@@ -368,9 +358,9 @@
   {
     "objectID": "NEWS.html#infrastructure",
     "href": "NEWS.html#infrastructure",
-    "title": "forrest 0.3.0",
-    "section": "",
-    "text": "Website URL added to DESCRIPTION URL field.",
+    "title": "forrest (development version)",
+    "section": "Infrastructure",
+    "text": "Infrastructure\n\nWebsite URL added to DESCRIPTION URL field.",
     "crumbs": [
       "News"
     ]
@@ -378,7 +368,7 @@
   {
     "objectID": "NEWS.html#new-features-1",
     "href": "NEWS.html#new-features-1",
-    "title": "forrest 0.3.0",
+    "title": "forrest (development version)",
     "section": "New features",
     "text": "New features\n\nsave_forrest() — new exported function to write a forest plot to a file. The graphics device (PDF, PNG, SVG, TIFF) is inferred from the file extension; resolution can be controlled via dpi for raster formats.\nforrest() gains a stripe argument (FALSE by default). When TRUE, alternate rows are shaded with a light-grey background to improve readability in tables with many rows.",
     "crumbs": [
@@ -388,7 +378,7 @@
   {
     "objectID": "NEWS.html#documentation-1",
     "href": "NEWS.html#documentation-1",
-    "title": "forrest 0.3.0",
+    "title": "forrest (development version)",
     "section": "Documentation",
     "text": "Documentation\n\nRevised framing: forrest is now documented as a general-purpose tool for any tabular estimates-and-CIs data, not only meta-analyses. The description, README, and vignettes have been updated accordingly.\nNew vignette Forest plots for regression results covers four practical patterns: multiple predictors from one model, comparing estimates across adjustment models, same predictor across multiple outcomes, and dose-response (exposure categories). Examples use broom::tidy() for parameter extraction.\nGetting-started vignette updated with a stripe example and a Saving plots section.\nREADME now leads with a regression-model example and an updated feature comparison table.",
     "crumbs": [
@@ -398,7 +388,7 @@
   {
     "objectID": "NEWS.html#refactoring",
     "href": "NEWS.html#refactoring",
-    "title": "forrest 0.3.0",
+    "title": "forrest (development version)",
     "section": "Refactoring",
     "text": "Refactoring\n\nDrawing helpers (draw_diamond(), draw_text_panel()) moved from R/utils.R to a dedicated R/draw.R, improving code organisation.\nsave_forrest() lives in its own R/save.R.",
     "crumbs": [
@@ -408,7 +398,7 @@
   {
     "objectID": "NEWS.html#bug-fixes",
     "href": "NEWS.html#bug-fixes",
-    "title": "forrest 0.3.0",
+    "title": "forrest (development version)",
     "section": "Bug fixes",
     "text": "Bug fixes\n\nHorizontal gridlines are now drawn at lwd = 0.7 (was 0.8) for a slightly lighter appearance.",
     "crumbs": [
