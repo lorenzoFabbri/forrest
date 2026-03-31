@@ -1,6 +1,6 @@
 Package: forrest
 Title: Publication-Ready Forest Plots
-Version: 0.3.0
+Version: 0.3.0.9000
 Authors@R: c(
     person("Lorenzo", "Fabbri", email = "lorenzo.fabbri92sm@gmail.com",
            role = c("aut", "cre", "cph"))
