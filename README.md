@@ -5,8 +5,13 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/forrest)](https://CRAN.R-project.org/package=forrest)
+[![CRAN
+downloads](https://cranlogs.r-pkg.org/badges/forrest)](https://cran.r-project.org/package=forrest)
+[![R-universe](https://lorenzoFabbri.r-universe.dev/badges/forrest)](https://lorenzoFabbri.r-universe.dev/forrest)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check](https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/lorenzoFabbri/forrest/branch/main/graph/badge.svg)](https://app.codecov.io/gh/lorenzoFabbri/forrest?branch=main)

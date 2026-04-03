@@ -20,7 +20,10 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/forrest)](https://CRAN.R-project.org/package=forrest)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/forrest)](https://cran.r-project.org/package=forrest)
+[![R-universe](https://lorenzoFabbri.r-universe.dev/badges/forrest)](https://lorenzoFabbri.r-universe.dev/forrest)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check](https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/lorenzoFabbri/forrest/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/lorenzoFabbri/forrest/branch/main/graph/badge.svg)](https://app.codecov.io/gh/lorenzoFabbri/forrest?branch=main)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95-yellow.svg)](https://buymeacoffee.com/epilorenzo)
