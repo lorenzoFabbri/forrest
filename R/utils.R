@@ -225,19 +225,20 @@ build_sections <- function(
   sec_ends <- cumsum(sec_rle$lengths)
   n_sections <- length(sec_rle$values)
 
-  out_rows <- vector("list", n_orig * 4L)
-  out_ptr <- 0L
-  is_section_hdr_vec <- logical(0)
-  is_subsection_hdr_vec <- logical(0)
-  is_spacer_vec <- logical(0)
+  acc <- new.env(parent = emptyenv())
+  acc$rows <- vector("list", n_orig * 4L)
+  acc$n <- 0L
+  acc$is_sec <- logical(0)
+  acc$is_sub <- logical(0)
+  acc$is_sp <- logical(0)
 
   push <- function(rows_df, is_sec, is_sub, is_sp) {
     k <- nrow(rows_df)
-    out_ptr <<- out_ptr + 1L
-    out_rows[[out_ptr]] <<- rows_df
-    is_section_hdr_vec <<- c(is_section_hdr_vec, rep(is_sec, k))
-    is_subsection_hdr_vec <<- c(is_subsection_hdr_vec, rep(is_sub, k))
-    is_spacer_vec <<- c(is_spacer_vec, rep(is_sp, k))
+    acc$n <- acc$n + 1L
+    acc$rows[[acc$n]] <- rows_df
+    acc$is_sec <- c(acc$is_sec, rep(is_sec, k))
+    acc$is_sub <- c(acc$is_sub, rep(is_sub, k))
+    acc$is_sp <- c(acc$is_sp, rep(is_sp, k))
   }
 
   for (s in seq_len(n_sections)) {
@@ -291,13 +292,13 @@ build_sections <- function(
     if (section_spacer) push(make_struct_row(""), FALSE, FALSE, TRUE)
   }
 
-  out_df <- do.call(rbind, out_rows[seq_len(out_ptr)])
+  out_df <- do.call(rbind, acc$rows[seq_len(acc$n)])
   rownames(out_df) <- NULL
 
   list(
     df = out_df,
-    is_section_header = is_section_hdr_vec,
-    is_subsection_header = is_subsection_hdr_vec,
-    is_spacer = is_spacer_vec
+    is_section_header = acc$is_sec,
+    is_subsection_header = acc$is_sub,
+    is_spacer = acc$is_sp
   )
 }
