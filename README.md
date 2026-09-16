@@ -241,3 +241,9 @@ forrest(
 | Export helper | ✅ | ❌ | ⚠️ | ❌ |
 | data.table support | ✅ | ❌ | ❌ | ❌ |
 | Actively maintained | ✅ | ✅ | ✅ | ❌ |
+
+## Acknowledgements
+
+forrest was developed with the assistance of [Claude
+Code](https://claude.com/product/claude-code), Anthropic’s agentic
+coding tool.
