@@ -1,174 +1,61 @@
 # Development guide
 
+Design decisions and the rule against new Imports are in the project memory (`project_forrest.md`); this file covers the commands.
+
 ## Daily workflow
 
 ```r
-devtools::load_all()   # reload package in the current R session
-devtools::document()   # run roxygen2 → regenerate man/ and NAMESPACE
-devtools::test()       # run testthat test suite (tests/)
-devtools::check()      # full R CMD check (equivalent to CRAN check)
+devtools::load_all()   # reload the package in the current R session
+devtools::document()   # run roxygen2: regenerate man/ and NAMESPACE
+devtools::test()       # run the testthat suite in tests/
+devtools::check()      # full R CMD check
+lintr::lint_package()  # lint with the settings in .lintr
 ```
 
-Run these in order when making non-trivial changes:
-`load_all()` → edit code → `document()` (if roxygen changed) → `test()` → `check()`.
+For a non-trivial change, run them in that order: `load_all()`, edit, `document()` if roxygen changed, `test()`, `check()`. `lintr`'s object-usage check reads the installed copy of the package, so run `devtools::install()` first when a function's signature has changed, or it reports false "unused argument" warnings.
 
 ## README
 
-The source is `README.Rmd`; `README.md` is generated — do not edit it directly.
-
-```r
-devtools::build_readme()   # knit README.Rmd → README.md (also rebuilds figures)
-```
+`README.md` is generated from `README.Rmd`; edit only the `.Rmd`. `devtools::build_readme()` knits it and rebuilds the figures in `man/figures/`.
 
 ## Vignettes
 
-Vignettes live in `vignettes/` and are written in Quarto (`.qmd`).
-The vignette engine is `quarto::html` (declared in each file's YAML front-matter).
-
-Render a single vignette during development:
+The vignettes in `vignettes/` are Quarto (`.qmd`) files using the `quarto::html` engine declared in each file's front matter. To render one while editing:
 
 ```bash
 quarto render vignettes/intro.qmd
-quarto render vignettes/meta.qmd
-quarto render vignettes/regression.qmd
 ```
 
-Build all vignettes as part of the package (writes to `inst/doc/`):
+`devtools::build_vignettes()` builds all of them into `doc/` and `Meta/` at the package root. Both directories are build output, ignored by git and by `R CMD build`.
+
+## Documentation website
+
+The site is built with [altdoc](https://etiennebacher.github.io/altdoc/) as a Quarto website, configured in `altdoc/quarto_website.yml` and rendered to `docs/`. The `altdoc` GitHub workflow rebuilds and deploys it on every push to `main`.
 
 ```r
-devtools::build_vignettes()
+altdoc::render_docs()    # re-run the vignettes and rebuild the reference pages from man/
+altdoc::preview_docs()   # open the rendered site in a browser
 ```
 
-## Documentation website (altdoc)
-
-The site is built with [altdoc](https://etiennebacher.github.io/altdoc/) using
-a Quarto website layout. Config lives in `altdoc/quarto_website.yml`; the
-rendered site goes to `docs/`.
-
-```r
-# One-time setup (already done — do not re-run unless resetting)
-# altdoc::setup_docs(tool = "quarto")
-
-# Rebuild the full site (vignettes + reference pages + index)
-altdoc::render_docs()
-
-# Preview the site locally in a browser
-altdoc::preview_docs()
-```
-
-`altdoc::render_docs()` re-runs vignettes and rebuilds all reference `.qmd`
-files from `man/`. Run it before pushing changes that affect the public docs.
-
-## Spell check
+## Other checks
 
 ```r
 devtools::spell_check()
+urlchecker::url_check()
+covr::package_coverage()   # covr::report() opens the HTML report
 ```
 
-## Code coverage
+## CRAN release
 
-```r
-covr::package_coverage()
-covr::report()   # open HTML coverage report
-```
+The steps follow [R Packages (2e), chapter 22](https://r-pkgs.org/release.html).
 
-## Install from source
+1. Choose the release type and bump the version with `usethis::use_version("minor")` (or `"patch"`, `"major"`). Turn the development heading in `NEWS.md` into the version heading.
+2. Run `devtools::spell_check()`, `devtools::build_readme()` and `urlchecker::url_check()`.
+3. Run `devtools::check(cran = TRUE)`. The target is 0 errors, 0 warnings and 0 notes; any note that cannot be removed is explained in `cran-comments.md`.
+4. Run `devtools::check_win_devel()`; win-builder emails the result to the maintainer in about 30 minutes. For other platforms, R-hub v2 runs checks as GitHub Actions: `rhub::rhub_setup()` once to add its workflow, then `rhub::rhub_check()`.
+5. Reverse dependencies, once the package has any: `revdepcheck::revdep_check(num_workers = 4)`, with results in `revdep/`.
+6. Update `cran-comments.md` with the check results and, for a resubmission, what changed.
+7. Submit with `devtools::submit_cran()`, which writes `CRAN-SUBMISSION`, then confirm through the link in CRAN's email. Submitting sends the maintainer's email address to CRAN, so ask Lorenzo before running it.
+8. After acceptance, run `usethis::use_github_release()` to tag the release and `usethis::use_dev_version(push = TRUE)` to move to the next development version. Check the CRAN results page for the package over the following days.
 
-```r
-devtools::install()                    # install current source into the active library
-pak::pak("lorenzoFabbri/forrest")      # install latest GitHub version
-```
-
----
-
-## CRAN release workflow
-
-Based on [R Packages (2e) — Chapter 22](https://r-pkgs.org/release.html).
-The guiding principle: _"If it hurts, do it more often"_ — run `R CMD check`
-throughout development, not only before submission.
-
-### 1. Decide the release type and bump the version
-
-```r
-usethis::use_version("minor")   # or "patch" / "major"
-```
-
-Update `NEWS.md` to document changes for this version.
-
-### 2. Pre-submission checks
-
-```r
-devtools::spell_check()          # flag spelling errors in docs
-devtools::build_readme()         # rebuild README.md if README.Rmd changed
-urlchecker::url_check()          # find broken or redirecting URLs
-```
-
-Run the local CRAN check:
-
-```r
-devtools::check(cran = TRUE)
-```
-
-Target: **0 errors, 0 warnings, 0 notes** (or document unavoidable notes in
-`cran-comments.md`).
-
-### 3. Check on Windows (win-builder) and R-devel
-
-```r
-devtools::check_win_devel()      # submit to CRAN's win-builder (~30 min for results)
-```
-
-Optionally check on multiple platforms via R-hub:
-
-```r
-rhub::check_for_cran()
-```
-
-### 4. Reverse dependency checks (if the package has dependents)
-
-```r
-revdepcheck::revdep_check(num_workers = 4)
-```
-
-Results land in `revdep/`. Fix or notify maintainers of any breakage.
-
-### 5. Update `cran-comments.md`
-
-Document the check results and any unavoidable NOTEs for the CRAN reviewer.
-For resubmissions, add a "Resubmission" section describing what was changed.
-
-### 6. Submit
-
-```r
-devtools::submit_cran()
-```
-
-This builds the bundle, posts it to the CRAN submission form, and writes a
-`CRAN-SUBMISSION` file. **Confirm the submission via the email link CRAN sends.**
-
-### 7. After acceptance
-
-```r
-usethis::use_github_release()    # tag the release on GitHub
-usethis::use_dev_version(push = TRUE)   # bump to dev version (e.g. 0.3.0.9000)
-```
-
-Monitor CRAN check results across flavors for a few days after acceptance.
-
-### CRAN check notes policy
-
-| Result  | Action                                                                                |
-| ------- | ------------------------------------------------------------------------------------- |
-| Error   | Must fix before submission                                                            |
-| Warning | Must fix before submission                                                            |
-| NOTE    | Document in `cran-comments.md`; some are harmless (e.g. first submission, time check) |
-
-### First submission — extra items
-
-- `Authors@R` must include a copyright holder (`[cph]` role) ✓
-- `Title` uses Title Case, ≤ 65 characters, no "for R" / "A Toolkit for" ✓
-- `Description` does not start with "This package" or the package name ✓
-- All exported functions have `@return` and `@examples` ✓
-- No `\dontrun{}` unless example truly cannot be run
-- `cran-comments.md` exists ✓
-- `NEWS.md` exists ✓
+Errors and warnings must be fixed before submitting. A note is either fixed or explained in `cran-comments.md`; "New submission" and a failure to verify the current time are routine.
