@@ -19,25 +19,17 @@ knitr:
 library(forrest)
 ```
 
-`forrest` creates publication-ready forest plots from any data frame that
-contains point estimates and confidence intervals. A single function,
-`forrest()`, handles the full range of use cases — regression model results,
-subgroup analyses, meta-analyses, dose-response patterns, and more.
+`forrest()` draws a forest plot from any data frame with one row per estimate and columns for the point estimate and the confidence limits. The rows can be regression coefficients, subgroup estimates, studies in a meta-analysis or exposure categories. The package's only dependency is [tinyplot](https://github.com/grantmcdermott/tinyplot), and it accepts data frames, tibbles and data.tables.
 
-The only hard dependency is [tinyplot](https://github.com/grantmcdermott/tinyplot).
-`forrest` works with base R data frames, tibbles, and data.tables.
-
----
+This vignette shows each feature on a small example. The data in every example are invented for illustration.
 
 ## Basic forest plot
 
-The simplest call requires only three column names: `estimate`, `lower`, and
-`upper`. Here we display adjusted regression coefficients from a linear model
-predicting systolic blood pressure (SBP).
+A call needs three column names: `estimate`, `lower` and `upper`. Here they hold coefficients from a linear model of systolic blood pressure (SBP).
 
 ```{r basic}
 dat <- data.frame(
-  predictor = c("Age (per 10 y)", "Female sex", "BMI (per 5 kg/m\u00b2)",
+  predictor = c("Age (per 10 y)", "Female sex", "BMI (per 5 kg/m²)",
                 "Current smoker", "Physically active"),
   estimate  = c( 0.18, -0.42,  0.11, -0.31,  0.24),
   lower     = c( 0.05, -0.61, -0.04, -0.52,  0.08),
@@ -54,14 +46,9 @@ forrest(
 )
 ```
 
----
-
 ## Section headers from a grouping column
 
-Pass a column name to `section` to automatically group rows under bold section
-headers. `forrest()` inserts a header row wherever the section value changes,
-indents the row labels within each section, and adds a blank spacer row after
-each section. No manual data manipulation is required.
+When `section` names a column, `forrest()` inserts a bold header row wherever that column's value changes, indents the labels beneath it, and adds a blank row after each section. Rows stay in the order they have in the data, so sort the data first if the sections should appear in a particular order.
 
 ```{r section}
 #| fig-height: 5
@@ -69,7 +56,7 @@ sub_dat <- data.frame(
   subgroup = c("Sex",    "Sex",
                "Age group", "Age group", "Age group"),
   label    = c("Female", "Male",
-               "30\u201349 years", "50\u201369 years", "70+ years"),
+               "30–49 years", "50–69 years", "70+ years"),
   estimate = c(-0.38,  0.12,  0.22, -0.15, -0.41),
   lower    = c(-0.58, -0.08,  0.02, -0.38, -0.66),
   upper    = c(-0.18,  0.32,  0.42,  0.08, -0.16)
@@ -87,14 +74,11 @@ forrest(
 )
 ```
 
-Use `section_indent = FALSE` to suppress automatic indentation, and
-`section_spacer = FALSE` to suppress the blank row after each section.
+`section_indent = FALSE` turns off the indentation and `section_spacer = FALSE` removes the blank row after each section.
 
-### Two-level hierarchy with subsection
+### Two levels of headers
 
-For analyses with a nested grouping structure, combine `section` and
-`subsection`. `forrest()` inserts top-level bold headers for `section` changes
-and indented sub-headers for `subsection` changes within each section.
+Adding `subsection` gives a second level: indented sub-headers wherever the subsection value changes within a section.
 
 ```{r subsection}
 #| fig-height: 7
@@ -112,7 +96,7 @@ nested_dat <- data.frame(
     "Deprivation", "Deprivation"
   ),
   predictor = c(
-    "PM2.5 (per 10 \u03bcg/m\u00b3)", "NO2 (per 10 ppb)",
+    "PM2.5 (per 10 μg/m³)", "NO2 (per 10 ppb)",
     "Green space (%)", "Walkability", "Noise (per 10 dB)",
     "Social cohesion", "Social isolation",
     "Area deprivation", "Employment rate"
@@ -137,13 +121,9 @@ forrest(
 )
 ```
 
----
+## Summary estimates
 
-## Adding a summary (pooled) estimate
-
-Mark one or more rows with `is_summary = TRUE` to draw them as filled diamonds
-instead of squares. This is useful for pooled estimates in meta-analyses or for
-overall effects after subgroup rows.
+Rows where the `is_summary` column is `TRUE` are drawn as filled diamonds spanning the confidence interval, the usual mark for a pooled or overall estimate.
 
 ```{r summary}
 sex_dat <- data.frame(
@@ -162,25 +142,23 @@ forrest(
   label      = "label",
   is_summary = "is_sum",
   xlab       = "Regression coefficient (95% CI)",
-  title      = "Association of female sex with SBP by subgroup"
+  title      = "Association of physical activity with SBP, by sex"
 )
 ```
 
----
+## Group colours
 
-## Group colouring
-
-Pass a `group` column to colour estimates by a categorical variable. A legend
-is added automatically using the Okabe-Ito colorblind-safe palette.
+A `group` column colours each row by its value and adds a legend. The default palette is Okabe-Ito, which stays distinguishable under the common forms of colour blindness. To choose the colours yourself, pass `col`, either as an unnamed vector used in order of appearance or as a vector named by group level.
 
 ```{r grouped}
 #| fig-height: 5
 grp_dat <- data.frame(
-  predictor = rep(
-    c("Air pollution (PM2.5)", "Noise exposure",
-      "Green space access", "Walkability index",
-      "Food environment"), 2
-  ),
+  predictor = c("Air pollution (PM2.5)", "Noise exposure",
+                "Green space access", "Walkability index",
+                "Food environment",
+                "Social cohesion", "Social isolation",
+                "Area deprivation", "Neighbourhood safety",
+                "Employment rate"),
   domain    = rep(c("Physical environment", "Social environment"),
                   each = 5),
   estimate  = c(-0.18,  0.12, -0.22,  0.15, -0.08,
@@ -202,21 +180,16 @@ forrest(
 )
 ```
 
----
+## Several estimates per row
 
-## Multiple estimates per row (dodge)
-
-Set `dodge = TRUE` (or a positive number) when consecutive rows share the same
-`label` value. The CIs are vertically offset within each label band, and the
-label is displayed once at the group centre. Combine with `group` to colour the
-series.
+With `dodge = TRUE`, consecutive rows that share a `label` value are drawn as one band: their intervals are offset vertically around the band's centre and the label appears once. Pair it with `group` so the reader can tell the series apart.
 
 ```{r dodge}
 #| fig-height: 4
 #| fig-width: 9
 dodge_dat <- data.frame(
   exposure = rep(
-    c("PM2.5 (per 10 \u03bcg/m\u00b3)", "NO2 (per 10 ppb)",
+    c("PM2.5 (per 10 μg/m³)", "NO2 (per 10 ppb)",
       "Noise (per 10 dB)", "Green space (%)", "Walkability"),
     each = 2
   ),
@@ -241,28 +214,19 @@ forrest(
   group    = "period",
   dodge    = TRUE,
   header   = "Environmental exposure",
-  ref_line = 0,
   xlab     = "Mean difference in SBP (mmHg, 95% CI)"
 )
 ```
 
-A numeric value for `dodge` sets the vertical spacing between rows within a
-group directly (in y-axis units). `dodge = TRUE` uses the default of `0.25`.
-Structural rows (section and subsection headers, spacers) are always treated as
-singleton groups and are not affected by dodging.
+A number instead of `TRUE` sets the distance between neighbouring intervals in a band, in units of one row; `TRUE` means `0.25`. Section and subsection headers and spacer rows are never merged into a band.
 
-### Wide-format text columns alongside dodged CIs
+### One text column per series
 
-By default, `cols` text values appear at each row's dodged y position,
-keeping them aligned with their CI whiskers. Set `cols_by_group = TRUE` to
-collapse each text column to one value per label group — this produces
-a wide table with one row per label and one column per condition, matching the
-layout commonly seen in multi-period epidemiology papers.
+By default each text column in `cols` prints a value beside every interval, at that interval's offset position. With `cols_by_group = TRUE`, each text column instead prints one value per band, at the band's centre: the first non-empty value among the band's rows. Giving each series its own column, filled only on that series' rows, produces a wide table with one row per label and one column per series.
 
 ```{r dodge-cols}
 #| fig-height: 4
 #| fig-width: 11
-# Add per-condition formatted text columns to the long-format data
 dodge_dat$est_ci     <- sprintf("%.2f (%.2f, %.2f)",
                                 dodge_dat$estimate,
                                 dodge_dat$lower,
@@ -287,25 +251,20 @@ forrest(
                     "Adulthood (95% CI)" = "text_adult"),
   widths        = c(2.8, 3.5, 2.2, 2.2),
   header        = "Environmental exposure",
-  ref_line      = 0,
   xlab          = "Mean difference in SBP (mmHg, 95% CI)"
 )
 ```
 
----
-
 ## Point shapes
 
-Pass a `shape` column to assign different point characters per category.
-Use together with `group` and `dodge` to encode two categorical dimensions
-at once — for example, colour = time period and shape = sex.
+A `shape` column gives each of its values a different point character and adds a second legend. Combined with `group` and `dodge`, a single band can then encode two variables, here period by colour and sex by shape.
 
 ```{r shape}
 #| fig-height: 5
 #| fig-width: 9
 shape_dat <- data.frame(
   exposure = rep(
-    c("PM2.5 (per 10 \u03bcg/m\u00b3)", "NO2 (per 10 ppb)",
+    c("PM2.5 (per 10 μg/m³)", "NO2 (per 10 ppb)",
       "Noise (per 10 dB)", "Green space (%)", "Walkability"),
     each = 4
   ),
@@ -343,26 +302,21 @@ forrest(
   group    = "period",
   shape    = "sex",
   dodge    = TRUE,
-  ref_line = 0,
   xlab     = "Mean difference in SBP (mmHg, 95% CI)"
 )
 ```
 
-The shape legend appears at `legend_shape_pos` (`"bottomright"` by default).
-Set `legend_shape_pos = NULL` to suppress it.
+The shape legend sits at `legend_shape_pos`, `"bottomright"` by default, and `legend_shape_pos = NULL` removes it. `legend_pos` does the same for the colour legend.
 
----
+## Text columns
 
-## Adding text columns
-
-Use the `cols` argument — a named character vector mapping display headers to
-column names in `data` — to show formatted statistics alongside the plot.
+`cols` adds text columns to the right of the plot. It is a named character vector: each name is a column header and each value is the name of a column in `data`. Format the text yourself, for instance with `sprintf()`, so that it shows exactly the digits you want. `widths` sets the relative widths of the label panel, the plot and each text column.
 
 ```{r text-cols}
 #| fig-height: 4.5
 #| fig-width: 10
 tc_dat <- data.frame(
-  predictor = c("Age (per 10 y)", "Female sex", "BMI (per 5 kg/m\u00b2)",
+  predictor = c("Age (per 10 y)", "Female sex", "BMI (per 5 kg/m²)",
                 "Current smoker", "Physically active"),
   estimate  = c( 0.18, -0.42,  0.11, -0.31,  0.24),
   lower     = c( 0.05, -0.61, -0.04, -0.52,  0.08),
@@ -390,21 +344,16 @@ forrest(
 )
 ```
 
-### Section-level annotations in text columns
+### Values in section header rows
 
-When `section` is active, text columns show `""` for section header rows by
-default. Use `section_cols` — a named character vector with the same syntax as
-`cols` — to populate specific columns in section header rows with a
-section-level value (e.g. number of studies, total N). The name must match a
-name in `cols`; the value is a column in `data` whose first non-NA entry in
-each section is used.
+Text columns are empty on the header rows that `section` inserts. `section_cols` fills chosen text columns on those rows with a section-level value. Its names must be names of `cols`, and its values are columns in `data`; on each header row, the named text column shows the first non-empty value of that data column within the section. `subsection_cols` does the same for subsection headers. Here each row shows its own sample size and each header shows the section's total.
 
 ```{r section-cols}
 #| fig-height: 5
 #| fig-width: 11
 sc_dat <- data.frame(
   subgroup  = c("Sex",    "Sex",   "Age group", "Age group", "Age group"),
-  label     = c("Female", "Male",  "30\u201349 y", "50\u201369 y", "70+ y"),
+  label     = c("Female", "Male",  "30–49 y", "50–69 y", "70+ y"),
   estimate  = c(-0.38,  0.12,  0.22, -0.15, -0.41),
   lower     = c(-0.58, -0.08,  0.02, -0.38, -0.66),
   upper     = c(-0.18,  0.32,  0.42,  0.08, -0.16),
@@ -415,8 +364,8 @@ sc_dat <- data.frame(
     "-0.15 (-0.38,  0.08)",
     "-0.41 (-0.66, -0.16)"
   ),
-  # Constant within each section — section header will show this value
-  k_text    = c("k = 2", "k = 2", "k = 3", "k = 3", "k = 3")
+  n_text    = c("1,204", "1,096", "702", "958", "640"),
+  n_section = c("2,300", "", "2,300", "", "")
 )
 
 forrest(
@@ -426,26 +375,23 @@ forrest(
   upper        = "upper",
   label        = "label",
   section      = "subgroup",
-  section_cols = c("k" = "k_text"),
+  section_cols = c("N" = "n_section"),
   header       = "Subgroup",
-  cols         = c("Coef (95% CI)" = "coef_ci", "k" = "k_text"),
+  cols         = c("Coef (95% CI)" = "coef_ci", "N" = "n_text"),
   widths       = c(2.5, 4, 2.5, 1.2),
   xlab         = "Regression coefficient (95% CI)"
 )
 ```
 
----
+## Row stripes
 
-## Alternating row stripes
-
-Set `stripe = TRUE` for a subtle alternating row background that aids
-readability with many rows.
+`stripe = TRUE` shades every other row, which helps the eye follow a row across a wide plot.
 
 ```{r stripe}
 #| fig-height: 6
 stripe_dat <- data.frame(
   label    = c(
-    "Age (per 10 y)", "Female sex", "BMI (per 5 kg/m\u00b2)",
+    "Age (per 10 y)", "Female sex", "BMI (per 5 kg/m²)",
     "Current smoker", "Physically active",
     "Alcohol intake", "Sleep duration", "Depressive symptoms"
   ),
@@ -465,23 +411,20 @@ forrest(
 )
 ```
 
----
-
 ## Themes
 
-`forrest()` ships three built-in themes. Pass the theme name as a character
-string, or supply a named list of style overrides for full control.
+`theme` takes the name of a built-in theme (`"default"`, `"minimal"` or `"classic"`) or a named list that overrides individual keys of the default theme. The keys are `grid_col`, `grid_lty` and `grid_lwd` for the horizontal gridlines, `ref_col` and `ref_lty` for the reference line, and `stripe_col` for striped rows.
 
 ```{r themes-minimal}
 #| fig-height: 3.5
 theme_dat <- data.frame(
-  predictor = c("Age (per 10 y)", "Female sex", "BMI (per 5 kg/m\u00b2)"),
+  predictor = c("Age (per 10 y)", "Female sex", "BMI (per 5 kg/m²)"),
   estimate  = c( 0.18, -0.42,  0.11),
   lower     = c( 0.05, -0.61, -0.04),
   upper     = c( 0.31, -0.23,  0.26)
 )
 
-# "minimal" theme — lighter gridlines and softer reference line
+# Lighter gridlines and a softer reference line
 forrest(
   theme_dat,
   estimate = "estimate",
@@ -496,7 +439,7 @@ forrest(
 
 ```{r themes-classic}
 #| fig-height: 3.5
-# "classic" theme — dotted gridlines and solid black reference line
+# Dotted gridlines and a solid black reference line
 forrest(
   theme_dat,
   estimate = "estimate",
@@ -511,7 +454,6 @@ forrest(
 
 ```{r themes-custom}
 #| fig-height: 3.5
-# Custom theme — override individual style keys
 forrest(
   theme_dat,
   estimate = "estimate",
@@ -524,12 +466,11 @@ forrest(
 )
 ```
 
----
+Graphical parameters that `forrest()` does not name, such as `cex.axis` and `cex.lab`, are passed through `...` to the call that sets up the plot region.
 
 ## Saving plots
 
-Use `save_forrest()` to export a plot to PDF, PNG, SVG, or TIFF. Pass a
-zero-argument function that calls `forrest()`.
+`save_forrest()` writes a plot to PDF, PNG, SVG or TIFF, choosing the device from the file extension. It takes a function with no arguments that draws the plot, so the device is opened before drawing starts and closed even if drawing fails. `dpi` sets the resolution of PNG and TIFF files.
 
 ```{r save}
 #| eval: false

@@ -19,75 +19,51 @@ knitr:
 library(forrest)
 ```
 
-This vignette walks through the internals of `forrest()` step by step, using
-concrete data at each stage so you can see exactly what gets built before
-anything is drawn.
+This vignette follows one data set through `forrest()`, calling the internal helpers directly to show what each step produces before anything is drawn. The helpers are not exported and are reached with `:::`; their interfaces may change between releases.
 
----
+## Design
 
-## Design principles
+`forrest()` is the only plotting function, and every layout is reached through its arguments, which name columns of the data as strings. The data stay tidy, one row per estimate. Visual structure such as section headers, indentation and blank rows is derived from grouping columns at draw time, so it never has to be written into the data.
 
-`forrest` follows three principles:
-
-1. **One function, all use cases.** `forrest()` covers regression tables,
-   meta-analyses, subgroup analyses, dose-response patterns, and multi-model
-   comparisons through a uniform column-name-based interface.
-
-2. **Data and structure are separate.** Users supply tidy data (one row = one
-   estimate). Visual structure — section headers, indentation, spacers — is
-   derived from grouping columns via `section` / `subsection`, not from
-   manually inserted NA rows in the data.
-
-3. **Base graphics with a single dependency.** All drawing uses base R
-   `graphics` functions. The only external dependency is
-   [tinyplot](https://github.com/grantmcdermott/tinyplot), used solely to
-   initialise the plot region.
-
----
+All drawing uses base R graphics. The one dependency, [tinyplot](https://github.com/grantmcdermott/tinyplot), sets up the plot region, so the axes and fonts follow tinyplot's theming.
 
 ## Source files
 
-| File | Purpose |
-|------|---------|
-| `R/forrest.R` | Exported `forrest()` — validation, section expansion, drawing pipeline |
-| `R/save.R` | Exported `save_forrest()` — device dispatch for PDF/PNG/SVG/TIFF |
-| `R/utils.R` | Internal helpers: `build_sections()`, `compute_dodge_groups()`, `group_colors()`, `group_shapes()`, `check_col()`, `%||%` |
-| `R/draw.R` | Internal drawing helpers: `draw_diamond()`, `draw_text_panel()` |
-| `R/theme.R` | Theme infrastructure: `.theme_defaults`, `.themes`, `resolve_theme()` |
+| File | Contents |
+|------|----------|
+| `R/forrest.R` | `forrest()`: argument checks, section expansion, layout and drawing |
+| `R/save.R` | `save_forrest()`: opens a PDF, PNG, SVG or TIFF device and draws into it |
+| `R/utils.R` | `build_sections()`, `compute_dodge_groups()`, `group_colors()`, `group_shapes()`, `check_col()` and `%||%` |
+| `R/draw.R` | `draw_diamond()` and `draw_text_panel()` |
+| `R/theme.R` | `.theme_defaults`, `.themes` and `resolve_theme()` |
 
----
+## Example data
 
-## Starting data
-
-We will use a small but representative data set throughout. Six studies are
-grouped into three geographic regions, and each region has a pooled estimate.
+Seven studies from three regions, with odds ratios, weights and a formatted text column:
 
 ```{r starting-data}
+or    <- c(1.081, 1.092, 1.095, 1.057, 1.086, 1.070, 1.116)
+lower <- c(1.038, 1.052, 1.058, 1.019, 1.050, 1.036, 1.063)
+upper <- c(1.126, 1.134, 1.134, 1.096, 1.123, 1.105, 1.171)
+
 meta <- data.frame(
-  study  = c(
-    "Chen (2016)", "Ibrahim (2022)",
-    "Bauer (2015)", "Evans (2018)", "Garcia (2020)", "Jensen (2023)",
-    "Fuentes (2019)"
-  ),
-  region = c(
-    "Asia",   "Asia",
-    "Europe", "Europe", "Europe", "Europe",
-    "Latin America"
-  ),
-  or     = c(1.081, 1.092, 1.095, 1.057, 1.086, 1.070, 1.116),
-  lower  = c(1.038, 1.052, 1.058, 1.019, 1.050, 1.036, 1.063),
-  upper  = c(1.126, 1.134, 1.134, 1.096, 1.123, 1.105, 1.171),
-  weight = c(2065,  1736,  816,   1041,  1479,  918,   567),
-  is_sum = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-  or_text = sprintf("%.2f (%.2f\u2013%.2f)",
-                    c(1.081, 1.092, 1.095, 1.057, 1.086, 1.070, 1.116),
-                    c(1.038, 1.052, 1.058, 1.019, 1.050, 1.036, 1.063),
-                    c(1.126, 1.134, 1.134, 1.096, 1.123, 1.105, 1.171))
+  study   = c("Chen (2016)", "Ibrahim (2022)",
+              "Bauer (2015)", "Evans (2018)", "Garcia (2020)", "Jensen (2023)",
+              "Fuentes (2019)"),
+  region  = c("Asia", "Asia",
+              "Europe", "Europe", "Europe", "Europe",
+              "Latin America"),
+  or      = or,
+  lower   = lower,
+  upper   = upper,
+  weight  = c(2065, 1736, 816, 1041, 1479, 918, 567),
+  is_sum  = FALSE,
+  or_text = sprintf("%.2f (%.2f–%.2f)", or, lower, upper)
 )
 meta
 ```
 
-Without any structural arguments, all seven rows are drawn as plain study rows:
+Without structural arguments every row is drawn as a study:
 
 ```{r plain}
 forrest(
@@ -98,21 +74,15 @@ forrest(
   label     = "study",
   weight    = "weight",
   log_scale = TRUE,
-  ref_line  = 1,
   xlab      = "OR (95% CI)"
 )
 ```
 
----
+## Section expansion
 
-## Step 1b — Section expansion via build_sections()
-
-`build_sections()` is the function that converts the tidy data into the
-display-ready expanded frame. Calling it directly shows what `forrest()`
-sees before drawing.
+When `section` is set, `forrest()` first calls `build_sections()`, which returns the expanded data frame that is then drawn, along with three logical vectors marking the rows it inserted.
 
 ```{r build-sections-call}
-# build_sections() is an internal function; access via :::
 expanded <- forrest:::build_sections(
   df             = meta,
   estimate       = "or",
@@ -128,35 +98,22 @@ expanded <- forrest:::build_sections(
   cols           = "or_text",
   section_cols   = NULL
 )
-```
 
-The result is a list with four elements. `$df` is the expanded data frame:
-
-```{r expanded-df}
 expanded$df[, c("study", "region", "or", "is_sum", "or_text")]
 ```
 
-The three flag vectors identify which rows are structural:
-
 ```{r expanded-flags}
 data.frame(
-  study              = expanded$df$study,
-  is_section_header  = expanded$is_section_header,
-  is_subsection_hdr  = expanded$is_subsection_header,
-  is_spacer          = expanded$is_spacer
+  study             = expanded$df$study,
+  is_section_header = expanded$is_section_header,
+  is_subsection_hdr = expanded$is_subsection_header,
+  is_spacer         = expanded$is_spacer
 )
 ```
 
-Key observations:
+Rows 1, 5 and 11 are the inserted headers for Asia, Europe and Latin America. Their label is the section value and their estimate is `NA`. A blank spacer row closes each section, the study labels are indented by two spaces, and the text column is empty on every inserted row.
 
-- Row 1 (`"Asia"`) and row 5 (`"Europe"`) and row 11 (`"Latin America"`) are
-  section header rows — `is_section_header = TRUE`, `or = NA`.
-- Data rows within each section are indented by two leading spaces.
-- The blank spacer rows (`study = ""`) follow each section.
-- `or_text` is `""` for all structural rows.
-
-Passing `section = "region"` to `forrest()` triggers this expansion
-automatically:
+Passing `section = "region"` to `forrest()` performs this expansion and draws the result:
 
 ```{r section-plot}
 #| fig-height: 7
@@ -169,17 +126,15 @@ forrest(
   section   = "region",
   weight    = "weight",
   log_scale = TRUE,
-  ref_line  = 1,
   xlab      = "OR (95% CI)"
 )
 ```
 
----
+Before expanding, `forrest()` copies the `group` and `shape` columns, and a per-row `col` vector, into private columns. Expansion rewrites the label column, and `group` may name that same column; the copies keep colours and legends tied to the original values, and inserted rows get none.
 
-## Subsection expansion
+### Two levels
 
-With both `section` and `subsection`, `build_sections()` inserts two levels of
-headers. Here each region contains studies from different design types.
+With `subsection` as well, `build_sections()` inserts a sub-header, indented by two spaces, wherever the subsection value changes within a section, and indents the data rows beneath it by four.
 
 ```{r subsection-data}
 meta2 <- data.frame(
@@ -193,28 +148,26 @@ meta2 <- data.frame(
   lower  = c(1.058, 1.019, 1.050, 1.036, 1.038, 1.052),
   upper  = c(1.134, 1.096, 1.123, 1.105, 1.126, 1.134)
 )
-```
 
-```{r subsection-expanded}
 exp2 <- forrest:::build_sections(
-  df           = meta2,
-  estimate     = "or",
-  lower        = "lower",
-  upper        = "upper",
-  label        = "study",
-  is_summary   = NULL,
-  weight       = NULL,
-  section      = "region",
-  subsection   = "design",
+  df             = meta2,
+  estimate       = "or",
+  lower          = "lower",
+  upper          = "upper",
+  label          = "study",
+  is_summary     = NULL,
+  weight         = NULL,
+  section        = "region",
+  subsection     = "design",
   section_indent = TRUE,
   section_spacer = TRUE
 )
 
 data.frame(
-  study               = exp2$df$study,
-  is_section_header   = exp2$is_section_header,
+  study                = exp2$df$study,
+  is_section_header    = exp2$is_section_header,
   is_subsection_header = exp2$is_subsection_header,
-  is_spacer           = exp2$is_spacer
+  is_spacer            = exp2$is_spacer
 )
 ```
 
@@ -229,170 +182,37 @@ forrest(
   section    = "region",
   subsection = "design",
   log_scale  = TRUE,
-  ref_line   = 1,
   xlab       = "OR (95% CI)"
 )
 ```
 
----
+### Values in header rows
 
-## Step 3 — Row type classification
-
-After section expansion, `forrest()` classifies every row into one of four
-types. Using the first expanded frame:
-
-```{r row-types}
-df  <- expanded$df
-est <- as.numeric(df$or)
-is_sum    <- as.logical(df$is_sum)
-is_struct <- expanded$is_section_header |
-             expanded$is_subsection_header |
-             expanded$is_spacer
-is_ref    <- is.na(est) & !is_sum & !is_struct
-is_bold   <- (expanded$is_section_header |
-              expanded$is_subsection_header) &
-             nchar(trimws(df$study)) > 0L
-
-data.frame(
-  study      = df$study,
-  is_sum     = is_sum,
-  is_struct  = is_struct,
-  is_ref     = is_ref,
-  is_bold    = is_bold,
-  CI_drawn   = !is_sum & !is_struct & !is_ref & !is.na(est)
-)
-```
-
-The `is_ref` column would be `TRUE` for a reference-category row (user-supplied
-`NA` estimate that is not a structural row). For this data there are none.
-
----
-
-## Step 8 — Dodge layout
-
-`compute_dodge_groups()` assigns visual group IDs. Consecutive rows with the
-same label form one group; structural rows are always singletons.
-
-For a non-dodged layout, each row maps to one y slot:
-
-```{r dodge-no-dodge}
-lbl       <- as.character(expanded$df$study)
-group_ids <- forrest:::compute_dodge_groups(lbl, is_struct)
-n_vis     <- max(group_ids)
-# y slot for each row (top = n_vis, bottom = 1)
-row_y     <- (n_vis + 1L) - group_ids
-
-data.frame(study = lbl, group_id = group_ids, y = row_y)
-```
-
-For a dodged layout with two series per label, consecutive rows sharing a label
-form one group and are spread around the group centre:
-
-```{r dodge-example-data}
-dodge_ex <- data.frame(
-  label    = rep(c("Asia", "Europe"), each = 2),
-  method   = rep(c("Cohort", "Case-control"), 2),
-  or       = c(1.08, 1.05, 1.09, 1.07),
-  lower    = c(1.04, 1.01, 1.05, 1.03),
-  upper    = c(1.13, 1.09, 1.14, 1.11)
-)
-```
-
-```{r dodge-example-groups}
-lbl2 <- as.character(dodge_ex$label)
-grp2 <- forrest:::compute_dodge_groups(lbl2, rep(FALSE, nrow(dodge_ex)))
-
-dodge_amt <- 0.25
-n_vis2    <- max(grp2)
-grp_cy    <- (n_vis2 + 1L) - seq_len(n_vis2)
-
-row_y2 <- numeric(nrow(dodge_ex))
-for (g in seq_len(n_vis2)) {
-  idx     <- which(grp2 == g)
-  k       <- length(idx)
-  offsets <- seq(-(k - 1L) / 2, (k - 1L) / 2, length.out = k) * dodge_amt
-  row_y2[idx] <- grp_cy[g] + offsets
-}
-
-data.frame(
-  label    = lbl2,
-  method   = dodge_ex$method,
-  group_id = grp2,
-  y        = row_y2
-)
-```
-
-The two "Asia" rows are offset symmetrically around y = 2 (the group centre),
-and the two "Europe" rows around y = 1:
-
-```{r dodge-plot}
-forrest(
-  dodge_ex,
-  estimate = "or",
-  lower    = "lower",
-  upper    = "upper",
-  label    = "label",
-  group    = "method",
-  dodge    = TRUE,
-  log_scale = TRUE,
-  ref_line  = 1,
-  xlab      = "OR (95% CI)"
-)
-```
-
----
-
-## Colour assignment
-
-`group_colors()` maps unique levels to the Okabe-Ito palette (skipping index 1,
-which is near-white):
-
-```{r group-colors}
-forrest:::group_colors(c("Asia", "Europe", "Latin America"))
-```
-
-When `group` is supplied, each row's colour comes from this map:
-
-```{r color-assignment}
-grp     <- c("Asia", "Asia", "Europe", "Europe", "Latin America")
-col_map <- forrest:::group_colors(grp)
-col_vec <- unname(col_map[grp])
-data.frame(grp, colour = col_vec)
-```
-
----
-
-## Section-level text column annotations
-
-`section_cols` lets specific `cols` columns show a section-level value in the
-header row rather than `""`. The value comes from the first non-NA entry of the
-named data column within each section.
+`section_cols` fills chosen text columns on the header rows. `forrest()` translates its names, which are text-column headers, into the data columns those text columns display, and `build_sections()` writes into each one the first non-empty value of the source column among the section's rows. Here the source column `k_text` holds the number of studies per section, and the displayed column `k_row` is empty on study rows.
 
 ```{r section-cols-data}
-meta$k_text <- c("k = 2", "k = 2",
-                 "k = 4", "k = 4", "k = 4", "k = 4",
-                 "k = 1")
+meta$k_text <- c("k = 2", "", "k = 4", "", "", "", "k = 1")
+meta$k_row  <- ""
 
 exp_sc <- forrest:::build_sections(
-  df           = meta,
-  estimate     = "or",
-  lower        = "lower",
-  upper        = "upper",
-  label        = "study",
-  is_summary   = "is_sum",
-  weight       = "weight",
-  section      = "region",
-  section_cols = c(k_text = "k_text"),
-  cols         = c("or_text", "k_text"),
+  df             = meta,
+  estimate       = "or",
+  lower          = "lower",
+  upper          = "upper",
+  label          = "study",
+  is_summary     = "is_sum",
+  weight         = "weight",
+  section        = "region",
+  section_cols   = c(k_row = "k_text"),
+  cols           = c("or_text", "k_row"),
   section_spacer = FALSE,
   section_indent = FALSE
 )
 
-exp_sc$df[, c("study", "or_text", "k_text")]
+exp_sc$df[, c("study", "or_text", "k_row")]
 ```
 
-Header rows have `""` in `or_text` (a row-level column) and the section value
-in `k_text` (declared in `section_cols`). Data rows keep their original values.
+The header rows carry the count in `k_row` and nothing in `or_text`, which `section_cols` does not name; study rows keep their own values.
 
 ```{r section-cols-plot}
 #| fig-height: 7
@@ -407,37 +227,48 @@ forrest(
   section_cols = c("k" = "k_text"),
   weight       = "weight",
   log_scale    = TRUE,
-  ref_line     = 1,
   header       = "Study",
-  cols         = c("OR (95% CI)" = "or_text", "k" = "k_text"),
+  cols         = c("OR (95% CI)" = "or_text", "k" = "k_row"),
   widths       = c(3.5, 3.5, 2.2, 1.0),
   xlab         = "OR (95% CI)"
 )
 ```
 
----
+## Row types
 
-## Reference-category rows
+After expansion every row is one of four types, and the type decides what is drawn. Structural rows are the inserted headers and spacers; header labels are bold. Reference rows are rows of the data whose estimate is `NA`; they show a plain label and no interval. Summary rows, flagged by `is_summary`, are drawn as diamonds. All other rows get a point and an interval. The classification for the expanded example:
 
-A row where `estimate = NA` and which is **not** auto-inserted by
-`build_sections()` is a reference category. It produces no CI or point, its
-label is rendered in regular (non-bold) font, and `ref_label = TRUE`
-appends `" (Ref.)"` automatically.
+```{r row-types}
+df        <- expanded$df
+est       <- as.numeric(df$or)
+is_sum    <- as.logical(df$is_sum)
+is_struct <- expanded$is_section_header |
+             expanded$is_subsection_header |
+             expanded$is_spacer
+is_ref    <- is.na(est) & !is_sum & !is_struct
+is_bold   <- (expanded$is_section_header | expanded$is_subsection_header) &
+             nchar(trimws(df$study)) > 0L
 
-```{r ref-category-data}
+data.frame(
+  study     = df$study,
+  is_sum    = is_sum,
+  is_struct = is_struct,
+  is_ref    = is_ref,
+  is_bold   = is_bold,
+  ci_drawn  = !is_sum & !is_struct & !is_ref
+)
+```
+
+This data set has no reference rows. A dose-response table has one, the reference category, and `ref_label = TRUE` appends "(Ref.)" to its label:
+
+```{r ref-category-plot}
 dose <- data.frame(
   quartile = c("Q1", "Q2", "Q3", "Q4"),
   or       = c(NA,   1.21, 1.45, 1.82),
   lower    = c(NA,   1.08, 1.28, 1.60),
   upper    = c(NA,   1.36, 1.65, 2.07)
 )
-dose
-```
 
-With `ref_label = TRUE`, the Q1 row's label gets `" (Ref.)"` appended and no
-CI is drawn:
-
-```{r ref-category-plot}
 forrest(
   dose,
   estimate  = "or",
@@ -446,21 +277,16 @@ forrest(
   label     = "quartile",
   ref_label = TRUE,
   log_scale = TRUE,
-  ref_line  = 1,
   xlab      = "OR (95% CI)"
 )
 ```
 
----
+## Summary diamonds
 
-## Summary (diamond) rows
+`draw_diamond()` draws each summary row as a polygon whose left and right tips are the confidence limits and whose top and bottom points sit above and below the estimate, `0.38 * cex` rows from the centre. Limits beyond `xlim` are cut at the axis.
 
-Rows with `is_summary = TRUE` are drawn as filled diamonds by `draw_diamond()`.
-The diamond's left and right tips are at `lo[i]` and `hi[i]` (the CI bounds),
-its horizontal centre is at `est[i]`, and its half-height is `0.38 * cex`.
-The diamond is clipped to `xlim` if the CI extends beyond the axis.
-
-```{r diamond-data}
+```{r diamond-plot}
+#| fig-height: 8
 with_pool <- rbind(
   meta[, c("study", "region", "or", "lower", "upper", "is_sum")],
   data.frame(
@@ -469,10 +295,7 @@ with_pool <- rbind(
     is_sum = TRUE
   )
 )
-```
 
-```{r diamond-plot}
-#| fig-height: 8
 forrest(
   with_pool,
   estimate   = "or",
@@ -482,29 +305,82 @@ forrest(
   section    = "region",
   is_summary = "is_sum",
   log_scale  = TRUE,
-  ref_line   = 1,
   xlab       = "OR (95% CI)"
 )
 ```
 
----
+## Dodging
 
-## Theme system
+`compute_dodge_groups()` numbers the bands that rows are drawn in. A new band starts at the first row, at every change of label, and at every structural row, so headers and spacers always have a band to themselves. Without `dodge`, each row is its own band.
 
-`resolve_theme()` merges user overrides with `.theme_defaults`. All six theme
-keys and their defaults:
+```{r dodge-example-groups}
+dodge_ex <- data.frame(
+  label  = rep(c("Asia", "Europe"), each = 2),
+  method = rep(c("Cohort", "Case-control"), 2),
+  or     = c(1.08, 1.05, 1.09, 1.07),
+  lower  = c(1.04, 1.01, 1.05, 1.03),
+  upper  = c(1.13, 1.09, 1.14, 1.11)
+)
+
+band <- forrest:::compute_dodge_groups(dodge_ex$label,
+                                       rep(FALSE, nrow(dodge_ex)))
+
+# Bands are one unit apart, top to bottom; rows in a band are spread
+# symmetrically around its centre, `dodge` units apart.
+n_band <- max(band)
+centre <- (n_band + 1L) - band
+k      <- tabulate(band)[band]
+pos    <- ave(seq_along(band), band, FUN = seq_along)
+y      <- centre + (pos - (k + 1) / 2) * 0.25
+
+data.frame(dodge_ex[, c("label", "method")], band, y)
+```
+
+The two Asia rows sit at 2 ± 0.125 and the two Europe rows at 1 ± 0.125:
+
+```{r dodge-plot}
+forrest(
+  dodge_ex,
+  estimate  = "or",
+  lower     = "lower",
+  upper     = "upper",
+  label     = "label",
+  group     = "method",
+  dodge     = TRUE,
+  log_scale = TRUE,
+  xlab      = "OR (95% CI)"
+)
+```
+
+## Colours
+
+`group_colors()` assigns colours to the distinct non-missing group values in order of appearance. By default it uses the Okabe-Ito palette from its second colour on, because the first is black and would be confused with the near-black of ungrouped rows. After eight groups the palette repeats.
+
+```{r group-colors}
+forrest:::group_colors(c("Asia", "Europe", NA, "Latin America"))
+```
+
+A `col` argument replaces the palette, matched by name or recycled in order:
+
+```{r group-colors-col}
+forrest:::group_colors(c("Asia", "Europe"), c(Europe = "navy", Asia = "red"))
+```
+
+## Themes
+
+`resolve_theme()` starts from `.theme_defaults` and overwrites the keys that the chosen theme or list supplies. The six keys and their defaults:
 
 ```{r theme-defaults}
 forrest:::.theme_defaults
 ```
 
-Built-in themes are stored as partial override lists:
+The built-in themes are lists of overrides:
 
 ```{r theme-list}
 forrest:::.themes
 ```
 
-A custom theme overrides only the keys you supply:
+A list passed as `theme` overrides only the keys it names, and an unknown key is an error:
 
 ```{r custom-theme}
 #| fig-height: 3.5

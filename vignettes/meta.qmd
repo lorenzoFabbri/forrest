@@ -19,23 +19,15 @@ knitr:
 library(forrest)
 ```
 
-The classic use case for a forest plot is a systematic review or meta-analysis:
-each row represents one study, point sizes reflect precision (inverse-variance
-weights), and a pooled estimate — drawn as a filled diamond — summarises the
-evidence.
+In a meta-analysis forest plot each row is one study, the size of its marker reflects the study's weight, and a diamond at the bottom shows the pooled estimate. This vignette builds that plot and its common variants for an invented meta-analysis of long-term exposure to fine particulate matter (PM~2.5~) and incident hypertension. The study names and numbers are made up.
 
-`forrest()` handles this pattern natively. This vignette walks through a
-simulated meta-analysis of the association between long-term fine-particulate
-matter (PM~2.5~) exposure and incident hypertension.
+`forrest()` only draws; it does not pool. Compute the pooled estimates with a meta-analysis package such as metafor or meta, or by hand as below, and pass the results in as rows.
 
----
+## Data
 
-## Simulated data
+Each study contributes a log odds ratio per 10 μg/m³ of PM~2.5~ and its standard error, chosen to scatter around a log odds ratio of 0.08. The pooled row is a fixed-effect (inverse-variance) estimate.
 
 ```{r sim-data}
-set.seed(2024)
-n_studies <- 10
-
 meta_dat <- data.frame(
   study    = c(
     "Anderson et al. (2014)",
@@ -55,8 +47,6 @@ meta_dat <- data.frame(
   ),
   n        = c(4520, 2810, 8340, 12600, 3950, 1870, 5430, 9100, 6780, 3210),
   events   = c( 612,  390, 1120,  1950,  540,  255,  770, 1380, 980,  450),
-  # Log odds ratios and SEs (simulated around a true log-OR of 0.08 per
-  # 10 µg/m³ increase in PM2.5)
   log_or   = c(0.062, 0.091, 0.078, 0.095, 0.055, 0.110, 0.083,
                0.072, 0.088, 0.068),
   se       = c(0.028, 0.035, 0.022, 0.019, 0.031, 0.042, 0.026,
@@ -64,21 +54,17 @@ meta_dat <- data.frame(
   is_sum   = FALSE
 )
 
-# Back-transform to OR scale
+# Odds ratios and 95% CIs on the natural scale
 meta_dat$or    <- exp(meta_dat$log_or)
 meta_dat$lower <- exp(meta_dat$log_or - 1.96 * meta_dat$se)
 meta_dat$upper <- exp(meta_dat$log_or + 1.96 * meta_dat$se)
 
-# Inverse-variance weights for the fixed-effect pooled estimate
+# Inverse-variance weights
 meta_dat$weight <- 1 / meta_dat$se^2
 
-# Fixed-effect pooled log-OR and SE
-pooled_log_or <- with(meta_dat,
-  sum(weight * log_or) / sum(weight)
-)
+pooled_log_or <- with(meta_dat, sum(weight * log_or) / sum(weight))
 pooled_se     <- sqrt(1 / sum(meta_dat$weight))
 
-# Append pooled row
 pooled_row <- data.frame(
   study    = "Pooled (fixed-effect)",
   region   = NA_character_,
@@ -94,22 +80,16 @@ pooled_row <- data.frame(
 )
 meta_all <- rbind(meta_dat, pooled_row)
 
-# Formatted text for the right-hand table columns
-meta_all$or_text <- ifelse(
-  meta_all$is_sum,
-  sprintf("%.2f (%.2f\u2013%.2f)", meta_all$or, meta_all$lower, meta_all$upper),
-  sprintf("%.2f (%.2f\u2013%.2f)", meta_all$or, meta_all$lower, meta_all$upper)
-)
+# Text for the right-hand columns
+meta_all$or_text     <- sprintf("%.2f (%.2f–%.2f)",
+                                meta_all$or, meta_all$lower, meta_all$upper)
 meta_all$n_text      <- formatC(meta_all$n,      format = "d", big.mark = ",")
 meta_all$events_text <- formatC(meta_all$events, format = "d", big.mark = ",")
 ```
 
----
+## Basic plot
 
-## Basic meta-analysis forest plot
-
-The simplest meta-analysis forest plot: studies ordered by appearance,
-point sizes proportional to inverse-variance weight, and a summary diamond.
+Odds ratios belong on a log axis, where an odds ratio of 2 and one of 0.5 sit at the same distance from 1. With `log_scale = TRUE` the reference line moves to 1 by default. `weight` scales the marker so that its area is proportional to the study's weight, and `is_summary` turns the pooled row into a diamond.
 
 ```{r basic-meta}
 forrest(
@@ -121,17 +101,13 @@ forrest(
   is_summary = "is_sum",
   weight     = "weight",
   log_scale  = TRUE,
-  ref_line   = 1,
-  xlab       = "OR for hypertension per 10 \u03bcg/m\u00b3 PM2.5 (95% CI)"
+  xlab       = "OR for hypertension per 10 μg/m³ PM2.5 (95% CI)"
 )
 ```
 
----
+## Text columns
 
-## Adding text columns
-
-Right-hand text panels are common in published forest plots. Pass `cols` as a
-named character vector, and set `header` to label the study column.
+Published meta-analysis plots usually print the sample size, event count and estimate beside each study. `cols` adds these as text columns and `header` labels the study column.
 
 ```{r meta-cols}
 #| fig-width: 11
@@ -144,7 +120,6 @@ forrest(
   is_summary = "is_sum",
   weight     = "weight",
   log_scale  = TRUE,
-  ref_line   = 1,
   header     = "Study",
   cols       = c(
     "N"            = "n_text",
@@ -152,20 +127,16 @@ forrest(
     "OR (95% CI)"  = "or_text"
   ),
   widths     = c(3.5, 3.5, 1.2, 1.2, 2.2),
-  xlab       = "OR for hypertension per 10 \u03bcg/m\u00b3 PM2.5 (95% CI)"
+  xlab       = "OR for hypertension per 10 μg/m³ PM2.5 (95% CI)"
 )
 ```
 
----
+## Colour by region
 
-## Subgroup analyses by region
-
-Colour by `region` to compare estimates across geographic subgroups. A
-`group` column triggers the Okabe-Ito palette and an automatic legend.
+Colouring the study rows by region shows at a glance whether estimates cluster geographically. The pooled row is left out here because it belongs to no region.
 
 ```{r meta-region}
 #| fig-height: 6
-# Exclude pooled row for the subgroup plot; add region-level pooled rows
 study_dat <- meta_all[!meta_all$is_sum, ]
 
 forrest(
@@ -176,23 +147,17 @@ forrest(
   label      = "study",
   group      = "region",
   log_scale  = TRUE,
-  ref_line   = 1,
-  legend_pos = "topright",
-  xlab       = "OR for hypertension per 10 \u03bcg/m\u00b3 PM2.5 (95% CI)"
+  xlab       = "OR for hypertension per 10 μg/m³ PM2.5 (95% CI)"
 )
 ```
 
----
+## Subgroup analysis by region
 
-## Structured subgroup analysis with section headers
-
-Pass `section = "region"` to group studies under bold region headers
-automatically. `forrest()` inserts headers, indents study labels, and adds
-spacers — no manual data manipulation required.
+For a formal subgroup analysis, each region gets its own header, its studies and its own pooled diamond. `section = "region"` inserts the headers, so the data only need the study rows and one pooled row per region, sorted by region.
 
 ```{r meta-structured}
 #| fig-height: 10
-# Helper: compute fixed-effect pooled row for a subset
+# Fixed-effect pooled row for one region
 pool_region <- function(dat, region_label) {
   w   <- 1 / dat$se^2
   lp  <- sum(w * dat$log_or) / sum(w)
@@ -212,8 +177,6 @@ pool_region <- function(dat, region_label) {
   )
 }
 
-# Build data: just the study rows and region-level pooled rows.
-# No manual header or spacer rows needed.
 regions    <- c("Asia", "Europe", "Latin America", "North America")
 structured <- do.call(rbind, lapply(regions, function(r) {
   sub <- meta_dat[meta_dat$region == r, ]
@@ -221,7 +184,7 @@ structured <- do.call(rbind, lapply(regions, function(r) {
 }))
 
 structured$or_text <- sprintf(
-  "%.2f (%.2f\u2013%.2f)",
+  "%.2f (%.2f–%.2f)",
   structured$or, structured$lower, structured$upper
 )
 
@@ -235,30 +198,26 @@ forrest(
   is_summary = "is_sum",
   weight     = "weight",
   log_scale  = TRUE,
-  ref_line   = 1,
   header     = "Study",
   cols       = c("OR (95% CI)" = "or_text"),
   widths     = c(4, 3.5, 2.5),
   stripe     = TRUE,
-  xlab       = "OR for hypertension per 10 \u03bcg/m\u00b3 PM2.5 (95% CI)"
+  xlab       = "OR for hypertension per 10 μg/m³ PM2.5 (95% CI)"
 )
 ```
 
----
+Latin America has a single study, so its pooled estimate equals that study's estimate.
 
-## Multiple exposures: comparing PM~2.5~, NO~2~, and noise
+## Several exposures in the same studies
 
-A meta-analysis may cover several exposures simultaneously. Use `group` to
-colour by exposure and `dodge = TRUE` to vertically separate the CIs when
-multiple rows share the same study label.
+When the same studies report several exposures, one band per study with one interval per exposure lets the reader compare exposures within a study. The data have one row per study and exposure, sorted by study; `group` colours the exposures and `dodge = TRUE` offsets them within each band.
 
 ```{r meta-multi-exposure}
 #| fig-height: 7
 #| fig-width: 10
-# Simulate effect estimates for three air-quality exposures across 6 studies
 set.seed(99)
 studies6 <- c("Anderson (2018)", "Bauer (2019)", "Chen (2020)",
-               "Di (2021)", "Evans (2022)", "Fuentes (2023)")
+              "Di (2021)", "Evans (2022)", "Fuentes (2023)")
 
 make_exp <- function(true_lor, n = 6) {
   se  <- runif(n, 0.025, 0.045)
@@ -270,23 +229,14 @@ make_exp <- function(true_lor, n = 6) {
   )
 }
 
-pm25  <- make_exp(0.08)
-no2   <- make_exp(0.05)
-noise <- make_exp(0.03)
-
-multi_exp <- data.frame(
-  study    = rep(studies6, 3),
-  exposure = rep(c("PM2.5", "NO2", "Noise"), each = 6),
-  or       = c(pm25$or,    no2$or,    noise$or),
-  lower    = c(pm25$lower, no2$lower, noise$lower),
-  upper    = c(pm25$upper, no2$upper, noise$upper)
+multi_exp <- cbind(
+  data.frame(
+    study    = rep(studies6, 3),
+    exposure = rep(c("PM2.5", "NO2", "Noise"), each = 6)
+  ),
+  rbind(make_exp(0.08), make_exp(0.05), make_exp(0.03))
 )
-
-# Formatted OR text per row
-multi_exp$or_text <- sprintf("%.2f (%.2f\u2013%.2f)",
-                              multi_exp$or,
-                              multi_exp$lower,
-                              multi_exp$upper)
+multi_exp <- multi_exp[order(match(multi_exp$study, studies6)), ]
 
 forrest(
   multi_exp,
@@ -297,14 +247,10 @@ forrest(
   group      = "exposure",
   dodge      = TRUE,
   log_scale  = TRUE,
-  ref_line   = 1,
-  legend_pos = "topright",
   header     = "Study",
   xlab       = "OR for hypertension (95% CI)"
 )
 ```
-
----
 
 ## Saving plots
 
@@ -322,8 +268,7 @@ save_forrest(
       is_summary = "is_sum",
       weight     = "weight",
       log_scale  = TRUE,
-      ref_line   = 1,
-      xlab       = "OR for hypertension per 10 \u03bcg/m\u00b3 PM2.5 (95% CI)"
+      xlab       = "OR for hypertension per 10 μg/m³ PM2.5 (95% CI)"
     )
   },
   width  = 10,

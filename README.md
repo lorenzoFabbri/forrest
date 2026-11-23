@@ -20,33 +20,30 @@ Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%E2%98%95-yellow.svg)
 
 <!-- badges: end -->
 
-`forrest` creates publication-ready forest plots from any data frame
-that contains point estimates and confidence intervals — regression
-models, subgroup analyses, meta-analyses, dose-response patterns, and
-more. A single dependency
-([tinyplot](https://github.com/grantmcdermott/tinyplot)) keeps the
-footprint minimal.
+`forrest` draws publication-ready forest plots from any data frame with
+one row per estimate and columns for the point estimate and its
+confidence limits: regression coefficients, subgroup estimates, studies
+in a meta-analysis, exposure categories. Its only dependency is
+[tinyplot](https://github.com/grantmcdermott/tinyplot).
 
-**Key features:**
+A single function, `forrest()`, covers the layouts these tables need:
 
-- Works with any estimates and CIs: regression coefficients, ORs, HRs,
-  MDs, …
-- Automatic section headers from a grouping column (`section` argument)
-  — no manual NA rows
-- Two-level hierarchy with `subsection` for nested grouping structures
-- Summary estimates rendered as filled diamonds (`is_summary`)
-- Reference-category rows (NA estimate) rendered without CI, optionally
-  annotated with `" (Ref.)"`
-- Alternating row stripes for readability (`stripe = TRUE`)
-- Group colouring with automatic Okabe-Ito legend
-- Optional text columns (formatted estimates, p-values, …) alongside the
-  plot
-- Section-level text column annotations via `section_cols`
-- Log-scale x-axis for ratio measures
-- CI clipping at axis limits with directional arrows
-- Point size proportional to row weights
-- Export to PDF, PNG, SVG, or TIFF with `save_forrest()`
-- Works with `data.frame`, `tibble`, and `data.table`
+- bold section headers, and optionally a second level of sub-headers,
+  generated from grouping columns, so the data never need hand-inserted
+  blank rows;
+- diamonds for pooled or overall estimates, and label-only rows for
+  reference categories;
+- colours and point shapes mapped from columns, with legends, and
+  several estimates per row offset vertically so their intervals do not
+  overlap;
+- formatted text columns beside the plot, such as estimates with
+  confidence intervals or p-values;
+- a log axis for ratio measures, marker sizes scaled by study weight,
+  row stripes, three themes, and arrows where an interval runs past the
+  axis limits.
+
+`save_forrest()` writes the plot to PDF, PNG, SVG or TIFF. Both
+functions accept data frames, tibbles and data.tables.
 
 ## Installation
 
@@ -58,16 +55,16 @@ install.packages("forrest")
 pak::pak("lorenzoFabbri/forrest")
 ```
 
-## Quick start
+## Examples
 
-### Introduction
+### Several estimates per row
 
-The minimal call requires only three column names — `estimate`, `lower`,
-and `upper`. Use `group` and `dodge = TRUE` to place multiple CIs per
-row when comparing results across categories (e.g., time periods, sexes,
-models). See the [Introduction
-vignette](https://lorenzofabbri.github.io/forrest/vignettes/intro.html)
-for the full feature tour.
+The minimal call names three columns: `estimate`, `lower` and `upper`.
+Here each exposure class has two estimates, one per period; `group`
+colours them and `dodge = TRUE` draws both within the exposure’s row.
+The
+[introduction](https://lorenzofabbri.github.io/forrest/vignettes/intro.html)
+shows every feature in turn.
 
 ``` r
 library(forrest)
@@ -90,7 +87,6 @@ forrest(
   group    = "period",
   dodge    = TRUE,
   header   = "Exposure class",
-  ref_line = 0,
   xlab     = "Coefficient (95% CI)"
 )
 ```
@@ -99,12 +95,12 @@ forrest(
 
 ### Meta-analysis
 
-Use `log_scale = TRUE` and `ref_line = 1` for ratio measures,
-`is_summary = TRUE` to draw the pooled row as a filled diamond, and
-`weight` to scale point sizes by inverse-variance weights. See the
-[Meta-analysis
+With `log_scale = TRUE` the axis is logarithmic and the reference line
+moves to 1. `is_summary` draws the pooled row as a diamond, and `weight`
+scales each study’s marker by its inverse-variance weight. The
+[meta-analysis
 vignette](https://lorenzofabbri.github.io/forrest/vignettes/meta.html)
-for subgroup analyses and multi-exposure layouts.
+adds subgroup analyses and several exposures per study.
 
 ``` r
 ma <- data.frame(
@@ -127,7 +123,6 @@ forrest(
   is_summary = "is_sum",
   weight     = "weight",
   log_scale  = TRUE,
-  ref_line   = 1,
   header     = "Study",
   cols       = c("OR (95% CI)" = "or_ci"),
   widths     = c(2.2, 4, 2.5),
@@ -139,10 +134,9 @@ forrest(
 
 ### Section headers
 
-Pass a column name to `section` to group rows under automatic bold
-headers. `forrest()` inserts a header wherever the section value
-changes, indents the row labels, and adds a blank spacer after each
-group — no manual data manipulation required.
+With `section`, `forrest()` inserts a bold header wherever the named
+column changes value, indents the rows beneath it and leaves a blank row
+after each group.
 
 ``` r
 subgroups <- data.frame(
@@ -165,7 +159,6 @@ forrest(
   label    = "exposure",
   section  = "domain",
   header   = "Exposure",
-  ref_line = 0,
   xlab     = "Regression coefficient (95% CI)"
 )
 ```
@@ -174,14 +167,14 @@ forrest(
 
 ### Regression models
 
-Use [`broom::tidy()`](https://broom.tidymodels.org/) to extract
-parameters from a fitted model and pass the result directly to
-`forrest()`. The `cols` argument adds a formatted text column alongside
-the plot; `header` labels the row-label panel. See the [Regression
-models
+[`broom::tidy()`](https://broom.tidymodels.org/) turns a fitted model
+into a data frame that `forrest()` plots directly. `cols` adds a
+formatted text column and `header` labels the label column. The
+[regression
 vignette](https://lorenzofabbri.github.io/forrest/vignettes/regression.html)
-for progressive adjustment, multiple outcomes, dose-response, and causal
-inference (g-computation, IPW) examples.
+covers adjustment sets, multiple outcomes, exposure categories, and
+average treatment effects by g-computation and inverse probability
+weighting.
 
 ``` r
 set.seed(1)
@@ -225,22 +218,33 @@ forrest(
 
 ## Compared with other packages
 
+The table compares `forrest` with three other forest-plot packages:
+[forestplot](https://cran.r-project.org/package=forestplot) 3.2.0,
+[forestploter](https://cran.r-project.org/package=forestploter) 1.2.0
+and [ggforestplot](https://github.com/NightingaleHealth/ggforestplot)
+0.1.0, as checked against their documentation and source in November
+2026. A ⚠️ marks partial support, explained below the table.
+
 | Feature | forrest | forestplot | forestploter | ggforestplot |
 |----|:--:|:--:|:--:|:--:|
-| Minimal dependencies | ✅ | ❌ | ❌ | ❌ |
-| General (not meta-analysis only) | ✅ | ✅ | ✅ | ⚠️ |
-| Study weight sizing | ✅ | ✅ | ✅ | ❌ |
-| Auto section headers from grouping column | ✅ | ⚠️ | ❌ | ❌ |
-| Two-level nested section hierarchy | ✅ | ❌ | ❌ | ❌ |
+| Dependencies outside base R | 1 | 2 | 2 | 19 |
+| Not tied to meta-analysis | ✅ | ✅ | ✅ | ⚠️ |
+| Marker size from weights | ✅ | ✅ | ✅ | ❌ |
+| Section headers from a grouping column | ✅ | ❌ | ❌ | ❌ |
+| Two levels of section headers | ✅ | ❌ | ❌ | ❌ |
 | Summary diamonds | ✅ | ✅ | ✅ | ❌ |
 | Text columns | ✅ | ✅ | ✅ | ❌ |
-| Alternating row stripes | ✅ | ✅ | ✅ | ✅ |
-| CI clipping with arrows | ✅ | ✅ | ⚠️ | ❌ |
-| Group colouring + legend | ✅ | ✅ | ✅ | ✅ |
-| Log-scale axis | ✅ | ✅ | ✅ | ✅ |
-| Export helper | ✅ | ❌ | ⚠️ | ❌ |
-| data.table support | ✅ | ❌ | ❌ | ❌ |
-| Actively maintained | ✅ | ✅ | ✅ | ❌ |
+| Row stripes | ✅ | ✅ | ✅ | ✅ |
+| Arrows for intervals past the axis limits | ✅ | ✅ | ✅ | ❌ |
+| Colour by group, with legend | ✅ | ✅ | ✅ | ✅ |
+| Log axis | ✅ | ✅ | ✅ | ✅ |
+| Function to save the plot to a file | ✅ | ❌ | ⚠️ | ❌ |
+| Release or commit in the past year | ✅ | ✅ | ✅ | ❌ |
+
+ggforestplot takes standard errors rather than confidence limits and is
+built around biomarker association plots. forestploter has no save
+function, but `get_wh()` returns the dimensions to pass to a graphics
+device.
 
 ## Acknowledgements
 
