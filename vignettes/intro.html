@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.11.9">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -73,14 +73,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3f2496242c16263c0d5ed257b2b27fab.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-44f7b187718e43abfea0560aa82c1a71.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -112,19 +113,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="Site">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">forrest</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -138,15 +138,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
+            <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav">
+  <nav class="quarto-secondary-nav" aria-label="Toolbar">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/internals.html">Articles</a></li><li class="breadcrumb-item"><a href="../vignettes/intro.html">Introduction to forrest</a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/internals.html">Articles</a></li><li class="breadcrumb-item"><a href="../vignettes/intro.html">Introduction to forrest</a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -154,7 +155,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Section">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -165,13 +166,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Articles</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-controls="quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-1-label">Articles</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" aria-labelledby="quarto-sidebar-section-1-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../vignettes/internals.html" class="sidebar-item-text sidebar-link">
@@ -200,13 +198,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
- <span class="menu-text">Reference</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-controls="quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text" id="quarto-sidebar-section-2-label">Reference</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" aria-labelledby="quarto-sidebar-section-2-label" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../man/forrest.html" class="sidebar-item-text sidebar-link">
@@ -248,9 +243,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         
     <div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="undefined"><i class="bi bi-link-45deg"></i></a></li></ul></div></div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content" tabindex="-1">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/internals.html">Articles</a></li><li class="breadcrumb-item"><a href="../vignettes/intro.html">Introduction to forrest</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/internals.html">Articles</a></li><li class="breadcrumb-item"><a href="../vignettes/intro.html">Introduction to forrest</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Introduction to forrest</h1>
 </div>
@@ -269,15 +264,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><code>forrest</code> creates publication-ready forest plots from any data frame that contains point estimates and confidence intervals. A single function, <code>forrest()</code>, handles the full range of use cases — regression model results, subgroup analyses, meta-analyses, dose-response patterns, and more.</p>
-<p>The only hard dependency is <a href="https://github.com/grantmcdermott/tinyplot">tinyplot</a>. <code>forrest</code> works with base R data frames, tibbles, and data.tables.</p>
-<hr>
+<p><code>forrest()</code> draws a forest plot from any data frame with one row per estimate and columns for the point estimate and the confidence limits. The rows can be regression coefficients, subgroup estimates, studies in a meta-analysis or exposure categories. The package’s only dependency is <a href="https://github.com/grantmcdermott/tinyplot">tinyplot</a>, and it accepts data frames, tibbles and data.tables.</p>
+<p>This vignette shows each feature on a small example. The data in every example are invented for illustration.</p>
 <section id="basic-forest-plot" class="level2">
 <h2 class="anchored" data-anchor-id="basic-forest-plot">Basic forest plot</h2>
-<p>The simplest call requires only three column names: <code>estimate</code>, <code>lower</code>, and <code>upper</code>. Here we display adjusted regression coefficients from a linear model predicting systolic blood pressure (SBP).</p>
+<p>A call needs three column names: <code>estimate</code>, <code>lower</code> and <code>upper</code>. Here they hold coefficients from a linear model of systolic blood pressure (SBP).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> <span class="fu">c</span>(<span class="st">"Age (per 10 y)"</span>, <span class="st">"Female sex"</span>, <span class="st">"BMI (per 5 kg/m\u00b2)"</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> <span class="fu">c</span>(<span class="st">"Age (per 10 y)"</span>, <span class="st">"Female sex"</span>, <span class="st">"BMI (per 5 kg/m²)"</span>,</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Current smoker"</span>, <span class="st">"Physically active"</span>),</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate  =</span> <span class="fu">c</span>( <span class="fl">0.18</span>, <span class="sc">-</span><span class="fl">0.42</span>,  <span class="fl">0.11</span>, <span class="sc">-</span><span class="fl">0.31</span>,  <span class="fl">0.24</span>),</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower     =</span> <span class="fu">c</span>( <span class="fl">0.05</span>, <span class="sc">-</span><span class="fl">0.61</span>, <span class="sc">-</span><span class="fl">0.04</span>, <span class="sc">-</span><span class="fl">0.52</span>,  <span class="fl">0.08</span>),</span>
@@ -300,17 +294,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<hr>
 </section>
 <section id="section-headers-from-a-grouping-column" class="level2">
 <h2 class="anchored" data-anchor-id="section-headers-from-a-grouping-column">Section headers from a grouping column</h2>
-<p>Pass a column name to <code>section</code> to automatically group rows under bold section headers. <code>forrest()</code> inserts a header row wherever the section value changes, indents the row labels within each section, and adds a blank spacer row after each section. No manual data manipulation is required.</p>
+<p>When <code>section</code> names a column, <code>forrest()</code> inserts a bold header row wherever that column’s value changes, indents the labels beneath it, and adds a blank row after each section. Rows stay in the order they have in the data, so sort the data first if the sections should appear in a particular order.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sub_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">subgroup =</span> <span class="fu">c</span>(<span class="st">"Sex"</span>,    <span class="st">"Sex"</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Age group"</span>, <span class="st">"Age group"</span>, <span class="st">"Age group"</span>),</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="fu">c</span>(<span class="st">"Female"</span>, <span class="st">"Male"</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>               <span class="st">"30\u201349 years"</span>, <span class="st">"50\u201369 years"</span>, <span class="st">"70+ years"</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>               <span class="st">"30–49 years"</span>, <span class="st">"50–69 years"</span>, <span class="st">"70+ years"</span>),</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.38</span>,  <span class="fl">0.12</span>,  <span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.15</span>, <span class="sc">-</span><span class="fl">0.41</span>),</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.58</span>, <span class="sc">-</span><span class="fl">0.08</span>,  <span class="fl">0.02</span>, <span class="sc">-</span><span class="fl">0.38</span>, <span class="sc">-</span><span class="fl">0.66</span>),</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.18</span>,  <span class="fl">0.32</span>,  <span class="fl">0.42</span>,  <span class="fl">0.08</span>, <span class="sc">-</span><span class="fl">0.16</span>)</span>
@@ -334,10 +327,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>Use <code>section_indent = FALSE</code> to suppress automatic indentation, and <code>section_spacer = FALSE</code> to suppress the blank row after each section.</p>
-<section id="two-level-hierarchy-with-subsection" class="level3">
-<h3 class="anchored" data-anchor-id="two-level-hierarchy-with-subsection">Two-level hierarchy with subsection</h3>
-<p>For analyses with a nested grouping structure, combine <code>section</code> and <code>subsection</code>. <code>forrest()</code> inserts top-level bold headers for <code>section</code> changes and indented sub-headers for <code>subsection</code> changes within each section.</p>
+<p><code>section_indent = FALSE</code> turns off the indentation and <code>section_spacer = FALSE</code> removes the blank row after each section.</p>
+<section id="two-levels-of-headers" class="level3">
+<h3 class="anchored" data-anchor-id="two-levels-of-headers">Two levels of headers</h3>
+<p>Adding <code>subsection</code> gives a second level: indented sub-headers wherever the subsection value changes within a section.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nested_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">domain    =</span> <span class="fu">c</span>(</span>
@@ -353,7 +346,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Deprivation"</span>, <span class="st">"Deprivation"</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ),</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> <span class="fu">c</span>(</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"PM2.5 (per 10 \u03bcg/m\u00b3)"</span>, <span class="st">"NO2 (per 10 ppb)"</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"PM2.5 (per 10 μg/m³)"</span>, <span class="st">"NO2 (per 10 ppb)"</span>,</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Green space (%)"</span>, <span class="st">"Walkability"</span>, <span class="st">"Noise (per 10 dB)"</span>,</span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Social cohesion"</span>, <span class="st">"Social isolation"</span>,</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Area deprivation"</span>, <span class="st">"Employment rate"</span></span>
@@ -384,12 +377,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<hr>
 </section>
 </section>
-<section id="adding-a-summary-pooled-estimate" class="level2">
-<h2 class="anchored" data-anchor-id="adding-a-summary-pooled-estimate">Adding a summary (pooled) estimate</h2>
-<p>Mark one or more rows with <code>is_summary = TRUE</code> to draw them as filled diamonds instead of squares. This is useful for pooled estimates in meta-analyses or for overall effects after subgroup rows.</p>
+<section id="summary-estimates" class="level2">
+<h2 class="anchored" data-anchor-id="summary-estimates">Summary estimates</h2>
+<p>Rows where the <code>is_summary</code> column is <code>TRUE</code> are drawn as filled diamonds spanning the confidence interval, the usual mark for a pooled or overall estimate.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sex_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="fu">c</span>(<span class="st">"Female"</span>, <span class="st">"Male"</span>, <span class="st">"Overall"</span>),</span>
@@ -407,7 +399,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">label      =</span> <span class="st">"label"</span>,</span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">is_summary =</span> <span class="st">"is_sum"</span>,</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab       =</span> <span class="st">"Regression coefficient (95% CI)"</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Association of female sex with SBP by subgroup"</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Association of physical activity with SBP, by sex"</span></span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
@@ -417,37 +409,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<hr>
 </section>
-<section id="group-colouring" class="level2">
-<h2 class="anchored" data-anchor-id="group-colouring">Group colouring</h2>
-<p>Pass a <code>group</code> column to colour estimates by a categorical variable. A legend is added automatically using the Okabe-Ito colorblind-safe palette.</p>
+<section id="group-colours" class="level2">
+<h2 class="anchored" data-anchor-id="group-colours">Group colours</h2>
+<p>A <code>group</code> column colours each row by its value and adds a legend. The default palette is Okabe-Ito, which stays distinguishable under the common forms of colour blindness. To choose the colours yourself, pass <code>col</code>, either as an unnamed vector used in order of appearance or as a vector named by group level.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>grp_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> <span class="fu">rep</span>(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"Air pollution (PM2.5)"</span>, <span class="st">"Noise exposure"</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Green space access"</span>, <span class="st">"Walkability index"</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Food environment"</span>), <span class="dv">2</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">domain    =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Physical environment"</span>, <span class="st">"Social environment"</span>),</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">each =</span> <span class="dv">5</span>),</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate  =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.18</span>,  <span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.22</span>,  <span class="fl">0.15</span>, <span class="sc">-</span><span class="fl">0.08</span>,</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.05</span>, <span class="sc">-</span><span class="fl">0.03</span>,  <span class="fl">0.09</span>, <span class="sc">-</span><span class="fl">0.11</span>,  <span class="fl">0.14</span>),</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower     =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.38</span>, <span class="sc">-</span><span class="fl">0.08</span>, <span class="sc">-</span><span class="fl">0.42</span>, <span class="sc">-</span><span class="fl">0.05</span>, <span class="sc">-</span><span class="fl">0.28</span>,</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span><span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.20</span>, <span class="sc">-</span><span class="fl">0.09</span>, <span class="sc">-</span><span class="fl">0.31</span>, <span class="sc">-</span><span class="fl">0.04</span>),</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper     =</span> <span class="fu">c</span>( <span class="fl">0.02</span>,  <span class="fl">0.32</span>, <span class="sc">-</span><span class="fl">0.02</span>,  <span class="fl">0.35</span>,  <span class="fl">0.12</span>,</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.22</span>,  <span class="fl">0.14</span>,  <span class="fl">0.27</span>,  <span class="fl">0.09</span>,  <span class="fl">0.32</span>)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  grp_dat,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"lower"</span>,</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"upper"</span>,</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"predictor"</span>,</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">group    =</span> <span class="st">"domain"</span>,</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Mean difference in SBP (mmHg, 95% CI)"</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> <span class="fu">c</span>(<span class="st">"Air pollution (PM2.5)"</span>, <span class="st">"Noise exposure"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Green space access"</span>, <span class="st">"Walkability index"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Food environment"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Social cohesion"</span>, <span class="st">"Social isolation"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Area deprivation"</span>, <span class="st">"Neighbourhood safety"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Employment rate"</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">domain    =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Physical environment"</span>, <span class="st">"Social environment"</span>),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">each =</span> <span class="dv">5</span>),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate  =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.18</span>,  <span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.22</span>,  <span class="fl">0.15</span>, <span class="sc">-</span><span class="fl">0.08</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.05</span>, <span class="sc">-</span><span class="fl">0.03</span>,  <span class="fl">0.09</span>, <span class="sc">-</span><span class="fl">0.11</span>,  <span class="fl">0.14</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower     =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.38</span>, <span class="sc">-</span><span class="fl">0.08</span>, <span class="sc">-</span><span class="fl">0.42</span>, <span class="sc">-</span><span class="fl">0.05</span>, <span class="sc">-</span><span class="fl">0.28</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span><span class="fl">0.12</span>, <span class="sc">-</span><span class="fl">0.20</span>, <span class="sc">-</span><span class="fl">0.09</span>, <span class="sc">-</span><span class="fl">0.31</span>, <span class="sc">-</span><span class="fl">0.04</span>),</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper     =</span> <span class="fu">c</span>( <span class="fl">0.02</span>,  <span class="fl">0.32</span>, <span class="sc">-</span><span class="fl">0.02</span>,  <span class="fl">0.35</span>,  <span class="fl">0.12</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.22</span>,  <span class="fl">0.14</span>,  <span class="fl">0.27</span>,  <span class="fl">0.09</span>,  <span class="fl">0.32</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  grp_dat,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"lower"</span>,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"upper"</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"predictor"</span>,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">group    =</span> <span class="st">"domain"</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Mean difference in SBP (mmHg, 95% CI)"</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -456,15 +448,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<hr>
 </section>
-<section id="multiple-estimates-per-row-dodge" class="level2">
-<h2 class="anchored" data-anchor-id="multiple-estimates-per-row-dodge">Multiple estimates per row (dodge)</h2>
-<p>Set <code>dodge = TRUE</code> (or a positive number) when consecutive rows share the same <code>label</code> value. The CIs are vertically offset within each label band, and the label is displayed once at the group centre. Combine with <code>group</code> to colour the series.</p>
+<section id="several-estimates-per-row" class="level2">
+<h2 class="anchored" data-anchor-id="several-estimates-per-row">Several estimates per row</h2>
+<p>With <code>dodge = TRUE</code>, consecutive rows that share a <code>label</code> value are drawn as one band: their intervals are offset vertically around the band’s centre and the label appears once. Pair it with <code>group</code> so the reader can tell the series apart.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dodge_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="fu">rep</span>(</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"PM2.5 (per 10 \u03bcg/m\u00b3)"</span>, <span class="st">"NO2 (per 10 ppb)"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"PM2.5 (per 10 μg/m³)"</span>, <span class="st">"NO2 (per 10 ppb)"</span>,</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Noise (per 10 dB)"</span>, <span class="st">"Green space (%)"</span>, <span class="st">"Walkability"</span>),</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">each =</span> <span class="dv">2</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
@@ -489,9 +480,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">group    =</span> <span class="st">"period"</span>,</span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">dodge    =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">header   =</span> <span class="st">"Environmental exposure"</span>,</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line =</span> <span class="dv">0</span>,</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Mean difference in SBP (mmHg, 95% CI)"</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Mean difference in SBP (mmHg, 95% CI)"</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -500,39 +490,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>A numeric value for <code>dodge</code> sets the vertical spacing between rows within a group directly (in y-axis units). <code>dodge = TRUE</code> uses the default of <code>0.25</code>. Structural rows (section and subsection headers, spacers) are always treated as singleton groups and are not affected by dodging.</p>
-<section id="wide-format-text-columns-alongside-dodged-cis" class="level3">
-<h3 class="anchored" data-anchor-id="wide-format-text-columns-alongside-dodged-cis">Wide-format text columns alongside dodged CIs</h3>
-<p>By default, <code>cols</code> text values appear at each row’s dodged y position, keeping them aligned with their CI whiskers. Set <code>cols_by_group = TRUE</code> to collapse each text column to one value per label group — this produces a wide table with one row per label and one column per condition, matching the layout commonly seen in multi-period epidemiology papers.</p>
+<p>A number instead of <code>TRUE</code> sets the distance between neighbouring intervals in a band, in units of one row; <code>TRUE</code> means <code>0.25</code>. Section and subsection headers and spacer rows are never merged into a band.</p>
+<section id="one-text-column-per-series" class="level3">
+<h3 class="anchored" data-anchor-id="one-text-column-per-series">One text column per series</h3>
+<p>By default each text column in <code>cols</code> prints a value beside every interval, at that interval’s offset position. With <code>cols_by_group = TRUE</code>, each text column instead prints one value per band, at the band’s centre: the first non-empty value among the band’s rows. Giving each series its own column, filled only on that series’ rows, produces a wide table with one row per label and one column per series.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add per-condition formatted text columns to the long-format data</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>dodge_dat<span class="sc">$</span>est_ci     <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                                dodge_dat<span class="sc">$</span>estimate,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                                dodge_dat<span class="sc">$</span>lower,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                                dodge_dat<span class="sc">$</span>upper)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>dodge_dat<span class="sc">$</span>text_child <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  dodge_dat<span class="sc">$</span>period <span class="sc">==</span> <span class="st">"Childhood"</span>, dodge_dat<span class="sc">$</span>est_ci, <span class="st">""</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>dodge_dat<span class="sc">$</span>text_adult <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  dodge_dat<span class="sc">$</span>period <span class="sc">==</span> <span class="st">"Adulthood"</span>, dodge_dat<span class="sc">$</span>est_ci, <span class="st">""</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  dodge_dat,</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate      =</span> <span class="st">"estimate"</span>,</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower         =</span> <span class="st">"lower"</span>,</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper         =</span> <span class="st">"upper"</span>,</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">label         =</span> <span class="st">"exposure"</span>,</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">group         =</span> <span class="st">"period"</span>,</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">dodge         =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols_by_group =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols          =</span> <span class="fu">c</span>(<span class="st">"Childhood (95% CI)"</span> <span class="ot">=</span> <span class="st">"text_child"</span>,</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Adulthood (95% CI)"</span> <span class="ot">=</span> <span class="st">"text_adult"</span>),</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths        =</span> <span class="fu">c</span>(<span class="fl">2.8</span>, <span class="fl">3.5</span>, <span class="fl">2.2</span>, <span class="fl">2.2</span>),</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">header        =</span> <span class="st">"Environmental exposure"</span>,</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line      =</span> <span class="dv">0</span>,</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab          =</span> <span class="st">"Mean difference in SBP (mmHg, 95% CI)"</span></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dodge_dat<span class="sc">$</span>est_ci     <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%.2f (%.2f, %.2f)"</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                                dodge_dat<span class="sc">$</span>estimate,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                                dodge_dat<span class="sc">$</span>lower,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                                dodge_dat<span class="sc">$</span>upper)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>dodge_dat<span class="sc">$</span>text_child <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  dodge_dat<span class="sc">$</span>period <span class="sc">==</span> <span class="st">"Childhood"</span>, dodge_dat<span class="sc">$</span>est_ci, <span class="st">""</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>dodge_dat<span class="sc">$</span>text_adult <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  dodge_dat<span class="sc">$</span>period <span class="sc">==</span> <span class="st">"Adulthood"</span>, dodge_dat<span class="sc">$</span>est_ci, <span class="st">""</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  dodge_dat,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate      =</span> <span class="st">"estimate"</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower         =</span> <span class="st">"lower"</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper         =</span> <span class="st">"upper"</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">label         =</span> <span class="st">"exposure"</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">group         =</span> <span class="st">"period"</span>,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">dodge         =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols_by_group =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols          =</span> <span class="fu">c</span>(<span class="st">"Childhood (95% CI)"</span> <span class="ot">=</span> <span class="st">"text_child"</span>,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Adulthood (95% CI)"</span> <span class="ot">=</span> <span class="st">"text_adult"</span>),</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths        =</span> <span class="fu">c</span>(<span class="fl">2.8</span>, <span class="fl">3.5</span>, <span class="fl">2.2</span>, <span class="fl">2.2</span>),</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">header        =</span> <span class="st">"Environmental exposure"</span>,</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab          =</span> <span class="st">"Mean difference in SBP (mmHg, 95% CI)"</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -541,16 +529,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<hr>
 </section>
 </section>
 <section id="point-shapes" class="level2">
 <h2 class="anchored" data-anchor-id="point-shapes">Point shapes</h2>
-<p>Pass a <code>shape</code> column to assign different point characters per category. Use together with <code>group</code> and <code>dodge</code> to encode two categorical dimensions at once — for example, colour = time period and shape = sex.</p>
+<p>A <code>shape</code> column gives each of its values a different point character and adds a second legend. Combined with <code>group</code> and <code>dodge</code>, a single band can then encode two variables, here period by colour and sex by shape.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>shape_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="fu">rep</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"PM2.5 (per 10 \u03bcg/m\u00b3)"</span>, <span class="st">"NO2 (per 10 ppb)"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"PM2.5 (per 10 μg/m³)"</span>, <span class="st">"NO2 (per 10 ppb)"</span>,</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Noise (per 10 dB)"</span>, <span class="st">"Green space (%)"</span>, <span class="st">"Walkability"</span>),</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">each =</span> <span class="dv">4</span></span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
@@ -588,9 +575,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">group    =</span> <span class="st">"period"</span>,</span>
 <span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">shape    =</span> <span class="st">"sex"</span>,</span>
 <span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">dodge    =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_line =</span> <span class="dv">0</span>,</span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Mean difference in SBP (mmHg, 95% CI)"</span></span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Mean difference in SBP (mmHg, 95% CI)"</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -599,15 +585,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>The shape legend appears at <code>legend_shape_pos</code> (<code>"bottomright"</code> by default). Set <code>legend_shape_pos = NULL</code> to suppress it.</p>
-<hr>
+<p>The shape legend sits at <code>legend_shape_pos</code>, <code>"bottomright"</code> by default, and <code>legend_shape_pos = NULL</code> removes it. <code>legend_pos</code> does the same for the colour legend.</p>
 </section>
-<section id="adding-text-columns" class="level2">
-<h2 class="anchored" data-anchor-id="adding-text-columns">Adding text columns</h2>
-<p>Use the <code>cols</code> argument — a named character vector mapping display headers to column names in <code>data</code> — to show formatted statistics alongside the plot.</p>
+<section id="text-columns" class="level2">
+<h2 class="anchored" data-anchor-id="text-columns">Text columns</h2>
+<p><code>cols</code> adds text columns to the right of the plot. It is a named character vector: each name is a column header and each value is the name of a column in <code>data</code>. Format the text yourself, for instance with <code>sprintf()</code>, so that it shows exactly the digits you want. <code>widths</code> sets the relative widths of the label panel, the plot and each text column.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tc_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> <span class="fu">c</span>(<span class="st">"Age (per 10 y)"</span>, <span class="st">"Female sex"</span>, <span class="st">"BMI (per 5 kg/m\u00b2)"</span>,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> <span class="fu">c</span>(<span class="st">"Age (per 10 y)"</span>, <span class="st">"Female sex"</span>, <span class="st">"BMI (per 5 kg/m²)"</span>,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Current smoker"</span>, <span class="st">"Physically active"</span>),</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate  =</span> <span class="fu">c</span>( <span class="fl">0.18</span>, <span class="sc">-</span><span class="fl">0.42</span>,  <span class="fl">0.11</span>, <span class="sc">-</span><span class="fl">0.31</span>,  <span class="fl">0.24</span>),</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower     =</span> <span class="fu">c</span>( <span class="fl">0.05</span>, <span class="sc">-</span><span class="fl">0.61</span>, <span class="sc">-</span><span class="fl">0.04</span>, <span class="sc">-</span><span class="fl">0.52</span>,  <span class="fl">0.08</span>),</span>
@@ -641,13 +626,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<section id="section-level-annotations-in-text-columns" class="level3">
-<h3 class="anchored" data-anchor-id="section-level-annotations-in-text-columns">Section-level annotations in text columns</h3>
-<p>When <code>section</code> is active, text columns show <code>""</code> for section header rows by default. Use <code>section_cols</code> — a named character vector with the same syntax as <code>cols</code> — to populate specific columns in section header rows with a section-level value (e.g.&nbsp;number of studies, total N). The name must match a name in <code>cols</code>; the value is a column in <code>data</code> whose first non-NA entry in each section is used.</p>
+<section id="values-in-section-header-rows" class="level3">
+<h3 class="anchored" data-anchor-id="values-in-section-header-rows">Values in section header rows</h3>
+<p>Text columns are empty on the header rows that <code>section</code> inserts. <code>section_cols</code> fills chosen text columns on those rows with a section-level value. Its names must be names of <code>cols</code>, and its values are columns in <code>data</code>; on each header row, the named text column shows the first non-empty value of that data column within the section. <code>subsection_cols</code> does the same for subsection headers. Here each row shows its own sample size and each header shows the section’s total.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sc_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">subgroup  =</span> <span class="fu">c</span>(<span class="st">"Sex"</span>,    <span class="st">"Sex"</span>,   <span class="st">"Age group"</span>, <span class="st">"Age group"</span>, <span class="st">"Age group"</span>),</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">label     =</span> <span class="fu">c</span>(<span class="st">"Female"</span>, <span class="st">"Male"</span>,  <span class="st">"30\u201349 y"</span>, <span class="st">"50\u201369 y"</span>, <span class="st">"70+ y"</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">label     =</span> <span class="fu">c</span>(<span class="st">"Female"</span>, <span class="st">"Male"</span>,  <span class="st">"30–49 y"</span>, <span class="st">"50–69 y"</span>, <span class="st">"70+ y"</span>),</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate  =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.38</span>,  <span class="fl">0.12</span>,  <span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.15</span>, <span class="sc">-</span><span class="fl">0.41</span>),</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower     =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.58</span>, <span class="sc">-</span><span class="fl">0.08</span>,  <span class="fl">0.02</span>, <span class="sc">-</span><span class="fl">0.38</span>, <span class="sc">-</span><span class="fl">0.66</span>),</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper     =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.18</span>,  <span class="fl">0.32</span>,  <span class="fl">0.42</span>,  <span class="fl">0.08</span>, <span class="sc">-</span><span class="fl">0.16</span>),</span>
@@ -658,8 +643,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"-0.15 (-0.38,  0.08)"</span>,</span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"-0.41 (-0.66, -0.16)"</span></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Constant within each section — section header will show this value</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">k_text    =</span> <span class="fu">c</span>(<span class="st">"k = 2"</span>, <span class="st">"k = 2"</span>, <span class="st">"k = 3"</span>, <span class="st">"k = 3"</span>, <span class="st">"k = 3"</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_text    =</span> <span class="fu">c</span>(<span class="st">"1,204"</span>, <span class="st">"1,096"</span>, <span class="st">"702"</span>, <span class="st">"958"</span>, <span class="st">"640"</span>),</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_section =</span> <span class="fu">c</span>(<span class="st">"2,300"</span>, <span class="st">""</span>, <span class="st">"2,300"</span>, <span class="st">""</span>, <span class="st">""</span>)</span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
@@ -669,9 +654,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper        =</span> <span class="st">"upper"</span>,</span>
 <span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">label        =</span> <span class="st">"label"</span>,</span>
 <span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">section      =</span> <span class="st">"subgroup"</span>,</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">section_cols =</span> <span class="fu">c</span>(<span class="st">"k"</span> <span class="ot">=</span> <span class="st">"k_text"</span>),</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">section_cols =</span> <span class="fu">c</span>(<span class="st">"N"</span> <span class="ot">=</span> <span class="st">"n_section"</span>),</span>
 <span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">header       =</span> <span class="st">"Subgroup"</span>,</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols         =</span> <span class="fu">c</span>(<span class="st">"Coef (95% CI)"</span> <span class="ot">=</span> <span class="st">"coef_ci"</span>, <span class="st">"k"</span> <span class="ot">=</span> <span class="st">"k_text"</span>),</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols         =</span> <span class="fu">c</span>(<span class="st">"Coef (95% CI)"</span> <span class="ot">=</span> <span class="st">"coef_ci"</span>, <span class="st">"N"</span> <span class="ot">=</span> <span class="st">"n_text"</span>),</span>
 <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">widths       =</span> <span class="fu">c</span>(<span class="fl">2.5</span>, <span class="dv">4</span>, <span class="fl">2.5</span>, <span class="fl">1.2</span>),</span>
 <span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab         =</span> <span class="st">"Regression coefficient (95% CI)"</span></span>
 <span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -683,16 +668,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<hr>
 </section>
 </section>
-<section id="alternating-row-stripes" class="level2">
-<h2 class="anchored" data-anchor-id="alternating-row-stripes">Alternating row stripes</h2>
-<p>Set <code>stripe = TRUE</code> for a subtle alternating row background that aids readability with many rows.</p>
+<section id="row-stripes" class="level2">
+<h2 class="anchored" data-anchor-id="row-stripes">Row stripes</h2>
+<p><code>stripe = TRUE</code> shades every other row, which helps the eye follow a row across a wide plot.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>stripe_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="fu">c</span>(</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Age (per 10 y)"</span>, <span class="st">"Female sex"</span>, <span class="st">"BMI (per 5 kg/m\u00b2)"</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Age (per 10 y)"</span>, <span class="st">"Female sex"</span>, <span class="st">"BMI (per 5 kg/m²)"</span>,</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Current smoker"</span>, <span class="st">"Physically active"</span>,</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Alcohol intake"</span>, <span class="st">"Sleep duration"</span>, <span class="st">"Depressive symptoms"</span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
@@ -718,20 +702,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<hr>
 </section>
 <section id="themes" class="level2">
 <h2 class="anchored" data-anchor-id="themes">Themes</h2>
-<p><code>forrest()</code> ships three built-in themes. Pass the theme name as a character string, or supply a named list of style overrides for full control.</p>
+<p><code>theme</code> takes the name of a built-in theme (<code>"default"</code>, <code>"minimal"</code> or <code>"classic"</code>) or a named list that overrides individual keys of the default theme. The keys are <code>grid_col</code>, <code>grid_lty</code> and <code>grid_lwd</code> for the horizontal gridlines, <code>ref_col</code> and <code>ref_lty</code> for the reference line, and <code>stripe_col</code> for striped rows.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>theme_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> <span class="fu">c</span>(<span class="st">"Age (per 10 y)"</span>, <span class="st">"Female sex"</span>, <span class="st">"BMI (per 5 kg/m\u00b2)"</span>),</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> <span class="fu">c</span>(<span class="st">"Age (per 10 y)"</span>, <span class="st">"Female sex"</span>, <span class="st">"BMI (per 5 kg/m²)"</span>),</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate  =</span> <span class="fu">c</span>( <span class="fl">0.18</span>, <span class="sc">-</span><span class="fl">0.42</span>,  <span class="fl">0.11</span>),</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower     =</span> <span class="fu">c</span>( <span class="fl">0.05</span>, <span class="sc">-</span><span class="fl">0.61</span>, <span class="sc">-</span><span class="fl">0.04</span>),</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper     =</span> <span class="fu">c</span>( <span class="fl">0.31</span>, <span class="sc">-</span><span class="fl">0.23</span>,  <span class="fl">0.26</span>)</span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># "minimal" theme — lighter gridlines and softer reference line</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lighter gridlines and a softer reference line</span></span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  theme_dat,</span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
@@ -751,7 +734,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># "classic" theme — dotted gridlines and solid black reference line</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dotted gridlines and a solid black reference line</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  theme_dat,</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
@@ -771,17 +754,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom theme — override individual style keys</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  theme_dat,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"lower"</span>,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"upper"</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"predictor"</span>,</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme    =</span> <span class="fu">list</span>(<span class="at">ref_col =</span> <span class="st">"#e63946"</span>, <span class="at">ref_lty =</span> <span class="dv">1</span>L, <span class="at">grid_col =</span> <span class="st">"#eeeeee"</span>),</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Custom theme (red reference line)"</span>,</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Coefficient (95% CI)"</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">forrest</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  theme_dat,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimate =</span> <span class="st">"estimate"</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower    =</span> <span class="st">"lower"</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper    =</span> <span class="st">"upper"</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">label    =</span> <span class="st">"predictor"</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme    =</span> <span class="fu">list</span>(<span class="at">ref_col =</span> <span class="st">"#e63946"</span>, <span class="at">ref_lty =</span> <span class="dv">1</span>L, <span class="at">grid_col =</span> <span class="st">"#eeeeee"</span>),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Custom theme (red reference line)"</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Coefficient (95% CI)"</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -790,11 +772,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<hr>
+<p>Graphical parameters that <code>forrest()</code> does not name, such as <code>cex.axis</code> and <code>cex.lab</code>, are passed through <code>...</code> to the call that sets up the plot region.</p>
 </section>
 <section id="saving-plots" class="level2">
 <h2 class="anchored" data-anchor-id="saving-plots">Saving plots</h2>
-<p>Use <code>save_forrest()</code> to export a plot to PDF, PNG, SVG, or TIFF. Pass a zero-argument function that calls <code>forrest()</code>.</p>
+<p><code>save_forrest()</code> writes a plot to PDF, PNG, SVG or TIFF, choosing the device from the file extension. It takes a function with no arguments that draws the plot, so the device is opened before drawing starts and closed even if drawing fails. <code>dpi</code> sets the resolution of PNG and TIFF files.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">save_forrest</span>(</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file   =</span> <span class="st">"my_forest_plot.pdf"</span>,</span>
@@ -895,7 +877,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
       // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
       for (var i=0; i<links.length; i++) {
         const link = links[i];
         if (!isInternal(link.href)) {
@@ -904,8 +887,69 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+          if (!link.classList.contains('no-external-icon')) {
+          }
         }
       }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
       const config = {
         allowHTML: true,
@@ -919,6 +963,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         interactiveBorder: 10,
         theme: 'quarto',
         placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
       };
       if (contentFn) {
         config.content = contentFn;
@@ -1081,44 +1126,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           const lineIds = lines.map((line) => {
             return targetCell + "-" + line;
           })
-          let top = null;
-          let height = null;
-          let parent = null;
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
           if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
             }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
             }
+            placeBand(gutterDiv, el, lastEl);
             selectedAnnoteEl = annoteEl;
           }
         };
@@ -1216,6 +1271,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       }
     }
   });
+  </script>
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Scrollable code","output":"Scrollable output"};
   </script>
 </div> <!-- /content -->
 
