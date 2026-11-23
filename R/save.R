@@ -43,6 +43,13 @@ save_forrest <- function(
   dpi = 300,
   bg = "white"
 ) {
+  if (!is.function(plot)) {
+    stop(
+      "`plot` must be a function that draws the plot, for example ",
+      "`function() forrest(...)`.",
+      call. = FALSE
+    )
+  }
   # Extract the file extension and dispatch to the right graphics device.
   # `tools::file_ext()` handles paths like "dir/plot.pdf" → "pdf"
   ext <- tolower(tools::file_ext(file))

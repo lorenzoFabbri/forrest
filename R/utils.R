@@ -21,6 +21,12 @@ as_df <- function(data) {
 #'   absent.
 #' @noRd
 check_col <- function(data, col, arg) {
+  if (!is.character(col) || length(col) != 1L || is.na(col)) {
+    stop(
+      sprintf("`%s` must be a single column name (string).", arg),
+      call. = FALSE
+    )
+  }
   if (!col %in% names(data)) {
     stop(
       sprintf("Column '%s' not found in data (argument `%s`).", col, arg),
@@ -40,23 +46,41 @@ check_col_opt <- function(data, col, arg) {
   if (!is.null(col)) check_col(data, col, arg)
 }
 
-#' Map a grouping vector to Okabe-Ito palette colours
+#' Map a grouping vector to colours
 #'
-#' Returns a named character vector mapping each unique level of `groups` to a
-#' colour from the Okabe-Ito colorblind-safe palette.
+#' Returns a named character vector mapping each unique non-missing level of
+#' `groups` to a colour. Without `col`, colours come from the Okabe-Ito
+#' colorblind-safe palette. A named `col` is matched to levels by name; an
+#' unnamed `col` is recycled over the levels in order of appearance.
 #'
-#' @param groups Character vector of group labels.
-#' @return Named character vector (`level -> hex colour`).
+#' @param groups Character vector of group labels. `NA` entries (structural
+#'   rows) get no level.
+#' @param col Optional character vector of colours.
+#' @return Named character vector (`level -> colour`).
 #' @noRd
-group_colors <- function(groups) {
-  lvls <- unique(groups)
+group_colors <- function(groups, col = NULL) {
+  lvls <- unique(groups[!is.na(groups)])
   n <- length(lvls)
-  # Skip index 1 (white/near-white) to keep colours visible on white backgrounds
-  pal <- grDevices::palette.colors(n + 1L, "Okabe-Ito")[-1L]
-  if (n > length(pal)) {
-    pal <- rep_len(pal, n)
+  if (!is.null(col)) {
+    if (!is.null(names(col))) {
+      missing_lvls <- setdiff(lvls, names(col))
+      if (length(missing_lvls) > 0L) {
+        stop(
+          sprintf(
+            "`col` has no colour for group level(s): %s.",
+            paste(missing_lvls, collapse = ", ")
+          ),
+          call. = FALSE
+        )
+      }
+      return(stats::setNames(unname(col[lvls]), lvls))
+    }
+    return(stats::setNames(rep_len(col, n), lvls))
   }
-  stats::setNames(pal[seq_len(n)], as.character(lvls))
+  # Okabe-Ito index 1 is black, too close to the near-black used for
+  # ungrouped rows, so groups start at index 2 and recycle after eight levels.
+  pal <- grDevices::palette.colors(9L, "Okabe-Ito")[-1L]
+  stats::setNames(unname(rep_len(pal, n)), lvls)
 }
 
 #' Assign visual group IDs for dodge layout
@@ -72,11 +96,11 @@ compute_dodge_groups <- function(lbl, is_header) {
   n <- length(lbl)
   group_ids <- integer(n)
   g <- 0L
-  prev_lbl <- ""
   for (i in seq_len(n)) {
-    if (is_header[i] || lbl[i] != prev_lbl) {
+    starts_group <- i == 1L || is_header[i] || is_header[i - 1L] ||
+      !identical(lbl[i], lbl[i - 1L])
+    if (starts_group) {
       g <- g + 1L
-      prev_lbl <- if (is_header[i]) "" else lbl[i]
     }
     group_ids[i] <- g
   }
@@ -85,14 +109,15 @@ compute_dodge_groups <- function(lbl, is_header) {
 
 #' Map shape levels to pch values
 #'
-#' Returns a named integer vector mapping each unique level of `shapes` to a
+#' Returns a named integer vector mapping each unique non-missing level of
+#' `shapes` to a
 #' point character value, cycling through a predefined set.
 #'
 #' @param shapes Character vector of shape labels.
 #' @return Named integer vector (`level -> pch`).
 #' @noRd
 group_shapes <- function(shapes) {
-  lvls <- unique(shapes)
+  lvls <- unique(shapes[!is.na(shapes)])
   pchs <- c(16L, 17L, 15L, 18L, 8L, 10L, 3L, 4L)
   if (length(lvls) > length(pchs)) {
     pchs <- rep_len(pchs, length(lvls))
@@ -131,10 +156,10 @@ group_shapes <- function(shapes) {
 #' @param section_spacer Logical; append a blank spacer row after each section.
 #' @param cols Character vector of data-column names used in text panels
 #'   (the *values* of the `cols` named vector passed to `forrest()`).
-#' @param section_cols Named character vector: names are `cols` display headers,
-#'   values are data-column names whose first non-NA entry in each section is
-#'   shown in the section header row.  `NULL` means all header text cells are
-#'   empty.
+#' @param section_cols Named character vector: names are the text-panel
+#'   columns to fill on section header rows, values are the data columns whose
+#'   first non-empty entry in each section is written there. `NULL` leaves all
+#'   header text cells empty.
 #' @param subsection_cols Like `section_cols` but for subsection header rows.
 #'
 #' @return A list with four elements:
@@ -205,7 +230,7 @@ build_sections <- function(
     if (length(v) == 0L) "" else as.character(v[[1L]])
   }
 
-  # Resolve annotation cols into a mapping: data-column name -> display value
+  # Resolve annotation cols into a mapping: target column -> display value
   resolve_annotation <- function(annot_cols, sub_df) {
     if (is.null(annot_cols) || length(annot_cols) == 0L) {
       return(character(0))
@@ -215,7 +240,7 @@ build_sections <- function(
       function(cn) first_val(sub_df, cn),
       character(1L)
     )
-    stats::setNames(vals, unname(annot_cols))
+    stats::setNames(vals, names(annot_cols))
   }
 
   # Section run-length boundaries

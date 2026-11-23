@@ -68,6 +68,16 @@ resolve_theme <- function(theme) {
     return(base)
   }
   if (is.list(theme)) {
+    bad <- setdiff(names(theme), names(.theme_defaults))
+    if (is.null(names(theme)) || any(names(theme) == "") || length(bad) > 0L) {
+      stop(
+        sprintf(
+          "`theme` list entries must be named with keys from: %s.",
+          paste(names(.theme_defaults), collapse = ", ")
+        ),
+        call. = FALSE
+      )
+    }
     base <- .theme_defaults
     base[names(theme)] <- theme
     return(base)

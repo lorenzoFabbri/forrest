@@ -39,21 +39,23 @@
 #' @param section_spacer Logical. If `TRUE` (default), a blank spacer row is
 #'   appended after the last row of each section.
 #' @param section_cols Named character vector. Names must be a subset of the
-#'   names of `cols`. Values are column names in `data` whose first non-NA
-#'   entry in each section is shown in that section's header row. Columns not
-#'   listed here display `""` in the header row. Use this to show section-level
-#'   summaries (e.g. `"k = 3 studies"`) next to the section header.
+#'   names of `cols`. Values are column names in `data`; on each section's
+#'   header row, the text column with that name shows the first non-empty
+#'   value of the data column within the section. Text columns not listed are
+#'   empty on header rows. Use this to show section-level summaries, such as
+#'   the number of studies, beside the section header.
 #' @param subsection_cols Like `section_cols` but for subsection header rows.
-#' @param ref_label Logical. When `TRUE` and `section` is provided, rows with
-#'   `NA` estimates that are present in the original data (i.e. reference
-#'   category rows, not auto-generated headers) have `" (Ref.)"` appended to
-#'   their label. Default is `FALSE`.
-#' @param ref_line Numeric. Position of the vertical reference line (e.g. `0`
-#'   for differences, `1` for ratio measures on the natural scale). Set to
-#'   `NULL` to suppress. Default is `0`.
-#' @param log_scale Logical. If `TRUE`, apply a log transformation to the
-#'   x-axis. Useful when plotting odds ratios, hazard ratios, or risk ratios
-#'   on the natural scale. Default is `FALSE`.
+#' @param ref_label Logical. When `TRUE`, reference-category rows (rows of
+#'   `data` whose estimate is `NA`, as opposed to the header rows that
+#'   `section` inserts) have `" (Ref.)"` appended to their label. Default is
+#'   `FALSE`.
+#' @param ref_line Numeric. Position of the vertical reference line: `0` for
+#'   differences, `1` for ratio measures. Set to `NULL` to suppress. Defaults
+#'   to `0`, or to `1` when `log_scale = TRUE`.
+#' @param log_scale Logical. If `TRUE`, the x-axis is drawn on a log scale,
+#'   for odds ratios, hazard ratios or risk ratios supplied on the natural
+#'   (not log) scale. All estimates and confidence limits must then be
+#'   positive. Default is `FALSE`.
 #' @param xlim Numeric vector of length 2 giving x-axis limits. Computed from
 #'   the data when `NULL` (default). Confidence intervals that extend beyond
 #'   `xlim` are clipped at the axis boundary and an arrow is drawn to indicate
@@ -65,7 +67,7 @@
 #'   drawn above the topmost row on the y-axis.
 #' @param cols Named character vector specifying extra text columns to display
 #'   to the right of the plot. Names become column headers; values are column
-#'   names in `data`. Example: `cols = c("OR (95\\% CI)" = "or_ci")`.
+#'   names in `data`, for example `cols = c("OR (95\% CI)" = "or_ci")`.
 #' @param widths Numeric vector of relative panel widths. When `cols` is
 #'   `NULL`, ignored. Otherwise, length must equal `2 + length(cols)`: label
 #'   panel, plot panel, then one entry per extra column. Sensible defaults are
@@ -90,9 +92,12 @@
 #'   sex).
 #' @param lwd Line width for confidence interval whiskers. Default is `2`.
 #' @param cex Point size multiplier. Default is `1`.
-#' @param col Colour or character vector of colours. When `NULL` (default) and
-#'   `group` is specified, the Okabe-Ito colorblind-safe palette is used. When
-#'   `NULL` and no `group`, a single dark colour is used.
+#' @param col Colours. With `group`, one colour per group level: a named
+#'   vector is matched to the levels by name, and an unnamed one is recycled
+#'   over the levels in order of appearance. Without `group`, a single colour
+#'   or one colour per row of `data`. When `NULL` (default), groups take the
+#'   Okabe-Ito colorblind-safe palette and ungrouped rows are drawn in
+#'   near-black.
 #' @param legend_pos Position of the colour legend when `group` is supplied.
 #'   Passed to `legend()`. Use `NULL` to suppress. Default is `"topright"`.
 #' @param cols_by_group Logical. Relevant only when `dodge` is active. When
@@ -107,8 +112,11 @@
 #' @param legend_shape_pos Position of the shape legend when `shape` is
 #'   supplied. Passed to `legend()`. Use `NULL` to suppress.
 #'   Default is `"bottomright"`.
-#' @param theme Visual theme name (`"default"`, `"minimal"`, `"classic"`) or a
-#'   named list of style overrides. Default is `"default"`.
+#' @param theme Visual theme: one of `"default"`, `"minimal"` or `"classic"`,
+#'   or a named list that overrides individual style keys of the default
+#'   theme. The keys are `grid_col`, `grid_lty` and `grid_lwd` (horizontal
+#'   gridlines), `ref_col` and `ref_lty` (reference line), and `stripe_col`
+#'   (background of striped rows). Default is `"default"`.
 #' @param ... Graphical parameters forwarded to the internal tinyplot call
 #'   (e.g. `cex.axis`, `cex.lab`).
 #'
@@ -189,11 +197,8 @@ forrest <- function(
   ...
 ) {
   # ── 1. Input validation ────────────────────────────────────────────────────
-  if (
-    !is.data.frame(data) &&
-      !inherits(data, "data.table") &&
-      !inherits(data, "tbl_df")
-  ) {
+  # Tibbles and data.tables inherit from data.frame
+  if (!is.data.frame(data)) {
     stop("`data` must be a data frame, tibble, or data.table.", call. = FALSE)
   }
   df <- as_df(data)
@@ -270,16 +275,44 @@ forrest <- function(
     }
   }
 
+  # Section expansion indents the label column and writes section names into
+  # it, so group and shape values (which may share that column) and a per-row
+  # colour vector are copied into private columns before rows are inserted.
+  if (!is.null(group)) {
+    df$.forrest_group <- as.character(df[[group]])
+  }
+  if (!is.null(shape)) {
+    df$.forrest_shape <- as.character(df[[shape]])
+  }
+  row_col <- !is.null(col) && is.null(group)
+  if (row_col) {
+    if (length(col) != 1L && length(col) != n) {
+      stop(
+        sprintf(
+          "Without `group`, `col` must have length 1 or %d (one per row).",
+          n
+        ),
+        call. = FALSE
+      )
+    }
+    df$.forrest_col <- rep_len(col, n)
+  }
+
   # ── 1b. Section expansion ──────────────────────────────────────────────────
   # When `section` is provided, build_sections() inserts bold header rows,
   # optional sub-headers, and blank spacer rows into `df` before any drawing.
   # The three flag vectors identify which of the expanded rows are structural
   # (auto-inserted) vs. original data rows.
   if (!is.null(section)) {
-    # Map section_cols / subsection_cols from display-header names to data-
-    # column names so build_sections() can look up values in df
-    sc_data_cols <- if (!is.null(section_cols)) unname(section_cols)
-    ssc_data_cols <- if (!is.null(subsection_cols)) unname(subsection_cols)
+    # Re-key section_cols / subsection_cols from display headers to the data
+    # columns that the text panels show, so build_sections() writes each
+    # header value into the column that is drawn
+    rekey <- function(annot) {
+      if (is.null(annot)) {
+        return(NULL)
+      }
+      stats::setNames(unname(annot), unname(cols[names(annot)]))
+    }
 
     sec_result <- build_sections( # nolint: object_usage_linter.
       df = df,
@@ -294,16 +327,8 @@ forrest <- function(
       section_indent = section_indent,
       section_spacer = section_spacer,
       cols = if (!is.null(cols)) unname(cols) else character(0),
-      section_cols = if (!is.null(sc_data_cols)) {
-        stats::setNames(sc_data_cols, sc_data_cols)
-      } else {
-        NULL
-      },
-      subsection_cols = if (!is.null(ssc_data_cols)) {
-        stats::setNames(ssc_data_cols, ssc_data_cols)
-      } else {
-        NULL
-      }
+      section_cols = rekey(section_cols),
+      subsection_cols = rekey(subsection_cols)
     )
     df <- sec_result$df
     n <- nrow(df)
@@ -328,8 +353,9 @@ forrest <- function(
   } else {
     as.character(seq_len(n))
   }
-  grp <- if (!is.null(group)) as.character(df[[group]]) else NULL
-  shp <- if (!is.null(shape)) as.character(df[[shape]]) else NULL
+  lbl[is.na(lbl)] <- ""
+  grp <- if (!is.null(group)) df$.forrest_group else NULL
+  shp <- if (!is.null(shape)) df$.forrest_shape else NULL
   is_sum <- if (!is.null(is_summary)) {
     as.logical(df[[is_summary]])
   } else {
@@ -359,16 +385,17 @@ forrest <- function(
   is_bold <- (.is_section_hdr | .is_subsection_hdr) & nchar(trimws(lbl)) > 0L
 
   # ── 4. Colours ─────────────────────────────────────────────────────────────
-  if (!is.null(col)) {
-    col_vec <- rep_len(col, n)
-    grp_col_map <- NULL
-  } else if (!is.null(grp)) {
-    grp_col_map <- group_colors(grp)
+  default_col <- "#333333"
+  grp_col_map <- NULL
+  if (!is.null(grp)) {
+    grp_col_map <- group_colors(grp, col)
     col_vec <- unname(grp_col_map[grp])
+  } else if (row_col) {
+    col_vec <- as.character(df$.forrest_col)
   } else {
-    col_vec <- rep("#333333", n)
-    grp_col_map <- NULL
+    col_vec <- rep(default_col, n)
   }
+  col_vec[is.na(col_vec)] <- default_col
 
   # ── 5. Point characters ────────────────────────────────────────────────────
   if (!is.null(shp)) {
@@ -383,19 +410,38 @@ forrest <- function(
   # ── 6. Per-row point sizes ─────────────────────────────────────────────────
   # Square-root scaling so marker area is proportional to weight.
   # Structural, reference, and summary rows always use cex 1x.
-  if (!is.null(wt)) {
-    reg_wt <- wt
-    reg_wt[is_sum | is_no_ci] <- NA_real_
-    max_wt <- max(reg_wt, na.rm = TRUE)
+  reg_wt <- if (!is.null(wt)) wt else numeric(0)
+  reg_wt[is_sum | is_no_ci] <- NA_real_
+  if (any(is.finite(reg_wt) & reg_wt > 0)) {
+    max_wt <- max(reg_wt[is.finite(reg_wt)])
     cex_vec <- cex * sqrt(reg_wt / max_wt)
-    cex_vec[is.na(cex_vec)] <- cex
+    cex_vec[!is.finite(cex_vec)] <- cex
   } else {
     cex_vec <- rep(cex, n)
   }
 
   # ── 7. X-axis limits ───────────────────────────────────────────────────────
-  xlim_auto <- is.null(xlim)
-  if (xlim_auto) {
+  if (log_scale) {
+    if (missing(ref_line)) {
+      ref_line <- 1
+    }
+    if (any(c(est, lo, hi, xlim) <= 0, na.rm = TRUE)) {
+      stop(
+        "`log_scale = TRUE` requires positive estimates, confidence limits ",
+        "and `xlim`. Supply ratios on the natural scale, not log ratios.",
+        call. = FALSE
+      )
+    }
+    if (!is.null(ref_line) && is.finite(ref_line) && ref_line <= 0) {
+      warning(
+        "`ref_line` must be positive on a log scale; it is not drawn.",
+        call. = FALSE
+      )
+      ref_line <- NULL
+    }
+  }
+
+  if (is.null(xlim)) {
     vals <- c(lo, hi)
     vals <- vals[is.finite(vals)]
     if (length(vals) == 0L) {
@@ -593,6 +639,15 @@ forrest <- function(
     lo_draw <- pmax(lo_reg, xlim[1L])
     hi_draw <- pmin(hi_reg, xlim[2L])
 
+    # Arrow shafts span 2% of the axis width in the axis's own scale
+    arrow_start <- function(x, dir) {
+      if (log_scale) {
+        x * exp(dir * diff(log(xlim)) * 0.02)
+      } else {
+        x + dir * diff(xlim) * 0.02
+      }
+    }
+
     cap_h <- 0.12
     for (k in seq_along(reg_idx)) {
       graphics::segments(
@@ -605,7 +660,7 @@ forrest <- function(
       )
       if (clip_lo[k]) {
         graphics::arrows(
-          lo_draw[k] + diff(xlim) * 0.02,
+          arrow_start(lo_draw[k], 1),
           y_reg[k],
           lo_draw[k],
           y_reg[k],
@@ -627,7 +682,7 @@ forrest <- function(
       }
       if (clip_hi[k]) {
         graphics::arrows(
-          hi_draw[k] - diff(xlim) * 0.02,
+          arrow_start(hi_draw[k], -1),
           y_reg[k],
           hi_draw[k],
           y_reg[k],
@@ -661,7 +716,10 @@ forrest <- function(
     }
   }
 
-  # Diamonds for summary rows
+  # Diamonds for summary rows; when dodged, they are flattened so that
+  # neighbouring diamonds in a band do not overlap
+  diamond_h <- if (dodge_amt > 0) min(0.38, 0.45 * dodge_amt) else 0.38
+  diamond_h <- diamond_h * cex
   sum_rows <- which(is_sum & !is.na(est))
   for (i in sum_rows) {
     draw_diamond(
@@ -669,7 +727,7 @@ forrest <- function(
       y = row_y[i],
       xmin = max(lo[i], xlim[1L]),
       xmax = min(hi[i], xlim[2L]),
-      height = 0.38 * cex,
+      height = diamond_h,
       col = col_vec[i]
     )
   }
@@ -692,7 +750,7 @@ forrest <- function(
       graphics::mtext(
         text = header,
         side = 2L,
-        at = n_vis + 0.6,
+        at = header_y(),
         las = 1L,
         line = 0.5,
         font = 2L,

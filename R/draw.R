@@ -20,6 +20,21 @@ draw_diamond <- function(x, y, xmin, xmax, height = 0.35, col = "black") {
   graphics::polygon(vx, vy, col = col, border = col)
 }
 
+#' Vertical position of a panel header
+#'
+#' Places the header 0.7 text lines above the top of the current plot region,
+#' in the top margin, so it clears the first row however many rows there are.
+#' The plot region must already be set up.
+#'
+#' @param offset Distance above the region's top edge, in text lines.
+#' @return A y coordinate in user units.
+#' @noRd
+header_y <- function(offset = 0.7) {
+  usr <- graphics::par("usr")
+  line_h <- diff(usr[3:4]) / graphics::par("pin")[2L] * graphics::par("csi")
+  usr[4L] + offset * line_h
+}
+
 #' Draw a text panel alongside the forest plot
 #'
 #' Renders a column of labels (or statistics) in its own plot region after
@@ -70,18 +85,19 @@ draw_text_panel <- function(
   if (!is.null(header)) {
     graphics::text(
       x = x_pos,
-      y = n_vis + 0.6,
+      y = header_y(),
       labels = header,
       adj = c(adj, 0.5),
       font = 2L,
       cex = cex,
       xpd = TRUE
     )
+    rule_y <- header_y(0.1)
     graphics::segments(
       0,
-      n_vis + 0.2,
+      rule_y,
       1,
-      n_vis + 0.2,
+      rule_y,
       col = "gray70",
       xpd = TRUE
     )

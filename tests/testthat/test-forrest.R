@@ -1135,3 +1135,205 @@ test_that("forrest() errors on unknown theme name", {
     "must be one of"
   )
 })
+
+# ── Argument validation and edge cases ──────────────────────────────────────
+
+test_that("forrest() errors when a column argument is not a single string", {
+  dat <- basic_dat()
+  expect_error(
+    forrest(dat, estimate = c("estimate", "lower"), lower = "lower",
+            upper = "upper"),
+    "single column name"
+  )
+})
+
+test_that("forrest() dodge handles NA and empty labels", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  dat$label <- NA_character_
+  expect_no_error(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            label = "label", dodge = TRUE)
+  )
+  dat$label <- ""
+  expect_no_error(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            label = "label", dodge = TRUE)
+  )
+})
+
+test_that("compute_dodge_groups() starts a group at every label change", {
+  expect_identical(
+    compute_dodge_groups(c(NA, NA, "x", "x", ""), c(FALSE, FALSE, FALSE,
+                                                    FALSE, TRUE)),
+    c(1L, 1L, 2L, 2L, 3L)
+  )
+})
+
+test_that("group_colors() drops NA levels and honours col", {
+  expect_named(group_colors(c("a", NA, "b")), c("a", "b"))
+  expect_identical(
+    unname(group_colors(c("a", "b"), c(b = "red", a = "blue"))),
+    c("blue", "red")
+  )
+  expect_identical(
+    unname(group_colors(c("a", "b", "c"), c("red", "blue"))),
+    c("red", "blue", "red")
+  )
+  expect_error(group_colors(c("a", "b"), c(a = "red")), "no colour")
+})
+
+test_that("group_shapes() drops NA levels", {
+  expect_named(group_shapes(c("f", NA, "m")), c("f", "m"))
+})
+
+test_that("forrest() accepts col with group", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  dat$grp <- rep(c("A", "B"), length.out = nrow(dat))
+  expect_no_error(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            group = "grp", col = c(A = "red", B = "blue"))
+  )
+})
+
+test_that("forrest() checks the length of per-row col without group", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  expect_no_error(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            col = rep(c("red", "blue"), length.out = nrow(dat)))
+  )
+  expect_error(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            col = rep("red", nrow(dat) + 1L)),
+    "length 1 or"
+  )
+})
+
+test_that("forrest() log scale rejects non-positive values", {
+  dat <- basic_dat()
+  dat$lower[1] <- -0.1
+  expect_error(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            log_scale = TRUE),
+    "requires positive"
+  )
+})
+
+test_that("forrest() log scale defaults ref_line to 1 and warns on <= 0", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- data.frame(estimate = c(1.2, 0.8), lower = c(1.0, 0.6),
+                    upper = c(1.5, 1.1))
+  expect_no_warning(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            log_scale = TRUE)
+  )
+  expect_warning(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            log_scale = TRUE, ref_line = 0),
+    "must be positive"
+  )
+})
+
+test_that("forrest() clips CIs with arrows on a log scale", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- data.frame(estimate = c(1.2, 0.8), lower = c(0.2, 0.6),
+                    upper = c(9, 1.1))
+  expect_no_error(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            log_scale = TRUE, xlim = c(0.5, 4))
+  )
+})
+
+test_that("forrest() ignores weights when none are usable", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- basic_dat()
+  dat$w <- NA_real_
+  expect_no_warning(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            weight = "w")
+  )
+})
+
+test_that("forrest() rejects unknown theme keys", {
+  dat <- basic_dat()
+  expect_error(
+    forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+            theme = list(gird_col = "red")),
+    "keys from"
+  )
+})
+
+test_that("save_forrest() errors when plot is not a function", {
+  expect_error(
+    save_forrest(tempfile(fileext = ".png"), NULL),
+    "must be a function"
+  )
+})
+
+test_that("forrest() keeps group levels intact when group equals label", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- data.frame(
+    stage = rep(c("Prenatal", "Childhood"), each = 2),
+    exposure = rep(c("Noise", "Air"), 2),
+    estimate = c(0.1, 0.2, 0.15, 0.25),
+    lower = c(0, 0.1, 0.05, 0.15),
+    upper = c(0.2, 0.3, 0.25, 0.35)
+  )
+  rec <- new.env()
+  suppressMessages(trace(
+    "legend",
+    bquote(assign("labels", legend, envir = .(rec))),
+    print = FALSE,
+    where = asNamespace("graphics")
+  ))
+  on.exit(
+    suppressMessages(untrace("legend", where = asNamespace("graphics"))),
+    add = TRUE
+  )
+  forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+          label = "exposure", group = "exposure", section = "stage")
+  expect_identical(rec$labels, c("Noise", "Air"))
+})
+
+test_that("forrest() section_cols fills the displayed column, not the source", {
+  pdf(nullfile())
+  on.exit(dev.off())
+  dat <- data.frame(
+    sec = c("A", "A", "B"),
+    label = c("a1", "a2", "b1"),
+    estimate = c(0.1, 0.2, 0.3),
+    lower = c(0, 0.1, 0.2),
+    upper = c(0.2, 0.3, 0.4),
+    n = c("10", "20", "30"),
+    n_sec = c("30", "", "30")
+  )
+  rec <- new.env()
+  rec$labels <- list()
+  suppressMessages(trace(
+    "draw_text_panel",
+    bquote(assign("labels", c(get("labels", envir = .(rec)), list(labels)),
+                  envir = .(rec))),
+    print = FALSE,
+    where = asNamespace("forrest")
+  ))
+  on.exit(
+    suppressMessages(
+      untrace("draw_text_panel", where = asNamespace("forrest"))
+    ),
+    add = TRUE
+  )
+  forrest(dat, estimate = "estimate", lower = "lower", upper = "upper",
+          label = "label", section = "sec", cols = c(N = "n"),
+          section_cols = c(N = "n_sec"))
+  n_panel <- rec$labels[[2L]]
+  expect_identical(n_panel, c("30", "10", "20", "", "30", "30", ""))
+})

@@ -84,25 +84,27 @@ for rows within a subsection).}
 appended after the last row of each section.}
 
 \item{section_cols}{Named character vector. Names must be a subset of the
-names of \code{cols}. Values are column names in \code{data} whose first non-NA
-entry in each section is shown in that section's header row. Columns not
-listed here display \code{""} in the header row. Use this to show section-level
-summaries (e.g. \code{"k = 3 studies"}) next to the section header.}
+names of \code{cols}. Values are column names in \code{data}; on each section's
+header row, the text column with that name shows the first non-empty
+value of the data column within the section. Text columns not listed are
+empty on header rows. Use this to show section-level summaries, such as
+the number of studies, beside the section header.}
 
 \item{subsection_cols}{Like \code{section_cols} but for subsection header rows.}
 
-\item{ref_label}{Logical. When \code{TRUE} and \code{section} is provided, rows with
-\code{NA} estimates that are present in the original data (i.e. reference
-category rows, not auto-generated headers) have \code{" (Ref.)"} appended to
-their label. Default is \code{FALSE}.}
+\item{ref_label}{Logical. When \code{TRUE}, reference-category rows (rows of
+\code{data} whose estimate is \code{NA}, as opposed to the header rows that
+\code{section} inserts) have \code{" (Ref.)"} appended to their label. Default is
+\code{FALSE}.}
 
-\item{ref_line}{Numeric. Position of the vertical reference line (e.g. \code{0}
-for differences, \code{1} for ratio measures on the natural scale). Set to
-\code{NULL} to suppress. Default is \code{0}.}
+\item{ref_line}{Numeric. Position of the vertical reference line: \code{0} for
+differences, \code{1} for ratio measures. Set to \code{NULL} to suppress. Defaults
+to \code{0}, or to \code{1} when \code{log_scale = TRUE}.}
 
-\item{log_scale}{Logical. If \code{TRUE}, apply a log transformation to the
-x-axis. Useful when plotting odds ratios, hazard ratios, or risk ratios
-on the natural scale. Default is \code{FALSE}.}
+\item{log_scale}{Logical. If \code{TRUE}, the x-axis is drawn on a log scale,
+for odds ratios, hazard ratios or risk ratios supplied on the natural
+(not log) scale. All estimates and confidence limits must then be
+positive. Default is \code{FALSE}.}
 
 \item{xlim}{Numeric vector of length 2 giving x-axis limits. Computed from
 the data when \code{NULL} (default). Confidence intervals that extend beyond
@@ -119,7 +121,7 @@ drawn above the topmost row on the y-axis.}
 
 \item{cols}{Named character vector specifying extra text columns to display
 to the right of the plot. Names become column headers; values are column
-names in \code{data}. Example: \code{cols = c("OR (95\\\\\% CI)" = "or_ci")}.}
+names in \code{data}, for example \code{cols = c("OR (95\\\% CI)" = "or_ci")}.}
 
 \item{widths}{Numeric vector of relative panel widths. When \code{cols} is
 \code{NULL}, ignored. Otherwise, length must equal \code{2 + length(cols)}: label
@@ -152,9 +154,12 @@ sex).}
 
 \item{cex}{Point size multiplier. Default is \code{1}.}
 
-\item{col}{Colour or character vector of colours. When \code{NULL} (default) and
-\code{group} is specified, the Okabe-Ito colorblind-safe palette is used. When
-\code{NULL} and no \code{group}, a single dark colour is used.}
+\item{col}{Colours. With \code{group}, one colour per group level: a named
+vector is matched to the levels by name, and an unnamed one is recycled
+over the levels in order of appearance. Without \code{group}, a single colour
+or one colour per row of \code{data}. When \code{NULL} (default), groups take the
+Okabe-Ito colorblind-safe palette and ungrouped rows are drawn in
+near-black.}
 
 \item{cols_by_group}{Logical. Relevant only when \code{dodge} is active. When
 \code{TRUE}, each text column in \code{cols} is collapsed to one value per label
@@ -173,8 +178,11 @@ Passed to \code{legend()}. Use \code{NULL} to suppress. Default is \code{"toprig
 supplied. Passed to \code{legend()}. Use \code{NULL} to suppress.
 Default is \code{"bottomright"}.}
 
-\item{theme}{Visual theme name (\code{"default"}, \code{"minimal"}, \code{"classic"}) or a
-named list of style overrides. Default is \code{"default"}.}
+\item{theme}{Visual theme: one of \code{"default"}, \code{"minimal"} or \code{"classic"},
+or a named list that overrides individual style keys of the default
+theme. The keys are \code{grid_col}, \code{grid_lty} and \code{grid_lwd} (horizontal
+gridlines), \code{ref_col} and \code{ref_lty} (reference line), and \code{stripe_col}
+(background of striped rows). Default is \code{"default"}.}
 
 \item{...}{Graphical parameters forwarded to the internal tinyplot call
 (e.g. \code{cex.axis}, \code{cex.lab}).}
